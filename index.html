@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4325315633009107" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-adsense-account" content="ca-pub-4325315633009107">
+  <meta name="776496e032a7af55a053cec7b4fab15568cf87d1" content="776496e032a7af55a053cec7b4fab15568cf87d1">
+  <title>Versant Practice PRO</title>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+             signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, 
+             signOut, onAuthStateChanged, updateProfile
+           } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp
+           } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyASKI0u0KBCPz0vg5ro0XhJlSSuWxrW8OU",
+      authDomain: "versantpro-7a2af.firebaseapp.com",
+      projectId: "versantpro-7a2af",
+      storageBucket: "versantpro-7a2af.firebasestorage.app",
+      messagingSenderId: "1032992540620",
+      appId: "1:1032992540620:web:a77017677625c1fdedff69",
+      measurementId: "G-4Q0YLBP4G5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // ─── FIRESTORE HELPERS ───────────────────────────────────────────────────
+    async function loadUserData(uid) {
+      try {
+        const ref = doc(db, "users", uid);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          return snap.data();
+        }
+        return null;
+      } catch (e) {
+        console.warn("Firestore load failed, using localStorage:", e);
+        return null;
+      }
+    }
+
+    async function saveUserData(uid, data) {
+      try {
+        const ref = doc(db, "users", uid);
+        await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+      } catch (e) {
+        console.warn("Firestore save failed, saved to localStorage only:", e);
+      }
+    }
+
+    // ─── EXPOSE TO GLOBAL SCOPE ──────────────────────────────────────────────
+    window._fb = {
+      auth, db, googleProvider,
+      createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      signInWithPopup, signInWithRedirect, getRedirectResult,
+      signOut, onAuthStateChanged, updateProfile,
+      loadUserData, saveUserData
+    };
+
+    // ─── HANDLE REDIRECT RESULT (Google login ke baad wapas aane pe) ────────
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) {
+        // Redirect se wapas aaye — user already onAuthStateChanged mein handle hoga
+        console.log("Redirect login success:", result.user.displayName);
+      }
+    }).catch(e => {
+      console.warn("Redirect result error:", e);
+      if (window._appReady) {
+        document.getElementById("authError").textContent = friendlyError(e.code);
+        document.getElementById("authLoading").style.display = "none";
+      }
+    });
+
+    // ─── AUTH STATE LISTENER ─────────────────────────────────────────────────
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        window._currentUser = user;
+        // Load cloud data
+        const cloudData = await loadUserData(user.uid);
+        if (cloudData && cloudData.state) {
+          window._state = cloudData.state;
+          localStorage.setItem("versantState", JSON.stringify(window._state));
+        } else {
+          await saveUserData(user.uid, { state: window._state, name: user.displayName || "" });
+        }
+        window._userName = user.displayName || cloudData?.name || user.email.split("@")[0];
+        if (window._appReady) window._onLoginSuccess();
+      } else {
+        window._currentUser = null;
+      }
+    });
+  </script>
+
+  <style>
+    :root {
+      --primary: #00D0FF;
+      --accent: #006FB0;
+      --success: #13B10C;
+      --dark: #0a0f1c;
+      --card-bg: rgba(30,41,59,0.92);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; overflow-x:hidden; }
+
+    body {
+      background: var(--dark);
+      color: #fff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .bg-grid {
+      position: fixed; inset:0;
+      background:
+        linear-gradient(to right, rgba(0,208,255,0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,208,255,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      animation: gridShift 50s linear infinite;
+      z-index:0; pointer-events:none;
+    }
+    @keyframes gridShift { to { transform: translate(80px,80px); } }
+
+    /* ── INTRO ── */
+    #introScreen {
+      position:fixed; inset:0; background:#05070f;
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column; z-index:99999; overflow:hidden;
+    }
+    .logo-glow {
+      position:absolute; inset:-40px;
+      background: radial-gradient(circle, rgba(0,208,255,0.55) 0%, transparent 70%);
+      border-radius:50%; animation: pulseGlow 3s ease-in-out infinite;
+    }
+    @keyframes pulseGlow { 0%,100%{opacity:.6} 50%{opacity:1} }
+    .main-logo {
+      width:200px; height:200px; border:5px solid var(--primary); border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:46px; font-weight:900; letter-spacing:10px;
+      background:linear-gradient(135deg,#111827,#1e293b); color:#fff;
+      box-shadow: 0 0 80px #00D0FF, inset 0 0 40px rgba(0,208,255,0.25);
+      position:relative;
+    }
+    .tagline {
+      font-size:26px; font-weight:700; letter-spacing:6px; margin-top:30px;
+      background:linear-gradient(90deg,#fff,#00D0FF,#fff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .loading-bar {
+      height:5px; background:#1e293b; border-radius:9999px;
+      overflow:hidden; margin:28px 0 10px; width:320px;
+    }
+    .loading-fill {
+      height:100%; width:0%;
+      background:linear-gradient(90deg,#00D0FF,#67e8f9,#fff);
+      box-shadow:0 0 20px #00D0FF; transition: width .04s linear;
+    }
+
+    /* ── AUTH MODAL ── */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(5,7,15,0.97);
+      display:none; align-items:center; justify-content:center; z-index:100000;
+    }
+    .modal-overlay.active { display:flex; }
+    .modal-box {
+      background:#1e293b; padding:36px 32px; border-radius:24px;
+      width:92%; max-width:420px; border:1px solid var(--primary);
+      text-align:center; position:relative;
+    }
+    .modal-box h2 { font-size:24px; margin-bottom:6px; color:#fff; }
+    .modal-box p { color:#94a3b8; margin-bottom:18px; font-size:14px; }
+    .modal-tabs { display:flex; gap:0; margin-bottom:24px; border-radius:12px; overflow:hidden; border:1px solid #334155; }
+    .modal-tab {
+      flex:1; padding:12px; font-weight:700; cursor:pointer;
+      background:#0f172a; color:#64748b; border:none; font-size:14px;
+      transition:.2s;
+    }
+    .modal-tab.active { background:var(--primary); color:#000; }
+    .form-input {
+      width:100%; padding:14px 18px; background:#0f172a;
+      border:2px solid #334155; color:#fff; border-radius:14px;
+      font-size:16px; margin-bottom:12px; outline:none; transition:.2s;
+    }
+    .form-input:focus { border-color:var(--primary); }
+    .btn-full {
+      width:100%; padding:15px; border:none; border-radius:14px;
+      font-size:16px; font-weight:700; cursor:pointer; transition:.3s; margin-top:4px;
+    }
+    .btn-primary { background:linear-gradient(90deg,#00D0FF,#006FB0); color:#fff; }
+    .btn-google {
+      background:#fff; color:#333; margin-top:12px;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+    }
+    .btn-google img { width:20px; }
+    .auth-error { color:#f87171; font-size:13px; margin-top:10px; min-height:18px; }
+    .auth-loading { display:none; color:var(--primary); font-size:14px; margin-top:10px; }
+
+    /* ── HEADER ── */
+    .header {
+      padding:12px 15px; background:rgba(15,23,42,0.95);
+      backdrop-filter:blur(20px); border-bottom:1px solid rgba(0,208,255,0.2);
+      position:sticky; top:0; z-index:1000;
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:nowrap;
+    }
+    .header-right { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+    .info-box {
+      padding:7px 14px; border-radius:9999px; font-size:13px; font-weight:600;
+      background:rgba(0,208,255,0.12); border:1px solid rgba(0,208,255,0.3);
+      cursor:pointer; white-space:nowrap; transition:.2s;
+    }
+    .info-box:hover { background:rgba(0,208,255,0.25); transform:scale(1.05); }
+    .streak-box { background:rgba(249,115,22,0.2); border-color:#fb923c; }
+    .logout-btn {
+      padding:7px 14px; border-radius:9999px; font-size:12px; font-weight:700;
+      background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4);
+      color:#f87171; cursor:pointer; transition:.2s;
+    }
+    .logout-btn:hover { background:rgba(239,68,68,0.3); }
+
+    /* ── SCREENS ── */
+    .screen { padding-bottom:90px !important; }
+    .screen h1 { font-size:30px; margin-bottom:18px; color:var(--primary); }
+    .screen h2 { margin-top:20px; font-size:20px; color:#67e8f9; }
+    .screen p  { color:#cbd5f5; line-height:1.7; margin-top:8px; }
+
+    /* ── HOME ── */
+    .stage-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+      gap:20px; max-width:1200px; margin:30px auto 0;
+    }
+    .card {
+      background:var(--card-bg); backdrop-filter:blur(20px);
+      border:1px solid rgba(0,208,255,0.2); padding:30px; border-radius:38px;
+      text-align:center; transition:.4s cubic-bezier(.4,0,.2,1); cursor:pointer;
+    }
+    .card:hover { transform:translateY(-12px); border-color:var(--primary); box-shadow:0 0 40px rgba(0,208,255,0.2); }
+    .card h2 { font-size:26px; color:var(--primary); }
+    .card p  { color:#94a3b8; margin-top:8px; }
+
+    /* ── LEVELS ── */
+    .level-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+      gap:14px; max-width:1100px; margin:36px auto;
+    }
+    .level-btn {
+      height:104px; border-radius:18px; font-size:22px; font-weight:700;
+      border:none; cursor:pointer; transition:.3s;
+    }
+    .unlocked { background:linear-gradient(135deg,#006FB0,#00D0FF); color:#fff; }
+    .completed { background:linear-gradient(135deg,#10b981,#34d399); color:#fff; }
+    .locked    { background:#334155; color:#64748b; cursor:not-allowed; }
+
+    /* ── QUESTION ── */
+    .practice-container {
+      max-width:900px; margin:36px auto;
+      background:var(--card-bg); backdrop-filter:blur(20px);
+      border-radius:26px; padding:36px; border:1px solid rgba(0,208,255,0.2);
+    }
+    .question { font-size:26px; line-height:1.65; margin:26px 0; color:#e2e8f0; }
+    .answer-box {
+      width:100%; background:#0f172a; border:2px solid #334155; color:#fff;
+      padding:18px; border-radius:14px; font-size:16px; resize:vertical;
+    }
+    .button-row { margin-top:28px; display:flex; flex-wrap:wrap; gap:12px; }
+    button {
+      padding:14px 28px; border:none; border-radius:9999px;
+      font-weight:700; cursor:pointer; transition:.3s; font-size:14px;
+    }
+    .primary { background:linear-gradient(90deg,#00D0FF,#006FB0); color:#fff; }
+    .success { background:linear-gradient(90deg,#13B10C,#4ade80); color:#fff; }
+
+    /* ── CALENDAR ── */
+    #calendarModal {
+      position:fixed; inset:0; background:rgba(5,7,15,0.97);
+      display:none; align-items:center; justify-content:center; z-index:100000;
+    }
+    .calendar-content {
+      background:#1e293b; padding:24px; border-radius:22px;
+      width:95%; max-width:400px; border:1px solid var(--primary);
+    }
+    .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; margin-top:14px; }
+    .cal-day {
+      width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+      border-radius:10px; font-size:13px; cursor:pointer;
+    }
+    .cal-day.practiced { background:#10b981; color:#fff; font-weight:700; }
+    .cal-day.today { border:2px solid var(--primary); }
+
+    /* ── TOAST ── */
+    #toast {
+      position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+      background:#1e2937; padding:14px 28px; border-radius:9999px;
+      border:1px solid var(--primary); display:none; z-index:99999;
+      font-size:14px; white-space:nowrap;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      position:fixed; bottom:0; width:100%;
+      background:rgba(15,23,42,0.97); backdrop-filter:blur(20px);
+      border-top:1px solid rgba(0,208,255,0.2);
+      display:flex; justify-content:space-around; padding:10px 4px; z-index:1000;
+    }
+    .footer button {
+      flex:1; margin:0 2px; padding:9px 0; border-radius:12px;
+      background:rgba(0,208,255,0.1); color:var(--primary);
+      border:1px solid rgba(0,208,255,0.3); font-size:12px; font-weight:600;
+    }
+    .footer button:hover { background:linear-gradient(90deg,#00D0FF,#006FB0); color:#fff; }
+
+    /* ── NEWS ── */
+    .news-card {
+      background:var(--card-bg); border:1px solid rgba(0,208,255,0.15);
+      border-radius:18px; padding:20px; margin-bottom:16px;
+    }
+    .news-card h3 { font-size:16px; color:#e2e8f0; line-height:1.5; }
+
+    /* ── SYNC BADGE ── */
+    #syncStatus {
+      position:fixed; top:70px; right:12px;
+      font-size:11px; padding:4px 10px; border-radius:9999px;
+      background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#34d399;
+      z-index:999; display:none;
+    }
+
+    @media(max-width:480px){
+      .header { padding:10px 8px; }
+      .info-box { font-size:11px; padding:6px 10px; }
+      .practice-container { padding:20px; }
+      .question { font-size:20px; }
+      .loading-bar { width:280px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="bg-grid"></div>
+
+<!-- ═══════════════════════════════════════════════
+     INTRO SCREEN
+════════════════════════════════════════════════ -->
+<div id="introScreen">
+  <div style="position:relative; width:200px; height:200px; margin:0 auto 32px;">
+    <div class="logo-glow"></div>
+    <div class="main-logo">V</div>
+  </div>
+  <div class="tagline">VERSANT PRO</div>
+  <div style="color:#64748b; margin-top:10px; font-size:13px;">HCL TECHBEE • EARLY CAREER PROGRAM</div>
+  <div class="loading-bar"><div class="loading-fill" id="introProgress"></div></div>
+  <div style="color:var(--primary); font-size:28px; font-weight:800;" id="introCounter">0 / 4000</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     AUTH MODAL (Login / Register)
+════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <h2>Welcome to Versant PRO</h2>
+    <p>Login karein taaki progress cloud mein save ho</p>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="modal-tab" id="tabRegister" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <input class="form-input" type="email" id="loginEmail" placeholder="Email address">
+      <input class="form-input" type="password" id="loginPass" placeholder="Password">
+      <button class="btn-full btn-primary" onclick="doLogin()">Login</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none;">
+      <input class="form-input" type="text" id="regName" placeholder="Your full name">
+      <input class="form-input" type="email" id="regEmail" placeholder="Email address">
+      <input class="form-input" type="password" id="regPass" placeholder="Password (min 6 chars)">
+      <button class="btn-full btn-primary" onclick="doRegister()">Create Account</button>
+    </div>
+
+    <!-- GOOGLE -->
+    
+
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-loading" id="authLoading">⏳ Please wait...</div>
+  </div>
+</div>
+
+<!-- SYNC STATUS -->
+<div id="syncStatus">☁️ Synced</div>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════ -->
+<div class="header">
+  <div style="font-size:24px; font-weight:800; letter-spacing:-1px;">
+    <span style="color:#00D0FF;">VERSANT</span><span>PRO</span>
+  </div>
+  <div class="header-right">
+    <div class="info-box" id="greetingBox">👋 <span id="greetingName">Guest</span></div>
+    <div class="info-box streak-box" onclick="showCalendar()">🔥 <span id="streakCount">0</span> days</div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<!-- AD BANNER -->
+<ins class="adsbygoogle" style="display:block"
+  data-ad-client="ca-pub-4325315633009107"
+  data-ad-slot="4567742062"
+  data-ad-format="auto"
+  data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+<!-- ═══════════════════════════════════════════════
+     HOME
+════════════════════════════════════════════════ -->
+<div id="home" class="screen" style="padding:36px 18px; display:none;">
+  <div style="max-width:1200px; margin:auto; text-align:center;">
+    <h2 id="welcomeText" style="font-size:34px; margin-bottom:6px;"></h2>
+    <p style="color:#94a3b8; margin-top:4px;">Master professional spoken English for HCL</p>
+  </div>
+  <div class="stage-grid">
+    <div class="card" onclick="openLevels(1)">
+      <h2>Stage 1</h2><p>📖 Read Aloud</p>
+    </div>
+    <div class="card" onclick="openLevels(2)">
+      <h2>Stage 2</h2><p>🎧 Listen &amp; Type</p>
+    </div>
+    <div class="card" onclick="openLevels(3)">
+      <h2>Stage 3</h2><p>⌨️ Typing Test</p>
+    </div>
+    <div class="card" onclick="openLevels(4)">
+      <h2>Stage 4</h2><p>🔁 Repeat Sentence</p>
+    </div>
+    <div class="card" onclick="openSummary()">
+      <h2>Analytics</h2><p>📊 Performance Hub</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     LEVELS
+════════════════════════════════════════════════ -->
+<div id="levels" class="screen" style="display:none; padding:20px;">
+  <button onclick="goHome()" style="padding:11px 26px; background:rgba(255,255,255,0.1); border:none; border-radius:9999px; color:#fff; margin-bottom:18px;">← Dashboard</button>
+  <h2 id="levelTitle" style="text-align:center; font-size:30px; margin:18px 0;"></h2>
+  <div style="max-width:1100px; margin:auto; background:#1e293b; height:10px; border-radius:9999px; overflow:hidden;">
+    <div id="progressFill" style="height:100%; width:0%; background:linear-gradient(90deg,#13B10C,#67e8f9); transition:.4s;"></div>
+  </div>
+  <div class="level-grid" id="levelGrid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     QUESTION
+════════════════════════════════════════════════ -->
+<div id="questionScreen" class="screen" style="display:none; padding:20px;">
+  <button onclick="backToLevels()" style="padding:11px 26px; background:rgba(255,255,255,0.1); border:none; border-radius:9999px; color:#fff;">← Levels</button>
+  <div class="practice-container">
+    <div id="questionHeading" style="font-weight:600; margin-bottom:8px; font-size:17px; color:#67e8f9;"></div>
+    <div class="question" id="questionText"></div>
+    <textarea id="answerBox" class="answer-box" rows="4" placeholder="Type your answer here..." style="display:none;"></textarea>
+    <div class="button-row" id="buttonContainer"></div>
+    <div id="spokenText" style="margin-top:22px; color:#67e8f9; min-height:28px; font-size:15px;"></div>
+    <div id="resultText" style="margin-top:26px; font-size:24px; font-weight:700;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
