@@ -1123,71 +1123,151 @@
 ═══════════════════════════════ -->
 <script>
 // ─── SENTENCES ─────────────────────────────────────────────────────
-const subjects = [
-  "The team",
-  "The company",
-  "The system",
-  "The manager",
-  "The process",
-  "The project",
-  "The employee",
-  "The group",
-  "The organisation",
-  "The workflow"
+const sentences = [
+"The team is improving performance",
+"The team is managing performance",
+"The team is optimizing performance",
+"The team is maintaining performance",
+"The team is supporting performance",
+
+"The company is improving performance",
+"The company is managing performance",
+"The company is optimizing performance",
+"The company is maintaining performance",
+"The company is supporting performance",
+
+"The system is improving performance",
+"The system is managing performance",
+"The system is optimizing performance",
+"The system is maintaining performance",
+"The system is supporting performance",
+
+"The manager is improving performance",
+"The manager is managing performance",
+"The manager is optimizing performance",
+"The manager is maintaining performance",
+"The manager is supporting performance",
+
+"The project is improving performance",
+"The project is managing performance",
+"The project is optimizing performance",
+"The project is maintaining performance",
+"The project is supporting performance",
+
+"The employee is improving performance",
+"The employee is managing performance",
+"The employee is optimizing performance",
+"The employee is maintaining performance",
+"The employee is supporting performance",
+
+"The group is improving performance",
+"The group is managing performance",
+"The group is optimizing performance",
+"The group is maintaining performance",
+"The group is supporting performance",
+
+"The organization is improving performance",
+"The organization is managing performance",
+"The organization is optimizing performance",
+"The organization is maintaining performance",
+"The organization is supporting performance",
+
+"The team is improving workflow",
+"The team is managing workflow",
+"The team is optimizing workflow",
+"The team is maintaining workflow",
+"The team is supporting workflow",
+
+"The company is improving workflow",
+"The company is managing workflow",
+"The company is optimizing workflow",
+"The company is maintaining workflow",
+"The company is supporting workflow",
+
+"The system is improving workflow",
+"The system is managing workflow",
+"The system is optimizing workflow",
+"The system is maintaining workflow",
+"The system is supporting workflow",
+
+"The manager is improving workflow",
+"The manager is managing workflow",
+"The manager is optimizing workflow",
+"The manager is maintaining workflow",
+"The manager is supporting workflow",
+
+"The project is improving workflow",
+"The project is managing workflow",
+"The project is optimizing workflow",
+"The project is maintaining workflow",
+"The project is supporting workflow",
+
+"The employee is improving workflow",
+"The employee is managing workflow",
+"The employee is optimizing workflow",
+"The employee is maintaining workflow",
+"The employee is supporting workflow",
+
+"The group is improving workflow",
+"The group is managing workflow",
+"The group is optimizing workflow",
+"The group is maintaining workflow",
+"The group is supporting workflow",
+
+"The organization is improving workflow",
+"The organization is managing workflow",
+"The organization is optimizing workflow",
+"The organization is maintaining workflow",
+"The organization is supporting workflow",
+
+"The team is improving quality",
+"The team is managing quality",
+"The team is optimizing quality",
+"The team is maintaining quality",
+"The team is supporting quality",
+
+"The company is improving quality",
+"The company is managing quality",
+"The company is optimizing quality",
+"The company is maintaining quality",
+"The company is supporting quality",
+
+"The system is improving quality",
+"The system is managing quality",
+"The system is optimizing quality",
+"The system is maintaining quality",
+"The system is supporting quality",
+
+"The manager is improving quality",
+"The manager is managing quality",
+"The manager is optimizing quality",
+"The manager is maintaining quality",
+"The manager is supporting quality",
+
+"The project is improving quality",
+"The project is managing quality",
+"The project is optimizing quality",
+"The project is maintaining quality",
+"The project is supporting quality",
+
+"The employee is improving quality",
+"The employee is managing quality",
+"The employee is optimizing quality",
+"The employee is maintaining quality",
+"The employee is supporting quality",
+
+"The group is improving quality",
+"The group is managing quality",
+"The group is optimizing quality",
+"The group is maintaining quality",
+"The group is supporting quality",
+
+"The organization is improving quality",
+"The organization is managing quality",
+"The organization is optimizing quality",
+"The organization is maintaining quality",
+"The organization is supporting quality"
 ];
-
-const verbs = [
-  "is improving",
-  "is managing",
-  "is creating",
-  "is building",
-  "is developing",
-  "is delivering",
-  "is handling",
-  "is optimizing",
-  "is maintaining",
-  "is supporting"
-];
-
-const objects = [
-  "the overall performance",
-  "the daily tasks",
-  "the project quality",
-  "the work flow efficiency",
-  "the customer experience",
-  "the system stability",
-  "the business growth",
-  "the team productivity",
-  "the final results",
-  "the operational process"
-];
-
-const endings = [
-  "very effectively",
-  "in a professional manner",
-  "with great consistency",
-  "without any errors",
-  "in a smooth way",
-  "with full dedication",
-  "in a structured approach",
-  "with clear communication",
-  "in an efficient manner",
-  "with high accuracy"
-];
-
-const sentences = [];
-
-for (let i = 0; i < 1000; i++) {
-  const s = subjects[Math.floor(Math.random() * subjects.length)];
-  const v = verbs[Math.floor(Math.random() * verbs.length)];
-  const o = objects[Math.floor(Math.random() * objects.length)];
-  const e = endings[Math.floor(Math.random() * endings.length)];
-
-  sentences.push(`${s} ${v} ${o} ${e}`);
-}
-
-console.log(sentences);
-
 
 const TOTAL = 1000;
 let questionsDB = { stage1:[], stage2:[], stage3:[], stage4:[] };
