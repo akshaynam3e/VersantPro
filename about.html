@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Versant Practice PRO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00C8FF; --primary-dim: rgba(0,200,255,0.15); --accent: #FF6B35; --success: #00E676;
+      --dark: #060B14; --dark2: #0D1526; --dark3: #162035; --card: rgba(13,21,38,0.9);
+      --border: rgba(0,200,255,0.18); --text: #E8EDF5; --muted: #6B7A99;
+      --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background: var(--dark); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x:hidden; }
+    .bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .bg-canvas::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,100,200,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 80%, rgba(0,200,255,0.08) 0%, transparent 60%); }
+    .bg-grid-lines { position:absolute; inset:0; background-image: linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px); background-size: 60px 60px; }
+    .header { padding:0 20px; height:64px; background: rgba(6,11,20,0.9); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); position:sticky; top:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; }
+    .header-brand { display:flex; align-items:center; gap:12px; }
+    .header-emblem { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,var(--primary),#0080CC); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-size:16px; font-weight:800; color:#000; }
+    .header-name { font-family:var(--font-head); font-size:18px; font-weight:800; color:#fff; letter-spacing:0.5px; }
+    .header-name span { color:var(--primary); }
+    .back-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:9999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:var(--text); font-size:14px; font-weight:600; cursor:pointer; transition:.2s; font-family:var(--font-body); text-decoration:none; }
+    .back-btn:hover { background:rgba(255,255,255,0.12); }
+    .info-container { position:relative; z-index:10; padding:40px 18px 120px; max-width:820px; margin:0 auto; }
+    .info-container h1 { font-family:var(--font-head); font-size:32px; font-weight:800; color:#fff; margin-bottom:20px; }
+    .info-container h2 { font-family:var(--font-head); font-size:18px; font-weight:700; color:var(--primary); margin:32px 0 10px; }
+    .info-container p, .info-container ul { color:#94A3B8; line-height:1.8; font-size:15px; margin-bottom:12px; }
+    .info-container ul { padding-left:20px; }
+    .info-container li { margin-bottom:8px; }
+    .footer { position:fixed; bottom:0; width:100%; background:rgba(6,11,20,0.97); backdrop-filter:blur(24px); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 8px; z-index:1000; gap:4px; }
+    .footer-btn { flex:1; padding:9px 4px; border-radius:10px; border:none; background:transparent; color:var(--muted); font-size:11px; font-weight:600; cursor:pointer; transition:.2s; font-family:var(--font-body); text-decoration:none; text-align:center; }
+    .footer-btn:hover { background:var(--primary-dim); color:var(--primary); }
+    .active-footer-btn { color: var(--primary); background: var(--primary-dim); }
+  </style>
+</head>
+<body>
+<div class="bg-canvas"><div class="bg-grid-lines"></div></div>
+<div class="header">
+  <div class="header-brand"><div class="header-emblem">V</div><div class="header-name"><span>Versant</span> PRO</div></div>
+  <div><a href="index.html" class="back-btn">Back</a></div>
+</div>
+<div class="info-container">
+  <h1>About Versant Practice PRO</h1>
+  <p>Versant Practice PRO is a dedicated English fluency training platform built for students and early-career professionals preparing for HCL TechBee and similar structured language assessments.</p>
+  <h2>Our Purpose</h2>
+  <p>Many students possess strong academic knowledge but struggle to communicate confidently in English during interviews and on-the-job interactions. Versant Practice PRO bridges that gap with a practical, structured approach to spoken and written English — no expensive coaching required.</p>
+  <h2>What Makes It Different</h2>
+  <p>Rather than passive reading exercises, this platform uses interactive, scored practice with real-time speech recognition, auditory recall challenges, and typing accuracy tests — exactly mirroring the format used in actual Versant assessments.</p>
+  <h2>Who Should Use It</h2>
+  <ul>
+    <li>Students preparing for the HCL TechBee Early Career Program</li>
+    <li>Fresh graduates appearing for campus placement interviews</li>
+    <li>Job seekers wanting to improve spoken English confidence</li>
+    <li>Professionals looking to communicate more clearly at work</li>
+  </ul>
+  <h2>Core Modules</h2>
+  <ul>
+    <li><strong>Read Aloud:</strong> Practice pronunciation, clarity, and natural pacing</li>
+    <li><strong>Listen &amp; Type:</strong> Develop listening comprehension and transcription accuracy</li>
+    <li><strong>Typing Test:</strong> Build speed and precision for digital communication</li>
+    <li><strong>Repeat Sentence:</strong> Train short-term auditory memory — a key Versant skill</li>
+  </ul>
+</div>
+<footer>
+  <div class="footer">
+    <a href="about.html" class="footer-btn active-footer-btn">About</a>
+    <a href="contact.html" class="footer-btn">Contact</a>
+    <a href="privacy.html" class="footer-btn">Privacy</a>
+    <a href="terms.html" class="footer-btn">Terms</a>
+    <a href="tips.html" class="footer-btn">Tips</a>
+    <a href="index.html" class="footer-btn">Practice</a>
+  </div>
+</footer>
+</body>
+</html>
