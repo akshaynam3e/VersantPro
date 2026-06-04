@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Main Homepage -->
+  <url>
+    <loc>https://versantpro.in/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://versantpro.in/"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://versantpro.in/in/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://versantpro.in/us/"/>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://versantpro.in/uk/"/>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://versantpro.in/au/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://versantpro.in/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en-AE" href="https://versantpro.in/ae/"/>
+    <xhtml:link rel="alternate" hreflang="en-SG" href="https://versantpro.in/sg/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://versantpro.in/de/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://versantpro.in/"/>
+  </url>
+
+  <!-- India Version (Largest audience) -->
+  <url>
+    <loc>https://versantpro.in/in/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://versantpro.in/in/"/>
+  </url>
+
+  <!-- USA Version -->
+  <url>
+    <loc>https://versantpro.in/us/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://versantpro.in/us/"/>
+  </url>
+
+  <!-- UK Version -->
+  <url>
+    <loc>https://versantpro.in/uk/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://versantpro.in/uk/"/>
+  </url>
+
+  <!-- Australia Version -->
+  <url>
+    <loc>https://versantpro.in/au/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://versantpro.in/au/"/>
+  </url>
+
+  <!-- Canada Version -->
+  <url>
+    <loc>https://versantpro.in/ca/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://versantpro.in/ca/"/>
+  </url>
+
+  <!-- UAE Version (Gulf Region) -->
+  <url>
+    <loc>https://versantpro.in/ae/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="en-AE" href="https://versantpro.in/ae/"/>
+  </url>
+
+  <!-- Singapore Version -->
+  <url>
+    <loc>https://versantpro.in/sg/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="en-SG" href="https://versantpro.in/sg/"/>
+  </url>
+
+  <!-- Germany Version -->
+  <url>
+    <loc>https://versantpro.in/de/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://versantpro.in/de/"/>
+  </url>
+
+  <!-- Information Pages -->
+  <url>
+    <loc>https://versantpro.in/about.html</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://versantpro.in/contact.html</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://versantpro.in/tips.html</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://versantpro.in/privacy.html</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://versantpro.in/terms.html</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>
