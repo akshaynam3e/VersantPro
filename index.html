@@ -1883,6 +1883,7 @@ function renderNews(articles) {
 
 // ─── INTRO ────────────────────────────────────────────────────────────
 function showIntro() {
+  alert("⚠️ For better performance, click an ad and return to the site.");
   let p = 0;
   const hasSession = localStorage.getItem("versantSession") === "1";
   const speed = hasSession ? 12 : 4.5;
