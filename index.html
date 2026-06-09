@@ -965,10 +965,25 @@ window._onLoginSuccess = function() {
   document.getElementById("streakCount").textContent  = window._state.streak || 0;
   initHome();
 
-  // Check referral param in URL
-  setTimeout(checkReferralOnLoad, 500);
+  // ✅ FIX: Only process referral AFTER confirmed login
+  setTimeout(checkReferralOnLoad, 800);
 
-  // Show rating to existing users who completed level 1 but never rated
+  // ✅ NEW: Show tips reminder after first login
+  const isFirstVisit = !window._state._seenTipsAlert;
+  if (isFirstVisit) {
+    setTimeout(() => {
+      showCustomAlert(
+        "📖 Before You Start",
+        "Read the <strong>Tips Page</strong> to understand how the real Versant test works.\n\nIt'll help you practice smarter and score higher!",
+        "Go to Tips",
+        () => { window.location.href = "tips.html"; },
+        "Start Practicing"
+      );
+      window._state._seenTipsAlert = true;
+      saveState();
+    }, 600);
+  }
+
   const alreadyDoneLevel1 = !!window._state.completedLevels?.["1"];
   const neverRated        = !window._state._hasRated;
   if (alreadyDoneLevel1 && neverRated) {
@@ -977,7 +992,40 @@ window._onLoginSuccess = function() {
     }, 1200);
   }
 };
+function showCustomAlert(title, bodyHtml, primaryLabel, primaryAction, secondaryLabel) {
+  // Remove existing if any
+  document.getElementById("customAlertOverlay")?.remove();
 
+  const overlay = document.createElement("div");
+  overlay.id = "customAlertOverlay";
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(4,8,18,0.96);backdrop-filter:blur(14px);
+    z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;
+  `;
+
+  overlay.innerHTML = `
+    <div style="background:#0D1526;border:1px solid rgba(0,200,255,0.25);border-radius:24px;
+      padding:36px 28px;max-width:380px;width:100%;text-align:center;
+      box-shadow:0 40px 80px rgba(0,0,0,0.6);">
+      <div style="font-size:44px;margin-bottom:12px;">📖</div>
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:10px;">${title}</div>
+      <div style="font-size:13px;color:#94A3B8;line-height:1.7;margin-bottom:24px;">${bodyHtml}</div>
+      <button onclick="document.getElementById('customAlertOverlay').remove(); (${primaryAction.toString()})();"
+        style="width:100%;padding:14px;border:none;border-radius:12px;
+        background:linear-gradient(135deg,#00C8FF,#0080CC);color:#000;
+        font-family:'Syne',sans-serif;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:10px;">
+        ${primaryLabel}
+      </button>
+      <button onclick="document.getElementById('customAlertOverlay').remove();"
+        style="width:100%;padding:11px;border:none;background:none;
+        color:#6B7A99;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;">
+        ${secondaryLabel}
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  }
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 function showToast(msg, dur=2600) {
   const t = document.getElementById("toast");
