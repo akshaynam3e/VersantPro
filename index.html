@@ -1008,7 +1008,6 @@ window._onLoginSuccess = function() {
   }
 };
 function showCustomAlert(title, bodyHtml, primaryLabel, primaryAction, secondaryLabel) {
-  // Remove existing if any
   document.getElementById("customAlertOverlay")?.remove();
 
   const overlay = document.createElement("div");
@@ -1024,16 +1023,16 @@ function showCustomAlert(title, bodyHtml, primaryLabel, primaryAction, secondary
       box-shadow:0 40px 80px rgba(0,0,0,0.6);">
       <div style="font-size:44px;margin-bottom:12px;">📖</div>
       <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:10px;">${title}</div>
-      <div style="font-size:13px;color:#94A3B8;line-height:1.7;margin-bottom:24px;">${bodyHtml}</div>
+      <div style="font-size:13px;color:#94A3B8;line-height:1.7;margin-bottom:24px; white-space:pre-line;">${bodyHtml}</div>
       
-      <button id="primaryAlertBtn" 
+      <button id="primaryBtn" 
         style="width:100%;padding:14px;border:none;border-radius:12px;
         background:linear-gradient(135deg,#00C8FF,#0080CC);color:#000;
         font-family:'Syne',sans-serif;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:10px;">
         ${primaryLabel}
       </button>
       
-      <button id="secondaryAlertBtn"
+      <button id="secondaryBtn"
         style="width:100%;padding:11px;border:none;background:none;
         color:#6B7A99;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;">
         ${secondaryLabel}
@@ -1043,20 +1042,18 @@ function showCustomAlert(title, bodyHtml, primaryLabel, primaryAction, secondary
 
   document.body.appendChild(overlay);
 
-  // Fixed button handlers
-  document.getElementById("primaryAlertBtn").onclick = () => {
+  // Fixed Click Handlers
+  document.getElementById("primaryBtn").onclick = () => {
     overlay.remove();
     if (typeof primaryAction === "function") {
       primaryAction();
-    } else if (typeof primaryAction === "string") {
-      window.location.href = primaryAction;
     }
   };
 
-  document.getElementById("secondaryAlertBtn").onclick = () => {
+  document.getElementById("secondaryBtn").onclick = () => {
     overlay.remove();
   };
-}
+          }
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 function showToast(msg, dur=2600) {
   const t = document.getElementById("toast");
