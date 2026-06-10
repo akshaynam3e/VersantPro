@@ -1,4 +1,4 @@
-<!-- Last updated: 10 June 2026 -->
+<!-- Last updated: 10 June 2026  11:46AM-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1705,7 +1705,8 @@ async function submitRepeat() {
   }
 }
 
-// ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
+// ── JUMBLE WORDS ───────────────────────────────────────────────────────────
+// ── JUMBLE WORDS ───────────────────────────────────────────────────────────
 function renderJumbleQ() {
   const sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx);
   TEST._currentJumble = { original: sentence };
@@ -1713,19 +1714,19 @@ function renderJumbleQ() {
   TEST._audioPlayed = false;
   TEST._submitted = false;
 
-  // Create 2-4 word chunks and shuffle them
+  // Create shuffled chunks
   const words = sentence.split(/\s+/).filter(w => w.length > 0);
   let chunks = [];
-  for (let i = 0; i < words.length; i += Math.floor(Math.random()*2) + 2) {  // 2 or 3 words
+  for (let i = 0; i < words.length; i += 3) {
     chunks.push(words.slice(i, i + 3).join(" "));
   }
-  chunks = chunks.sort(() => Math.random() - 0.5); // Random shuffle
-  TEST._jumbleChunks = chunks.filter(c => c.trim() !== "");
+  chunks = chunks.sort(() => Math.random() - 0.5);
+  TEST._jumbleChunks = chunks;
 
   document.getElementById("testCard").innerHTML = `
     <div class="instr-box">
       <p><strong>Jumble Words</strong></p>
-      <p>Listen to the jumbled chunks carefully. Then speak the full sentence in the correct order.</p>
+      <p>You will <strong>hear</strong> the sentence broken into jumbled chunks. Listen carefully, then speak the full sentence in the correct order.</p>
       <button class="play-instr" onclick="speakInstructions('${instrText.jumble.replace(/'/g, "\\'")}')">▶ Play Instructions</button>
     </div>
 
@@ -1739,7 +1740,7 @@ function renderJumbleQ() {
     </div>
 
     <div id="jumbleSpokenText" class="spoken-text empty" style="display:none; margin-top:16px;">
-      Your spoken answer will appear here...
+      Your answer will appear here...
     </div>
 
     <div class="btn-row" id="jumbleBtnRow" style="margin-top:24px;">
@@ -1753,7 +1754,9 @@ function renderJumbleQ() {
       <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
       <span>AI is evaluating your response…</span>
     </div>
-  `;}
+  `;
+}
+
 async function playJumbleChunks() {
   if (TEST._audioPlayed) {
     showToast("⚠️ Audio plays once only!");
@@ -1761,15 +1764,13 @@ async function playJumbleChunks() {
   }
 
   TEST._audioPlayed = true;
-  const playBtn = document.getElementById("jumblePlayBtn");
-  playBtn.disabled = true;
-  playBtn.textContent = "🔊 Playing...";
+  const btn = document.getElementById("jumblePlayBtn");
+  btn.disabled = true;
+  btn.textContent = "🔊 Playing chunks...";
 
   for (let chunk of TEST._jumbleChunks) {
     await new Promise(resolve => {
-      speakTTS(chunk + ".", () => {
-        setTimeout(resolve, 650); // pause between chunks
-      });
+      speakTTS(chunk + ".", () => setTimeout(resolve, 700));
     });
   }
 
@@ -1790,7 +1791,7 @@ function startJumbleSpeech() {
     timeLeft--;
     if (tc) {
       tc.textContent = timeLeft;
-      tc.className = "timer-circle" + (timeLeft<=5?" danger":timeLeft<=8?" warn":"");
+      tc.className = "timer-circle" + (timeLeft<=5 ? " danger" : timeLeft<=8 ? " warn" : "");
     }
     if (timeLeft <= 0) {
       clearInterval(TEST._jumbleTimer);
@@ -1830,12 +1831,9 @@ async function submitJumble() {
   if (spoken.trim()) {
     evalRepeatSentence(correct, spoken).then(score => {
       TEST.scores.jumble.score = Math.min(TEST.scores.jumble.score + score.points, SECTIONS[1].maxScore);
-    });
+    }).catch(() => {});
   }
-          }
-    
-
-
+  }
 // ── 2. CONVERSATION ───────────────────────────────────────────────────────────
 function renderConvQ() {
   const conv = seeded(CONVERSATION_POOL, TEST.level, TEST.qIdx);
