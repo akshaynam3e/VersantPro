@@ -1682,23 +1682,19 @@ async function submitRepeat() {
 // ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
 function renderJumbleQ() {
   let sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx);
-  let words = sentence.split(/\s+/).filter(w => w.length > 0);
-  words = words.sort(() => Math.random() - 0.5);   // Jumble the words
-
-  TEST._currentJumble = { original: sentence, jumbled: words };
+  TEST._currentJumble = { 
+    original: sentence, 
+    chunks: createJumbledChunks(sentence) 
+  };
   TEST._jumbleSpoken = "";
   TEST._audioPlayed = false;
   TEST._submitted = false;
 
   document.getElementById("testCard").innerHTML = `
     <div class="instr-box">
-      <p>Hear the <strong>jumbled sentence</strong>. Rearrange the words in correct order and <strong>speak</strong> the full sentence.</p>
+      <p>Listen to the <strong>jumbled chunks</strong>. Rearrange them mentally and <strong>speak the full correct sentence</strong>.</p>
     </div>
     
-    <div style="background:rgba(0,200,255,0.06); border:1px solid rgba(0,200,255,0.2); border-radius:14px; padding:18px; margin:16px 0; font-size:15.5px; line-height:1.6;">
-      ${words.join(" ")}
-    </div>
-
     <div class="timer-wrap" id="jumbleTimerWrap" style="display:none;">
       <div class="timer-circle" id="jumbleTimerCircle">15</div>
       <div class="timer-label">seconds to speak</div>
@@ -1711,7 +1707,7 @@ function renderJumbleQ() {
     <div id="jumbleSpokenText" style="display:none; margin-top:12px; padding:12px; background:rgba(0,200,255,0.05); border-radius:10px;"></div>
 
     <div class="btn-row" id="jumbleBtnRow">
-      <button class="btn btn-cta" id="jumblePlayBtn" onclick="playJumbleAudio()">▶ Play Jumbled Sentence</button>
+      <button class="btn btn-cta" id="jumblePlayBtn" onclick="playJumbleAudio()">▶ Play Jumbled Chunks</button>
     </div>
 
     <div class="result-feedback" id="resultFeedback"></div>
@@ -1720,6 +1716,23 @@ function renderJumbleQ() {
       <span>AI is evaluating your response…</span>
     </div>
   `;
+}
+
+// Helper: Break sentence into 2-3 word chunks and shuffle them
+function createJumbledChunks(sentence) {
+  const words = sentence.split(/\s+/).filter(w => w.length > 0);
+  const chunks = [];
+  let i = 0;
+  
+  while (i < words.length) {
+    const chunkSize = Math.random() > 0.5 ? 2 : 3;
+    const chunk = words.slice(i, i + chunkSize).join(" ");
+    chunks.push(chunk);
+    i += chunkSize;
+  }
+  
+  // Shuffle chunks
+  return chunks.sort(() => Math.random() - 0.5);
 }
 
 function playJumbleAudio() {
@@ -1731,10 +1744,10 @@ function playJumbleAudio() {
   TEST._audioPlayed = true;
   const btn = document.getElementById("jumblePlayBtn");
   btn.disabled = true;
-  btn.textContent = "🔊 Playing jumbled sentence…";
+  btn.textContent = "🔊 Playing jumbled chunks…";
 
-  const jumbledText = TEST._currentJumble.jumbled.join(" ");
-  speakTTS(jumbledText, () => {
+  const spokenChunks = TEST._currentJumble.chunks.map(c => c + ".").join(" ");
+  speakTTS(spokenChunks, () => {
     startJumbleSpeech();
   });
 }
@@ -1788,7 +1801,6 @@ async function submitJumble() {
 
   const spoken = TEST._jumbleSpoken || "";
   const correct = TEST._currentJumble.original;
-  const maxQ = SECTIONS[1].maxScore / SECTIONS[1].questions;
 
   showNextOnly();
 
