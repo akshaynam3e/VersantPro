@@ -1681,33 +1681,46 @@ async function submitRepeat() {
 
 // ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
 function renderJumbleQ() {
-  let sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx);
-  TEST._currentJumble = { 
-    original: sentence, 
-    chunks: createJumbledChunks(sentence) 
-  };
+  const sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx); // Original correct sentence
+  TEST._currentJumble = { original: sentence };
   TEST._jumbleSpoken = "";
   TEST._audioPlayed = false;
   TEST._submitted = false;
 
+  // Create shuffled chunks (2-4 words each)
+  const words = sentence.split(/\s+/).filter(w => w.length > 0);
+  let chunks = [];
+  for (let i = 0; i < words.length; i += 3) {
+    chunks.push(words.slice(i, i + 3).join(" "));
+  }
+  // Shuffle the chunks
+  chunks = chunks.sort(() => Math.random() - 0.5);
+
+  TEST._jumbleChunks = chunks;
+
   document.getElementById("testCard").innerHTML = `
     <div class="instr-box">
-      <p>Listen to the <strong>jumbled chunks</strong>. Rearrange them mentally and <strong>speak the full correct sentence</strong>.</p>
+      <p><strong>Jumble Words</strong></p>
+      <p>Listen carefully to the jumbled chunks. Then speak the complete correct sentence.</p>
     </div>
-    
+
     <div class="timer-wrap" id="jumbleTimerWrap" style="display:none;">
       <div class="timer-circle" id="jumbleTimerCircle">15</div>
       <div class="timer-label">seconds to speak</div>
     </div>
 
     <div class="waveform inactive" id="jumbleWaveform">
-      ${Array(12).fill(0).map(()=>`<div class="wave-bar" style="height:${4+Math.random()*20}px"></div>`).join("")}
+      ${Array(12).fill(0).map(() => `<div class="wave-bar" style="height:${4 + Math.random() * 28}px"></div>`).join("")}
     </div>
 
-    <div id="jumbleSpokenText" style="display:none; margin-top:12px; padding:12px; background:rgba(0,200,255,0.05); border-radius:10px;"></div>
+    <div id="jumbleSpokenText" class="spoken-text empty" style="display:none;">
+      Your answer will appear here...
+    </div>
 
     <div class="btn-row" id="jumbleBtnRow">
-      <button class="btn btn-cta" id="jumblePlayBtn" onclick="playJumbleAudio()">▶ Play Jumbled Chunks</button>
+      <button class="btn btn-cta" id="jumblePlayBtn" onclick="playJumbleChunks()">
+        ▶ Play Jumbled Chunks
+      </button>
     </div>
 
     <div class="result-feedback" id="resultFeedback"></div>
@@ -1718,38 +1731,29 @@ function renderJumbleQ() {
   `;
 }
 
-// Helper: Break sentence into 2-3 word chunks and shuffle them
-function createJumbledChunks(sentence) {
-  const words = sentence.split(/\s+/).filter(w => w.length > 0);
-  const chunks = [];
-  let i = 0;
-  
-  while (i < words.length) {
-    const chunkSize = Math.random() > 0.5 ? 2 : 3;
-    const chunk = words.slice(i, i + chunkSize).join(" ");
-    chunks.push(chunk);
-    i += chunkSize;
+async function playJumbleChunks() {
+  if (TEST._audioPlayed) {
+    showToast("⚠️ Audio plays once only!");
+    return;
   }
-  
-  // Shuffle chunks
-  return chunks.sort(() => Math.random() - 0.5);
-}
 
-function playJumbleAudio() {
-  if (TEST._audioPlayed) { 
-    showToast("⚠️ Audio plays once only!"); 
-    return; 
-  }
-  
   TEST._audioPlayed = true;
-  const btn = document.getElementById("jumblePlayBtn");
-  btn.disabled = true;
-  btn.textContent = "🔊 Playing jumbled chunks…";
+  const playBtn = document.getElementById("jumblePlayBtn");
+  playBtn.disabled = true;
+  playBtn.textContent = "🔊 Playing chunks...";
 
-  const spokenChunks = TEST._currentJumble.chunks.map(c => c + ".").join(" ");
-  speakTTS(spokenChunks, () => {
-    startJumbleSpeech();
-  });
+  const chunks = TEST._jumbleChunks;
+
+  for (let i = 0; i < chunks.length; i++) {
+    await new Promise(resolve => {
+      speakTTS(chunks[i] + ".", () => {
+        setTimeout(resolve, 600); // pause between chunks
+      });
+    });
+  }
+
+  // After all chunks played, enable speaking
+  startJumbleSpeech();
 }
 
 function startJumbleSpeech() {
@@ -1764,24 +1768,25 @@ function startJumbleSpeech() {
   
   const iv = setInterval(() => {
     timeLeft--;
-    if (tc) { 
-      tc.textContent = timeLeft; 
-      tc.className = "timer-circle" + (timeLeft<=5?" danger":timeLeft<=8?" warn":""); 
+    if (tc) {
+      tc.textContent = timeLeft;
+      tc.className = "timer-circle" + (timeLeft <= 5 ? " danger" : timeLeft <= 8 ? " warn" : "");
     }
-    if (timeLeft <= 0) { 
-      clearInterval(iv); 
-      if (!TEST._submitted) submitJumble(); 
+    if (timeLeft <= 0) {
+      clearInterval(iv);
+      if (!TEST._submitted) submitJumble();
     }
   }, 1000);
-  
+
   TEST._jumbleTimer = iv;
 
   startSpeechRec(text => {
     TEST._jumbleSpoken = text;
     const el = document.getElementById("jumbleSpokenText");
-    if (el) { 
-      el.textContent = text; 
-      el.style.display = "block"; 
+    if (el) {
+      el.textContent = text;
+      el.classList.remove("empty");
+      el.style.display = "block";
     }
   }, () => {
     clearInterval(TEST._jumbleTimer);
@@ -1789,13 +1794,13 @@ function startJumbleSpeech() {
   });
 
   const row = document.getElementById("jumbleBtnRow");
-  row.innerHTML = `<button class="btn btn-success" onclick="submitJumble()">✓ Submit</button>`;
+  row.innerHTML = `<button class="btn btn-success" onclick="submitJumble()">✓ Submit Answer</button>`;
 }
 
 async function submitJumble() {
   if (TEST._submitted) return;
   TEST._submitted = true;
-  
+
   clearInterval(TEST._jumbleTimer);
   stopSpeechRec();
 
@@ -1809,8 +1814,7 @@ async function submitJumble() {
       TEST.scores.jumble.score = Math.min(TEST.scores.jumble.score + score.points, SECTIONS[1].maxScore);
     }).catch(() => {});
   }
-}
-
+               }
 // ── 2. CONVERSATION ───────────────────────────────────────────────────────────
 function renderConvQ() {
   const conv = seeded(CONVERSATION_POOL, TEST.level, TEST.qIdx);
