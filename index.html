@@ -1682,7 +1682,7 @@ async function submitRepeat() {
 
 // ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
 // ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
-function renderJumbleQ() {
+  function renderJumbleQ() {
   let sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx);
   let words = sentence.split(/\s+/).filter(w => w.length > 0);
   words = words.sort(() => Math.random() - 0.5);
