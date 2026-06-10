@@ -1583,7 +1583,6 @@ function updateSectionSteps() {
 function renderQuestion() {
   const sec = SECTIONS[TEST.sectionIdx];
   document.getElementById("qCounter").textContent = `Question ${TEST.qIdx+1} of ${sec.questions}`;
-  
   if (sec.id === "repeat") renderRepeatQ();
   else if (sec.id === "jumble") renderJumbleQ();
   else if (sec.id === "conversation") renderConvQ();
@@ -1681,11 +1680,10 @@ async function submitRepeat() {
 }
 
 // ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
-// ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
-  function renderJumbleQ() {
+function renderJumbleQ() {
   let sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx);
   let words = sentence.split(/\s+/).filter(w => w.length > 0);
-  words = words.sort(() => Math.random() - 0.5);
+  words = words.sort(() => Math.random() - 0.5);   // Jumble the words
 
   TEST._currentJumble = { original: sentence, jumbled: words };
   TEST._jumbleSpoken = "";
@@ -1694,7 +1692,7 @@ async function submitRepeat() {
 
   document.getElementById("testCard").innerHTML = `
     <div class="instr-box">
-      <p>Hear the <strong>jumbled sentence</strong>. Rearrange the words and <strong>speak</strong> the correct sentence.</p>
+      <p>Hear the <strong>jumbled sentence</strong>. Rearrange the words in correct order and <strong>speak</strong> the full sentence.</p>
     </div>
     
     <div style="background:rgba(0,200,255,0.06); border:1px solid rgba(0,200,255,0.2); border-radius:14px; padding:18px; margin:16px 0; font-size:15.5px; line-height:1.6;">
@@ -1704,106 +1702,6 @@ async function submitRepeat() {
     <div class="timer-wrap" id="jumbleTimerWrap" style="display:none;">
       <div class="timer-circle" id="jumbleTimerCircle">15</div>
       <div class="timer-label">seconds to speak</div>
-    </div>
-
-    <div class="waveform inactive" id="jumbleWaveform">
-      ${Array(12).fill(0).map(()=>`<div class="wave-bar" style="height:${4+Math.random()*20}px"></div>`).join("")}
-    </div>
-
-    <div id="jumbleSpokenText" style="display:none; margin-top:12px; padding:12px; background:rgba(0,200,255,0.05); border-radius:10px;"></div>
-
-    <div class="btn-row" id="jumbleBtnRow">
-      <button class="btn btn-cta" id="jumblePlayBtn" onclick="playJumbleAudio()">▶ Play Jumbled Sentence</button>
-    </div>
-
-    <div class="result-feedback" id="resultFeedback"></div>
-    <div class="ai-thinking" id="aiThinking" style="display:none;">
-      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
-      <span>AI is evaluating your response…</span>
-    </div>
-  `;
-}
-
-function playJumbleAudio() {
-  if (TEST._audioPlayed) {
-    showToast("⚠️ Audio plays once only!");
-    return;
-  }
-  
-  TEST._audioPlayed = true;
-  const btn = document.getElementById("jumblePlayBtn");
-  btn.disabled = true;
-  btn.textContent = "🔊 Playing jumbled sentence…";
-  
-  // Speak the jumbled words naturally
-  const jumbledText = TEST._currentJumble.jumbled.join(" ");
-  speakTTS(jumbledText, () => {
-    startJumbleSpeech();
-  });
-}
-
-function startJumbleSpeech() {
-  document.getElementById("jumbleTimerWrap").style.display = "flex";
-  
-  const wf = document.getElementById("jumbleWaveform");
-  wf.classList.remove("inactive");
-  animateWaveform(wf);
-  
-  let timeLeft = 15;
-  const tc = document.getElementById("jumbleTimerCircle");
-  
-  const iv = setInterval(() => {
-    timeLeft--;
-    if (tc) {
-      tc.textContent = timeLeft;
-      tc.className = "timer-circle" + (timeLeft <= 5 ? " danger" : timeLeft <= 8 ? " warn" : "");
-    }
-    if (timeLeft <= 0) {
-      clearInterval(iv);
-      if (!TEST._submitted) submitJumble();
-    }
-  }, 1000);
-  
-  TEST._jumbleTimer = iv;
-  
-  startSpeechRec(text => {
-    TEST._jumbleSpoken = text;
-    const el = document.getElementById("jumbleSpokenText");
-    if (el) {
-      el.textContent = text;
-      el.style.display = "block";
-    }
-  }, () => {
-    clearInterval(TEST._jumbleTimer);
-    if (!TEST._submitted) submitJumble();
-  });
-  
-  // Change button to Submit
-  const row = document.getElementById("jumbleBtnRow");
-  row.innerHTML = `<button class="btn btn-success" onclick="submitJumble()">✓ Submit</button>`;
-}
-
-async function submitJumble() {
-  if (TEST._submitted) return;
-  TEST._submitted = true;
-  
-  clearInterval(TEST._jumbleTimer);
-  stopSpeechRec();
-  
-  const spoken = TEST._jumbleSpoken || "";
-  const correct = TEST._currentJumble.original;
-  const maxQ = SECTIONS[1].maxScore / SECTIONS[1].questions; // Jumble is index 1
-  
-  // Show Next immediately
-  showNextOnly();
-  
-  // Evaluate using same logic as Repeat (very suitable for this)
-  if (spoken.trim()) {
-    evalRepeatSentence(correct, spoken).then(score => {
-      TEST.scores.jumble.score = Math.min(TEST.scores.jumble.score + score.points, SECTIONS[1].maxScore);
-    }).catch(() => {});
-  }
-}abel">seconds to speak</div>
     </div>
 
     <div class="waveform inactive" id="jumbleWaveform">
@@ -1835,7 +1733,6 @@ function playJumbleAudio() {
   btn.disabled = true;
   btn.textContent = "🔊 Playing jumbled sentence…";
 
-  // Speak the jumbled words naturally
   const jumbledText = TEST._currentJumble.jumbled.join(" ");
   speakTTS(jumbledText, () => {
     startJumbleSpeech();
@@ -1878,7 +1775,6 @@ function startJumbleSpeech() {
     if (!TEST._submitted) submitJumble();
   });
 
-  // Change button to Submit
   const row = document.getElementById("jumbleBtnRow");
   row.innerHTML = `<button class="btn btn-success" onclick="submitJumble()">✓ Submit</button>`;
 }
@@ -1892,16 +1788,14 @@ async function submitJumble() {
 
   const spoken = TEST._jumbleSpoken || "";
   const correct = TEST._currentJumble.original;
-  const maxQ = SECTIONS[1].maxScore / SECTIONS[1].questions;   // Jumble is index 1
+  const maxQ = SECTIONS[1].maxScore / SECTIONS[1].questions;
 
-  // Show Next immediately
   showNextOnly();
 
-  // Evaluate using same logic as Repeat (very suitable for this)
   if (spoken.trim()) {
     evalRepeatSentence(correct, spoken).then(score => {
       TEST.scores.jumble.score = Math.min(TEST.scores.jumble.score + score.points, SECTIONS[1].maxScore);
-    }).catch(()=>{});
+    }).catch(() => {});
   }
 }
 
@@ -2020,7 +1914,9 @@ async function submitConv() {
 
   const conv   = TEST._currentConv;
   const spoken = TEST._convSpoken || "";
-  const maxQ   = SECTIONS[1].maxScore / SECTIONS[1].questions;
+  
+  // ✅ Conversation ab index 2 hai
+  const maxQ   = SECTIONS[2].maxScore / SECTIONS[2].questions;
 
   // Show Next immediately
   showNextOnly();
@@ -2028,10 +1924,11 @@ async function submitConv() {
   // Evaluate in background
   if (spoken.trim()) {
     evalConversation(conv, spoken).then(score => {
-      TEST.scores.conversation.score = Math.min(TEST.scores.conversation.score + score.points, SECTIONS[1].maxScore);
+      TEST.scores.conversation.score = Math.min(TEST.scores.conversation.score + score.points, SECTIONS[2].maxScore);
     }).catch(()=>{});
   }
 }
+
 
 // ── 3. FILL IN BLANKS ─────────────────────────────────────────────────────────
 function renderFillQ() {
@@ -2081,12 +1978,13 @@ function submitFill() {
   const ans     = (input?.value||"").trim().toLowerCase();
   const correct = TEST._currentFill.answer.toLowerCase().split(" ")[0];
   const exact   = ans === correct;
-  const maxQ    = SECTIONS[2].maxScore / SECTIONS[2].questions;
+  
+  // ✅ FIXED: Fill in Blanks ab index 4 hai
+  const maxQ    = SECTIONS[4].maxScore / SECTIONS[4].questions;
   const points  = exact ? maxQ : 0;
 
-  TEST.scores.fillblanks.score = Math.min(TEST.scores.fillblanks.score + points, SECTIONS[2].maxScore);
+  TEST.scores.fillblanks.score = Math.min(TEST.scores.fillblanks.score + points, SECTIONS[4].maxScore);
 
-  // Show Next immediately (no AI wait needed for fill blanks)
   showNextOnly();
 }
 
@@ -2129,12 +2027,12 @@ async function submitDictation() {
 
   const typed   = (document.getElementById("dictInput")?.value||"").trim();
   const correct = TEST._currentDictation;
+  
+  // ✅ FIXED: Dictation ab index 3 hai
   const maxQ    = SECTIONS[3].maxScore / SECTIONS[3].questions;
 
-  // Show Next immediately
   showNextOnly();
 
-  // Evaluate in background
   if (typed) {
     evalDictation(correct, typed).then(score => {
       TEST.scores.dictation.score = Math.min(TEST.scores.dictation.score + score.points, SECTIONS[3].maxScore);
