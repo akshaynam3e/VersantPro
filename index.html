@@ -1681,20 +1681,17 @@ async function submitRepeat() {
 }
 
 // ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
+// ── 2. JUMBLE WORDS ───────────────────────────────────────────────────────────
 function renderJumbleQ() {
-  // Use sentence from REPEAT_POOL and jumble the words
   let sentence = seeded(REPEAT_POOL, TEST.level, TEST.qIdx);
   let words = sentence.split(/\s+/).filter(w => w.length > 0);
-  words = words.sort(() => Math.random() - 0.5); // Shuffle
-  
-  TEST._currentJumble = {
-    original: sentence,
-    jumbled: words
-  };
+  words = words.sort(() => Math.random() - 0.5);
+
+  TEST._currentJumble = { original: sentence, jumbled: words };
   TEST._jumbleSpoken = "";
-  TEST._audioPlayed = false; // We can play the jumbled version if needed
+  TEST._audioPlayed = false;
   TEST._submitted = false;
-  
+
   document.getElementById("testCard").innerHTML = `
     <div class="instr-box">
       <p>Hear the <strong>jumbled sentence</strong>. Rearrange the words and <strong>speak</strong> the correct sentence.</p>
