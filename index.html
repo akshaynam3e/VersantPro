@@ -985,7 +985,7 @@ window._onLoginSuccess = function() {
 
   // ✅ NEW: Show tips reminder after first login
   const isFirstVisit = !window._state._seenTipsAlert;
-  if (true) {
+  if (isFirstVisit) {
     setTimeout(() => {
       showCustomAlert(
         "📖 Before You Start",
