@@ -509,14 +509,28 @@
 
 <!-- HEADER -->
 <div class="header">
-  <div class="header-brand" onclick="location.reload()" style="cursor:pointer;" title="Reload">
+  
+  <div class="header-brand" onclick="location.reload(); window.scrollTo(0,0);" style="cursor:pointer;" title="Reload">
     <div class="header-emblem">V</div>
-    <div class="header-name" onclick="location.reload(); window.scrollTo(0,0);"><span>Versant</span> Pro</div> 
-  <div class="header-right">
-    <div class="pill" onclick="openProfile()" style="cursor:pointer;" title="View Profile">👋 <span id="greetingName">Guest</span></div>
-    <div class="pill pill-streak" onclick="openCalendar()" style="cursor:pointer;" title="Practice Calendar">🔥 <span id="streakCount">0</span>d</div>
-    <button class="btn-logout" onclick="doLogout()">Log out</button>
+    <div class="header-name"><span>Versant</span> Pro</div>
   </div>
+
+  <div class="header-right">
+
+    <div class="pill" onclick="openProfile()" style="cursor:pointer;" title="View Profile">
+      👋 <span id="greetingName">Guest</span>
+    </div>
+
+    <div class="pill pill-streak" onclick="openCalendar()" style="cursor:pointer;" title="Practice Calendar">
+      🔥 <span id="streakCount">0</span>d
+    </div>
+
+    <button class="btn-logout" onclick="doLogout()">
+      Logout
+    </button>
+
+  </div>
+
 </div>
 
 <!-- AD BANNER (non-blocking, after header) -->
