@@ -492,13 +492,13 @@
     </div>
     <div id="loginForm">
       <input class="form-input" type="email" id="loginEmail" placeholder="Email address">
-      <input class="form-input" type="password" id="loginPass" placeholder="Password">
+      <input class="form-input" type="password" id="loginPass" placeholder="Enter Password">
       <button class="btn-full" onclick="doLogin()">Sign In</button>
     </div>
     <div id="registerForm" style="display:none;">
-      <input class="form-input" type="text" id="regName" placeholder="Your full name">
+      <input class="form-input" type="text" id="regName" placeholder="Your UserName Here">
       <input class="form-input" type="email" id="regEmail" placeholder="Email address">
-      <input class="form-input" type="password" id="regPass" placeholder="Password (min 6 chars)">
+      <input class="form-input" type="password" id="regPass" placeholder="Enter Password">
       <button class="btn-full" onclick="doRegister()">Create Account</button>
     </div>
     <div class="auth-error" id="authError"></div>
@@ -511,8 +511,7 @@
 <div class="header">
   <div class="header-brand" onclick="location.reload()" style="cursor:pointer;" title="Reload">
     <div class="header-emblem">V</div>
-    <div class="header-name"><span>Versant</span> PRO</div>
-  </div>
+    <div class="header-name" onclick="location.reload(); window.scrollTo(0,0);"><span>Versant</span> Pro</div> 
   <div class="header-right">
     <div class="pill" onclick="openProfile()" style="cursor:pointer;" title="View Profile">👋 <span id="greetingName">Guest</span></div>
     <div class="pill pill-streak" onclick="openCalendar()" style="cursor:pointer;" title="Practice Calendar">🔥 <span id="streakCount">0</span>d</div>
@@ -528,7 +527,7 @@
 <!-- ═══════════════════ HOME SCREEN ═══════════════════ -->
 <div id="homeScreen" class="screen active">
   <div class="hero">
-    <div class="hero-badge">🎯 HCL TechBee · Pearson Versant Clone</div>
+    <div class="hero-badge">🎯 HCL TechBee</div>
     <h1>AI-Powered <em>English Test</em><br>Practice Platform</h1>
     <p>5 real exam sections per level. AI-evaluated scoring. 5000 unique tests.</p>
     <div class="stats-row">
