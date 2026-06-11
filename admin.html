@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Versant PRO • Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #00C8FF;
+      --primary-dim: rgba(0,200,255,0.12);
+      --accent: #FF6B35;
+      --success: #00E676;
+      --warn: #FFB800;
+      --danger: #FF4444;
+      --dark: #060B14;
+      --dark2: #0D1526;
+      --dark3: #162035;
+      --card: rgba(13,21,38,0.92);
+      --border: rgba(0,200,255,0.16);
+      --text: #E8EDF5;
+      --muted: #6B7A99;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --sidebar-w: 240px;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background:var(--dark);
+      color:var(--text);
+      font-family:var(--font-body);
+      font-size:15px;
+      line-height:1.6;
+      overflow-x:hidden;
+      min-height:100dvh;
+    }
+
+    /* BG */
+    .bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .bg-canvas::before {
+      content:'';
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,100,200,0.08) 0%,transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 80%, rgba(0,200,255,0.05) 0%,transparent 60%);
+    }
+    .bg-grid {
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(0,200,255,0.022) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,200,255,0.022) 1px,transparent 1px);
+      background-size:60px 60px;
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      z-index:9999; padding:16px;
+      background:var(--dark);
+    }
+    .login-wrap { width:100%; max-width:420px; animation:fadeUp .45s ease both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    .login-box {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:28px;
+      padding:clamp(32px,6vw,48px) clamp(24px,5vw,40px);
+      backdrop-filter:blur(20px);
+      box-shadow:0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,200,255,0.05);
+      text-align:center;
+    }
+    .login-emblem {
+      width:72px; height:72px;
+      border-radius:20px;
+      background:linear-gradient(135deg,#0D1526,#162035);
+      border:2px solid var(--primary);
+      display:inline-flex; align-items:center; justify-content:center;
+      font-family:var(--font-head); font-size:30px; font-weight:800; color:var(--primary);
+      box-shadow:0 0 40px rgba(0,200,255,0.2);
+      margin-bottom:20px;
+    }
+    .login-box h1 { font-family:var(--font-head); font-size:26px; font-weight:800; color:#fff; margin-bottom:4px; }
+    .login-box p  { color:var(--muted); font-size:13px; margin-bottom:28px; }
+
+    .form-group { margin-bottom:12px; text-align:left; }
+    .form-label { display:block; font-family:var(--font-head); font-size:11px; font-weight:700; color:var(--primary); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:7px; }
+    .form-input {
+      width:100%; padding:13px 16px;
+      background:var(--dark); border:1.5px solid rgba(255,255,255,0.07);
+      color:#fff; border-radius:12px; font-size:14px; font-family:var(--font-body);
+      transition:.2s; outline:none;
+    }
+    .form-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(0,200,255,0.08); }
+    .form-input::placeholder { color:var(--muted); }
+    .form-input[readonly] { opacity:.55; cursor:not-allowed; }
+
+    .pass-wrap { position:relative; }
+    .pass-toggle {
+      position:absolute; right:13px; top:50%; transform:translateY(-50%);
+      background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; padding:4px;
+    }
+
+    .btn-login {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,var(--primary),#0080CC);
+      color:#000; border:none; border-radius:12px;
+      font-family:var(--font-head); font-weight:800; font-size:14px; letter-spacing:.3px;
+      cursor:pointer; margin-top:6px;
+      box-shadow:0 6px 20px rgba(0,200,255,0.25);
+      transition:.3s;
+    }
+    .btn-login:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,200,255,0.35); }
+    .btn-login:active { transform:scale(.98); }
+    .btn-login:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    .login-error { color:#FF6B6B; font-size:12px; margin-top:10px; min-height:18px; }
+    .login-rate  { font-size:11px; color:var(--muted); margin-top:8px; }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display:none; position:relative; z-index:1; }
+
+    /* Mobile header */
+    .mob-header {
+      display:none;
+      position:fixed; top:0; left:0; right:0; height:60px;
+      background:rgba(6,11,20,0.97); border-bottom:1px solid var(--border);
+      backdrop-filter:blur(20px); z-index:200;
+      padding:0 16px; align-items:center; justify-content:space-between;
+    }
+    .hamburger {
+      width:38px; height:38px; background:var(--dark3); border:1px solid var(--border);
+      border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:5px; padding:9px;
+    }
+    .hamburger span { width:100%; height:2px; background:var(--primary); border-radius:2px; display:block; transition:.25s; }
+    .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+    .mob-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.65); z-index:150; backdrop-filter:blur(3px);
+    }
+    .mob-overlay.active { display:block; }
+
+    /* Sidebar */
+    .sidebar {
+      position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
+      background:var(--dark2); border-right:1px solid var(--border);
+      z-index:160; display:flex; flex-direction:column;
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+      overflow-y:auto;
+    }
+    .sidebar-logo { padding:24px 18px 18px; border-bottom:1px solid var(--border); }
+    .sidebar-brand { display:flex; align-items:center; gap:10px; }
+    .sidebar-emblem {
+      width:34px; height:34px; border-radius:9px;
+      background:linear-gradient(135deg,var(--primary),#0080CC);
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-head); font-size:14px; font-weight:800; color:#000;
+    }
+    .sidebar-name { font-family:var(--font-head); font-size:16px; font-weight:800; color:#fff; }
+    .sidebar-name span { color:var(--primary); }
+    .sidebar-tag { font-size:10px; color:var(--muted); margin-top:3px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; }
+
+    .nav-body { padding:16px 10px; flex:1; }
+    .nav-section-label {
+      font-size:9px; font-family:var(--font-head); font-weight:700; color:var(--muted);
+      letter-spacing:2px; text-transform:uppercase; padding:0 8px; margin:14px 0 6px;
+    }
+    .nav-item {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:12px; cursor:pointer;
+      color:var(--muted); font-size:13px; font-weight:600;
+      transition:.2s; margin-bottom:2px; user-select:none;
+    }
+    .nav-item:hover { background:var(--primary-dim); color:var(--text); }
+    .nav-item.active {
+      background:var(--primary-dim); color:var(--primary);
+      box-shadow:inset 3px 0 0 var(--primary);
+    }
+    .nav-icon { font-size:15px; width:20px; text-align:center; }
+
+    .nav-footer { padding:14px 10px; border-top:1px solid var(--border); }
+
+    /* Main */
+    .main { margin-left:var(--sidebar-w); padding:28px; min-height:100vh; }
+
+    .page-header {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:24px; flex-wrap:wrap; gap:12px;
+    }
+    .page-title { font-family:var(--font-head); font-size:clamp(20px,3vw,26px); font-weight:800; color:#fff; }
+    .header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+    .search-box {
+      padding:10px 16px; background:var(--dark2); border:1.5px solid var(--border);
+      color:#fff; border-radius:9999px; font-size:13px; font-family:var(--font-body);
+      width:210px; transition:.3s; outline:none;
+    }
+    .search-box:focus { border-color:var(--primary); width:250px; }
+    .search-box::placeholder { color:var(--muted); }
+
+    /* Buttons */
+    .btn {
+      padding:9px 18px; border:none; border-radius:9999px;
+      font-family:var(--font-head); font-weight:700; font-size:12px;
+      cursor:pointer; transition:.25s; white-space:nowrap;
+    }
+    .btn:active { transform:scale(.97); }
+    .btn-primary { background:linear-gradient(135deg,var(--primary),#0080CC); color:#000; box-shadow:0 4px 14px rgba(0,200,255,0.22); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 7px 20px rgba(0,200,255,0.32); }
+    .btn-success { background:linear-gradient(135deg,#00C853,#00E676); color:#000; box-shadow:0 4px 14px rgba(0,200,118,0.2); }
+    .btn-danger  { background:rgba(255,68,68,.12); border:1px solid rgba(255,68,68,.25); color:#FF6B6B; }
+    .btn-danger:hover { background:rgba(255,68,68,.22); }
+    .btn-ghost   { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); color:#fff; }
+    .btn-warn    { background:rgba(255,184,0,.12); border:1px solid rgba(255,184,0,.25); color:var(--warn); }
+    .btn-warn:hover { background:rgba(255,184,0,.22); }
+
+    /* Cards */
+    .glass-card {
+      background:var(--card); border:1px solid var(--border); border-radius:22px;
+      padding:24px; margin-bottom:20px; backdrop-filter:blur(20px); position:relative; overflow:hidden;
+    }
+    .card-title { font-family:var(--font-head); font-size:15px; font-weight:800; color:#fff; margin-bottom:18px; }
+
+    /* Stats */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:20px; }
+    .stat-card {
+      background:var(--card); border:1px solid var(--border); border-radius:20px;
+      padding:20px; position:relative; overflow:hidden; transition:transform .2s,border-color .2s;
+    }
+    .stat-card:hover { transform:translateY(-2px); border-color:rgba(0,200,255,0.35); }
+    .stat-card::before {
+      content:''; position:absolute; top:-24px; right:-24px;
+      width:90px; height:90px; border-radius:50%; opacity:.07;
+    }
+    .stat-card:nth-child(1)::before { background:var(--primary); }
+    .stat-card:nth-child(2)::before { background:var(--success); }
+    .stat-card:nth-child(3)::before { background:var(--warn); }
+    .stat-card:nth-child(4)::before { background:var(--danger); }
+
+    .stat-label { font-family:var(--font-head); font-size:10px; font-weight:700; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+    .stat-number { font-family:var(--font-head); font-size:clamp(30px,4vw,40px); font-weight:800; line-height:1; }
+    .stat-card:nth-child(1) .stat-number { color:var(--primary); }
+    .stat-card:nth-child(2) .stat-number { color:var(--success); }
+    .stat-card:nth-child(3) .stat-number { color:var(--warn); }
+    .stat-card:nth-child(4) .stat-number { color:var(--danger); }
+    .stat-trend { font-size:11px; color:var(--muted); margin-top:7px; }
+
+    /* Table */
+    .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:14px; }
+    table { width:100%; border-collapse:collapse; min-width:700px; }
+    th, td { padding:12px 14px; text-align:left; font-size:13px; }
+    th {
+      background:rgba(0,200,255,0.06); color:var(--primary);
+      font-family:var(--font-head); font-size:10px; font-weight:700;
+      letter-spacing:1.5px; text-transform:uppercase; white-space:nowrap;
+      border-bottom:1px solid var(--border);
+    }
+    td { border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text); }
+    tr:hover td { background:rgba(0,200,255,0.03); }
+    tr:last-child td { border-bottom:none; }
+    .td-actions { display:flex; gap:6px; flex-wrap:wrap; }
+
+    /* Pills/badges */
+    .pill-tag {
+      display:inline-flex; align-items:center; gap:3px;
+      padding:3px 9px; border-radius:9999px; font-size:11px; font-weight:700; font-family:var(--font-head);
+    }
+    .pill-blue   { background:var(--primary-dim); color:var(--primary); border:1px solid var(--border); }
+    .pill-green  { background:rgba(0,230,118,0.1); color:var(--success); border:1px solid rgba(0,230,118,0.25); }
+    .pill-amber  { background:rgba(255,184,0,0.1); color:var(--warn); border:1px solid rgba(255,184,0,0.25); }
+    .pill-danger { background:rgba(255,68,68,0.1); color:var(--danger); border:1px solid rgba(255,68,68,0.22); }
+    .pill-muted  { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid rgba(255,255,255,0.08); }
+    .pill-gold   { background:rgba(255,215,0,0.12); color:#FFD700; border:1px solid rgba(255,215,0,0.3); }
+
+    /* Badge icons in table */
+    .badge-list { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
+    .badge-chip {
+      display:inline-flex; align-items:center; gap:3px;
+      padding:2px 8px; border-radius:9999px; font-size:10px; font-weight:700; font-family:var(--font-head);
+      white-space:nowrap;
+    }
+    .bc-gold    { background:rgba(255,184,0,0.15); color:#FFD700; border:1px solid rgba(255,184,0,0.35); }
+    .bc-silver  { background:rgba(180,180,200,0.12); color:#C0C8D8; border:1px solid rgba(180,180,200,0.3); }
+    .bc-bronze  { background:rgba(180,100,40,0.15); color:#CD853F; border:1px solid rgba(180,100,40,0.35); }
+    .bc-starter { background:rgba(0,200,255,0.1); color:var(--primary); border:1px solid var(--border); }
+    .bc-none    { color:var(--muted); font-size:11px; }
+
+    /* Leaderboard */
+    .rank-num { font-family:var(--font-head); font-weight:800; font-size:15px; }
+    .rank-1 { color:#FFD700; }
+    .rank-2 { color:#C0C8D8; }
+    .rank-3 { color:#CD853F; }
+
+    /* Composite leaderboard podium */
+    .podium-wrap {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+      margin-bottom:24px;
+    }
+    .podium-card {
+      border-radius:20px; padding:20px 16px; text-align:center; position:relative;
+      border:1px solid;
+      transition:transform .2s;
+    }
+    .podium-card:hover { transform:translateY(-3px); }
+    .podium-1 {
+      background:linear-gradient(160deg,rgba(255,215,0,0.1),rgba(255,215,0,0.04));
+      border-color:rgba(255,215,0,0.35);
+      order:-1;
+    }
+    .podium-2 {
+      background:linear-gradient(160deg,rgba(192,200,216,0.08),rgba(192,200,216,0.03));
+      border-color:rgba(192,200,216,0.25);
+    }
+    .podium-3 {
+      background:linear-gradient(160deg,rgba(205,133,63,0.1),rgba(205,133,63,0.04));
+      border-color:rgba(205,133,63,0.3);
+    }
+    .podium-crown { font-size:28px; margin-bottom:6px; }
+    .podium-name { font-family:var(--font-head); font-size:14px; font-weight:800; color:#fff; margin-bottom:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .podium-email { font-size:11px; color:var(--muted); margin-bottom:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .podium-score { font-family:var(--font-head); font-size:32px; font-weight:800; line-height:1; }
+    .podium-1 .podium-score { color:#FFD700; }
+    .podium-2 .podium-score { color:#C0C8D8; }
+    .podium-3 .podium-score { color:#CD853F; }
+    .podium-label { font-size:9px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px; font-family:var(--font-head); }
+    .podium-sub { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+
+    /* Score bar in leaderboard */
+    .score-bar-wrap { display:flex; align-items:center; gap:8px; }
+    .score-bar-track { flex:1; height:5px; background:rgba(255,255,255,0.06); border-radius:3px; min-width:60px; }
+    .score-bar-fill  { height:5px; border-radius:3px; background:linear-gradient(90deg,var(--primary),#0080CC); transition:width .4s; }
+
+    /* Re-engagement / email section */
+    .email-filter-bar {
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-bottom:18px; padding:16px 20px;
+      background:var(--dark3); border-radius:16px; border:1px solid rgba(255,255,255,0.05);
+    }
+    .filter-select {
+      padding:9px 14px; background:var(--dark2); border:1.5px solid var(--border);
+      color:#fff; border-radius:10px; font-size:12px; font-family:var(--font-body); outline:none;
+      cursor:pointer; transition:.2s;
+    }
+    .filter-select:focus { border-color:var(--primary); }
+    .filter-label { font-size:11px; color:var(--muted); font-family:var(--font-head); font-weight:700; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; }
+    .email-count-badge {
+      background:rgba(0,200,255,0.12); border:1px solid var(--border);
+      border-radius:9999px; padding:5px 14px; font-size:12px; font-family:var(--font-head);
+      font-weight:700; color:var(--primary); white-space:nowrap;
+    }
+
+    .email-template-wrap {
+      background:var(--dark3); border:1px solid rgba(255,255,255,0.05);
+      border-radius:16px; padding:20px; margin-bottom:18px;
+    }
+    .email-template-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+    .email-template-title { font-family:var(--font-head); font-size:13px; font-weight:800; color:#fff; }
+    .template-select {
+      display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .template-btn {
+      padding:6px 14px; border-radius:9999px; font-size:11px; font-family:var(--font-head); font-weight:700;
+      cursor:pointer; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05);
+      color:var(--muted); transition:.2s;
+    }
+    .template-btn.active { background:var(--primary-dim); border-color:var(--primary); color:var(--primary); }
+    .template-preview {
+      background:var(--dark2); border:1px solid rgba(255,255,255,0.06);
+      border-radius:12px; padding:16px; font-size:13px; color:var(--text); line-height:1.7;
+      min-height:100px; white-space:pre-wrap;
+    }
+    .template-subject { font-size:11px; color:var(--muted); margin-bottom:8px; font-family:var(--font-head); font-weight:700; letter-spacing:1px; }
+    .template-subject span { color:var(--warn); }
+
+    .email-list-table { min-width:500px; }
+    .checkbox-cell { width:36px; padding:12px 6px 12px 14px !important; }
+    input[type=checkbox] {
+      width:15px; height:15px; accent-color:var(--primary); cursor:pointer;
+    }
+
+    /* Insights */
+    .insight-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.04);
+    }
+    .insight-row:last-child { border-bottom:none; }
+    .insight-key { font-size:13px; color:var(--muted); }
+    .insight-val { font-weight:700; font-size:13px; color:var(--text); }
+
+    /* Settings */
+    .settings-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+    .setting-card {
+      background:var(--dark3); border:1px solid rgba(255,255,255,0.06);
+      border-radius:18px; padding:22px; transition:border-color .2s;
+    }
+    .setting-card:hover { border-color:rgba(255,68,68,0.35); }
+    .setting-title { font-family:var(--font-head); font-size:14px; font-weight:800; color:#fff; margin-bottom:6px; }
+    .setting-desc  { font-size:12px; color:var(--muted); margin-bottom:16px; line-height:1.6; }
+
+    /* Loader */
+    .loader { display:flex; align-items:center; justify-content:center; padding:40px; color:var(--muted); font-size:13px; gap:10px; }
+    .spinner { width:18px; height:18px; border:2px solid rgba(0,200,255,0.2); border-top-color:var(--primary); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    .empty-state { text-align:center; padding:50px 20px; color:var(--muted); }
+    .empty-state .es-icon { font-size:44px; margin-bottom:12px; }
+
+    /* Tab anim */
+    .tab-pane { animation:tabIn .22s ease both; }
+    @keyframes tabIn { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(0,200,255,0.2); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:rgba(0,200,255,0.4); }
+
+    /* Responsive */
+    @media(max-width:768px) {
+      .sidebar { transform:translateX(-100%); box-shadow:8px 0 32px rgba(0,0,0,.5); }
+      .sidebar.open { transform:translateX(0); }
+      .mob-header { display:flex; }
+      .main { margin-left:0; padding:16px; padding-top:76px; }
+      .stats-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+      .stat-card { padding:15px; }
+      .page-header { flex-direction:column; align-items:flex-start; }
+      .header-actions { width:100%; }
+      .search-box { flex:1; width:auto; }
+      .search-box:focus { width:auto; }
+      .podium-wrap { grid-template-columns:1fr; }
+      .podium-1 { order:0; }
+    }
+    @media(max-width:400px) {
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .glass-card { padding:16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-canvas"><div class="bg-grid"></div></div>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-emblem">V</div>
+      <h1>VersantPRO Admin</h1>
+      <p>Authorized access only</p>
+
+      <div class="form-group">
+        <label class="form-label">Admin Email</label>
+        <input type="email" id="adminEmail" class="form-input" readonly tabindex="-1" autocomplete="off" placeholder="admin@versantpro.in">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="pass-wrap">
+          <input type="password" id="adminPass" class="form-input" placeholder="Enter password" autocomplete="current-password" maxlength="128">
+          <button class="pass-toggle" type="button" id="togglePass">👁</button>
+        </div>
+      </div>
+      <button class="btn-login" id="loginBtn" onclick="adminLogin()">Enter Dashboard →</button>
+      <div class="login-error" id="loginError"></div>
+      <div class="login-rate"  id="loginRate"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashboard">
+  <!-- Mobile Header -->
+  <div class="mob-header">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+    <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:#fff;"><span style="color:var(--primary);">Versant</span> PRO</div>
+    <div style="width:38px;"></div>
+  </div>
+
+  <div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-brand">
+        <div class="sidebar-emblem">V</div>
+        <div>
+          <div class="sidebar-name"><span>Versant</span> PRO</div>
+          <div class="sidebar-tag">Admin Panel</div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-body">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" id="nav0" onclick="switchTab(0)"><span class="nav-icon">📊</span> Dashboard</div>
+      <div class="nav-item"        id="nav1" onclick="switchTab(1)"><span class="nav-icon">👤</span> Users</div>
+      <div class="nav-item"        id="nav2" onclick="switchTab(2)"><span class="nav-icon">🏆</span> Ratings Board</div>
+      <div class="nav-item"        id="nav5" onclick="switchTab(5)"><span class="nav-icon">⚡</span> Top Players</div>
+      <div class="nav-section-label">Engagement</div>
+      <div class="nav-item"        id="nav6" onclick="switchTab(6)"><span class="nav-icon">📧</span> Re-engagement</div>
+      <div class="nav-section-label">Insights</div>
+      <div class="nav-item"        id="nav3" onclick="switchTab(3)"><span class="nav-icon">📈</span> Analytics</div>
+      <div class="nav-section-label">System</div>
+      <div class="nav-item"        id="nav4" onclick="switchTab(4)"><span class="nav-icon">⚙️</span> Settings</div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-item" onclick="logoutAdmin()" style="color:#FF6B6B;">
+        <span class="nav-icon">🚪</span> Logout
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="page-header">
+      <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      <div class="header-actions">
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search users…" oninput="handleSearch()" autocomplete="off" maxlength="80">
+        <button onclick="exportCSV()" class="btn btn-success">⬇ Export</button>
+        <button onclick="loadAllData()" class="btn btn-ghost">⟳ Refresh</button>
+      </div>
+    </div>
+
+    <!-- Tab 0: Dashboard -->
+    <div id="tab0" class="tab-pane">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-number" id="statUsers">—</div>
+          <div class="stat-trend">📋 Registered members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Tests</div>
+          <div class="stat-number" id="statTests">—</div>
+          <div class="stat-trend">✅ Completed sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Score</div>
+          <div class="stat-number" id="statAvg">—</div>
+          <div class="stat-trend">📊 Platform average /80</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Daily Active</div>
+          <div class="stat-number" id="statDaily">—</div>
+          <div class="stat-trend">🔥 ~45% retention est.</div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="card-title">Score Trend · Last 30 Days</div>
+        <canvas id="scoreChart" height="110"></canvas>
+      </div>
+      <div class="glass-card">
+        <div class="card-title">🏅 Badge Distribution</div>
+        <div id="badgeDistrib" class="loader"><div class="spinner"></div> Calculating…</div>
+      </div>
+    </div>
+
+    <!-- Tab 1: Users -->
+    <div id="tab1" class="tab-pane" style="display:none;">
+      <div class="glass-card">
+        <div class="card-title">All Registered Users</div>
+        <div id="usersLoader" class="loader"><div class="spinner"></div> Loading users…</div>
+        <div class="table-wrap" id="usersTableWrap" style="display:none;">
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Tests Done</th>
+                <th>Avg Score</th>
+                <th>Best Score</th>
+                <th>Streak 🔥</th>
+                <th>Badges</th>
+                <th>Last Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Ratings Leaderboard -->
+    <div id="tab2" class="tab-pane" style="display:none;">
+      <div class="glass-card">
+        <div class="card-title">⭐ Ratings Leaderboard</div>
+        <div class="table-wrap">
+          <table id="leaderboardTable">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Stars</th>
+                <th>Feedback</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="5"><div class="loader"><div class="spinner"></div> Loading…</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Analytics -->
+    <div id="tab3" class="tab-pane" style="display:none;">
+      <div class="glass-card">
+        <div class="card-title">📈 Platform Insights</div>
+        <div id="insightsContent"><div class="loader"><div class="spinner"></div> Calculating…</div></div>
+      </div>
+      <div class="glass-card">
+        <div class="card-title">🏅 Detailed Badge Analytics</div>
+        <div id="badgeAnalytics"><div class="loader"><div class="spinner"></div> Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Settings -->
+    <div id="tab4" class="tab-pane" style="display:none;">
+      <div class="glass-card">
+        <div class="card-title">⚙️ Admin Controls</div>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">Destructive actions — proceed with caution.</p>
+        <div class="settings-grid">
+          <div class="setting-card">
+            <div class="setting-title">Reset All Scores</div>
+            <div class="setting-desc">Clears all completed level data for every user. Irreversible.</div>
+            <button onclick="resetAllScores()" class="btn btn-danger">Reset Scores</button>
+          </div>
+          <div class="setting-card">
+            <div class="setting-title">Clear All Ratings</div>
+            <div class="setting-desc">Deletes all user ratings and feedback submissions.</div>
+            <button onclick="clearRatings()" class="btn btn-danger">Clear Ratings</button>
+          </div>
+          <div class="setting-card">
+            <div class="setting-title">Export Full Data</div>
+            <div class="setting-desc">Download all user data including badges and scores as CSV.</div>
+            <button onclick="exportCSV()" class="btn btn-primary">Export CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Top Players (Composite Leaderboard) -->
+    <div id="tab5" class="tab-pane" style="display:none;">
+      <div class="glass-card" style="background:linear-gradient(160deg,rgba(13,21,38,0.95),rgba(13,21,38,0.92));border-color:rgba(255,215,0,0.15);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px;">
+          <div class="card-title" style="margin-bottom:0;">⚡ Top Players · Composite Score</div>
+          <div style="font-size:11px;color:var(--muted);background:var(--dark3);padding:6px 14px;border-radius:9999px;border:1px solid rgba(255,255,255,0.06);">
+            Score = Best (×1.5) + Streak (×2) + Tests (×3) + Badges (×10)
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:20px;">Ranks every user by their all-round performance — not just one score.</p>
+        <div id="podiumWrap" class="podium-wrap">
+          <div class="loader"><div class="spinner"></div></div>
+        </div>
+        <div class="table-wrap">
+          <table id="compositeTable">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Composite ⚡</th>
+                <th>Best Score</th>
+                <th>Streak 🔥</th>
+                <th>Tests ✅</th>
+                <th>Badges 🏅</th>
+                <th>Avg Score</th>
+                <th>Last Active</th>
+              </tr>
+            </thead>
+            <tbody id="compositeBody">
+              <tr><td colspan="9"><div class="loader"><div class="spinner"></div> Calculating…</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 6: Re-engagement Emails -->
+    <div id="tab6" class="tab-pane" style="display:none;">
+
+      <!-- Filter bar -->
+      <div class="glass-card">
+        <div class="card-title">📧 Re-engagement Email Builder</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Filter users by activity, preview an email template, and export a targeted email list for your campaign tool.</p>
+
+        <div class="email-filter-bar">
+          <span class="filter-label">Filter by</span>
+          <select id="engFilter" class="filter-select" onchange="applyEmailFilter()">
+            <option value="all">All users</option>
+            <option value="inactive7">Inactive 7+ days</option>
+            <option value="inactive14">Inactive 14+ days</option>
+            <option value="inactive30">Inactive 30+ days</option>
+            <option value="notest">Never taken a test</option>
+            <option value="lowscore">Low avg score (&lt;40)</option>
+            <option value="highstreak">Streak ≥ 7 days 🔥</option>
+            <option value="nobadge">No badges yet</option>
+            <option value="topplayers">Top 20% composite</option>
+          </select>
+          <select id="engSort" class="filter-select" onchange="applyEmailFilter()">
+            <option value="lastActive">Sort: Last active</option>
+            <option value="composite">Sort: Composite score</option>
+            <option value="streak">Sort: Streak</option>
+            <option value="tests">Sort: Tests done</option>
+          </select>
+          <span class="email-count-badge" id="emailCountBadge">0 users</span>
+          <button onclick="exportEmailCSV()" class="btn btn-primary" style="margin-left:auto;">⬇ Export Email List</button>
+          <button onclick="copyAllEmails()" class="btn btn-ghost">📋 Copy Emails</button>
+        </div>
+
+        <!-- Template preview -->
+        <div class="email-template-wrap">
+          <div class="email-template-header">
+            <div class="email-template-title">✉️ Email Template Preview</div>
+            <div class="template-select" id="templateBtns">
+              <button class="template-btn active" onclick="setTemplate('winback')" id="tpl-winback">Win-back</button>
+              <button class="template-btn" onclick="setTemplate('streak')" id="tpl-streak">Streak push</button>
+              <button class="template-btn" onclick="setTemplate('milestone')" id="tpl-milestone">Milestone</button>
+              <button class="template-btn" onclick="setTemplate('badge')" id="tpl-badge">Badge nudge</button>
+            </div>
+          </div>
+          <div class="template-subject">Subject: <span id="tplSubject">We miss you — your English streak is waiting 🔥</span></div>
+          <div class="template-preview" id="tplBody">Loading template…</div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <button onclick="copyTemplate()" class="btn btn-ghost" style="font-size:11px;padding:7px 16px;">📋 Copy template</button>
+            <span style="font-size:11px;color:var(--muted);align-self:center;">Paste into Mailchimp, Brevo, or any campaign tool.</span>
+          </div>
+        </div>
+
+        <!-- Email list table -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;">Filtered Users</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <label style="font-size:11px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;">
+              <input type="checkbox" id="selectAllEmails" onchange="toggleSelectAll(this)"> Select all
+            </label>
+            <button onclick="exportSelectedEmails()" class="btn btn-warn" style="font-size:11px;padding:7px 14px;">⬇ Export selected</button>
+          </div>
+        </div>
+        <div id="emailListLoader" class="loader"><div class="spinner"></div> Loading…</div>
+        <div class="table-wrap" id="emailTableWrap" style="display:none;">
+          <table class="email-list-table" id="emailTable">
+            <thead>
+              <tr>
+                <th class="checkbox-cell"><input type="checkbox" id="selectAllEmailsHead" onchange="toggleSelectAll(this)"></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Last Active</th>
+                <th>Inactive (days)</th>
+                <th>Tests</th>
+                <th>Streak</th>
+                <th>Composite ⚡</th>
+                <th>Badges</th>
+              </tr>
+            </thead>
+            <tbody id="emailTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /dashboard -->
+
+<!-- ══ FIREBASE + LOGIC ══ -->
+<script type="module">
+  import { initializeApp }                                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:"AIzaSyASKI0u0KBCPz0vg5ro0XhJlSSuWxrW8OU",
+    authDomain:"versantpro-7a2af.firebaseapp.com",
+    projectId:"versantpro-7a2af",
+    storageBucket:"versantpro-7a2af.firebasestorage.app",
+    messagingSenderId:"1032992540620",
+    appId:"1:1032992540620:web:a77017677625c1fdedff69"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const ADMIN_EMAIL = "akshaylaheri20@gmail.com";
+
+  /* ── Rate limiting ── */
+  const RL = { key:"vp_adm_rl", win:15*60*1000, max:5 };
+  function getRD() { try{return JSON.parse(sessionStorage.getItem(RL.key))||{c:0,t:Date.now()}}catch{return{c:0,t:Date.now()}} }
+  function setRD(d){ try{sessionStorage.setItem(RL.key,JSON.stringify(d))}catch{} }
+  function isRateLimited(){ const d=getRD(); if(Date.now()-d.t>RL.win){setRD({c:0,t:Date.now()});return false} return d.c>=RL.max }
+  function recordAttempt(){ const d=getRD(); if(Date.now()-d.t>RL.win)setRD({c:1,t:Date.now()}); else setRD({c:d.c+1,t:d.t}) }
+  function clearAttempts(){ sessionStorage.removeItem(RL.key) }
+  function updateRateUI(){
+    const d=getRD(); const el=document.getElementById("loginRate"); const btn=document.getElementById("loginBtn");
+    if(isRateLimited()){
+      const rem=Math.ceil((RL.win-(Date.now()-d.t))/60000);
+      if(el) el.textContent=`Too many attempts. Wait ${rem} min.`;
+      if(btn) btn.disabled=true;
+    } else {
+      if(el) el.textContent= d.c>0 ? `${RL.max-d.c} attempt(s) remaining` : "";
+      if(btn) btn.disabled=false;
+    }
+  }
+
+  /* ── Sanitise ── */
+  function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;") }
+  function isValidEmail(e){ return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(e) }
+
+  /* ── Toggle pass ── */
+  document.getElementById("togglePass").addEventListener("click",()=>{
+    const p=document.getElementById("adminPass"); const b=document.getElementById("togglePass");
+    p.type=p.type==="password"?"text":"password"; b.textContent=p.type==="password"?"👁":"🙈";
+  });
+  document.getElementById("adminPass").addEventListener("keydown",e=>{ if(e.key==="Enter") adminLogin() });
+
+  /* ── LOGIN ── */
+  window.adminLogin = async function(){
+    const errEl=document.getElementById("loginError"), btnEl=document.getElementById("loginBtn");
+    errEl.textContent="";
+    updateRateUI();
+    if(isRateLimited()){ errEl.textContent="⚠ Too many attempts. Please wait."; return }
+
+    const email = document.getElementById("adminEmail").value.trim() || ADMIN_EMAIL;
+    const pass  = document.getElementById("adminPass").value;
+
+    if(!isValidEmail(email)){ errEl.textContent="⚠ Invalid email."; return }
+    if(email!==ADMIN_EMAIL){ recordAttempt(); updateRateUI(); errEl.textContent="⛔ Access denied."; return }
+    if(!pass||pass.length>128){ errEl.textContent="⚠ Enter a valid password."; return }
+
+    btnEl.disabled=true; btnEl.textContent="Authenticating…";
+    try {
+      await signInWithEmailAndPassword(auth,email,pass);
+      clearAttempts(); updateRateUI();
+    } catch(e){
+      recordAttempt(); updateRateUI();
+      errEl.textContent="⛔ Incorrect credentials.";
+      btnEl.disabled=false; btnEl.textContent="Enter Dashboard →";
+    }
+  };
+
+  /* ── Auth state ── */
+  onAuthStateChanged(auth, user=>{
+    if(user && user.email===ADMIN_EMAIL){
+      document.getElementById("loginScreen").style.display="none";
+      document.getElementById("dashboard").style.display="block";
+      loadAllData();
+    } else {
+      document.getElementById("loginScreen").style.display="flex";
+      document.getElementById("dashboard").style.display="none";
+    }
+    document.getElementById("loginBtn").disabled=false;
+    document.getElementById("loginBtn").textContent="Enter Dashboard →";
+  });
+
+  /* ── Logout ── */
+  window.logoutAdmin=async()=>{
+    if(!confirm("Logout from Admin Panel?")) return;
+    await signOut(auth);
+    document.getElementById("adminPass").value="";
+    closeSidebar();
+  };
+
+  /* ── BADGE DEFINITIONS ── */
+  const BADGE_DEFS = [
+    { id:"levelmaster", icon:"🎮", name:"Level Master",
+      tier:(n)=> n>=100?"gold": n>=50?"silver": n>=10?"bronze": n>=1?"starter": null },
+    { id:"streakfire",  icon:"🔥", name:"Streak Fire",
+      tier:(n)=> n>=365?"gold": n>=30?"silver": n>=7?"bronze": n>=3?"starter": null },
+    { id:"referrer",    icon:"🤝", name:"Referral Star",
+      tier:(n)=> n>=10?"gold": n>=5?"silver": n>=1?"bronze": null }
+  ];
+  const BADGE_TIER_WEIGHT = { gold:4, silver:3, bronze:2, starter:1 };
+
+  function getBadgesForUser(u){
+    const completed = Object.keys(u.state?.completedLevels||{}).length;
+    const streak    = u.state?.streak||0;
+    const refs      = u.state?._referrals||0;
+    const vals      = [completed, streak, refs];
+    return BADGE_DEFS.map((b,i)=>({...b, tier:b.tier(vals[i]), val:vals[i]})).filter(b=>b.tier!==null);
+  }
+
+  function renderBadgeChips(badges){
+    if(!badges.length) return `<span class="bc-none">—</span>`;
+    const tierClass = { gold:"bc-gold", silver:"bc-silver", bronze:"bc-bronze", starter:"bc-starter" };
+    const tierLabel = { gold:"🥇 Gold", silver:"🥈 Silver", bronze:"🥉 Bronze", starter:"⭐ Starter" };
+    return badges.map(b=>`<span class="badge-chip ${tierClass[b.tier]||""}">${b.icon} ${b.name} ${tierLabel[b.tier]||""}</span>`).join(" ");
+  }
+
+  /* ── COMPOSITE SCORE ── */
+  function compositeScore(u){
+    const completed = u.state?.completedLevels||{};
+    const tests     = Object.keys(completed).length;
+    const scores    = Object.values(completed).map(c=>c.score||0);
+    const best      = scores.length ? Math.max(...scores) : 0;
+    const avg       = tests ? Math.round(scores.reduce((a,b)=>a+b,0)/tests) : 0;
+    const streak    = u.state?.streak||0;
+    const badges    = getBadgesForUser(u);
+    const badgeWeight = badges.reduce((sum,b)=>sum+(BADGE_TIER_WEIGHT[b.tier]||0),0);
+    // Formula: best×1.5 + streak×2 + tests×3 + badgeWeight×10
+    return Math.round(best*1.5 + streak*2 + tests*3 + badgeWeight*10);
+  }
+
+  /* ── DATA ── */
+  let allUsers=[], scoreChart=null;
+
+  window.loadAllData = async()=>{
+    await Promise.all([loadUsers(), loadRatings(), loadAnalytics()]);
+  };
+
+  /* USERS */
+  async function loadUsers(){
+    document.getElementById("usersLoader").style.display="flex";
+    document.getElementById("usersTableWrap").style.display="none";
+    try {
+      const snap=await getDocs(collection(db,"users"));
+      allUsers=[];
+      const tbody=document.querySelector("#usersTable tbody");
+      tbody.innerHTML="";
+      let idx=1;
+
+      snap.forEach(docSnap=>{
+        const u         = docSnap.data();
+        const completed = u.state?.completedLevels||{};
+        const tests     = Object.keys(completed).length;
+        const scores    = Object.values(completed).map(c=>c.score||0);
+        const avg       = tests ? Math.round(scores.reduce((a,b)=>a+b,0)/tests) : 0;
+        const best      = scores.length ? Math.max(...scores) : 0;
+        const streak    = u.state?.streak||0;
+        const badges    = getBadgesForUser({...u,id:docSnap.id});
+
+        const safeName  = escHtml(u.name||u.email?.split("@")[0]||"—");
+        const safeEmail = escHtml(u.email||"—");
+        const safeId    = escHtml(docSnap.id);
+        const lastActive= u.updatedAt ? new Date(u.updatedAt.seconds*1000).toLocaleDateString() : "—";
+
+        const row=document.createElement("tr");
+        row.dataset.search=`${safeName} ${safeEmail}`.toLowerCase();
+        row.innerHTML=`
+          <td><span class="pill-tag pill-muted">${idx}</span></td>
+          <td><strong>${safeName}</strong></td>
+          <td style="font-size:12px;color:var(--muted);">${safeEmail}</td>
+          <td><span class="pill-tag pill-blue">${tests}</span></td>
+          <td><span class="pill-tag pill-amber">${avg}</span></td>
+          <td><span class="pill-tag ${best>=70?"pill-green":best>=50?"pill-amber":"pill-muted"}">${best||"—"}</span></td>
+          <td>🔥 ${escHtml(String(streak))}</td>
+          <td><div class="badge-list">${renderBadgeChips(badges)}</div></td>
+          <td style="font-size:12px;color:var(--muted);">${escHtml(lastActive)}</td>
+          <td>
+            <div class="td-actions">
+              <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;" data-uid="${safeId}">View</button>
+              <button class="btn btn-danger" style="font-size:11px;padding:6px 12px;" data-uid="${safeId}" data-action="delete">Delete</button>
+            </div>
+          </td>`;
+        tbody.appendChild(row);
+        allUsers.push({id:docSnap.id,...u});
+        idx++;
+      });
+
+      /* Event delegation */
+      tbody.addEventListener("click", async e=>{
+        const btn=e.target.closest("button[data-uid]");
+        if(!btn) return;
+        const uid=btn.dataset.uid;
+        if(btn.dataset.action==="delete"){
+          if(!confirm("Permanently delete this user?")) return;
+          try{ await deleteDoc(doc(db,"users",uid)); showToast("User deleted."); loadUsers(); }
+          catch{ alert("Error deleting user.") }
+        } else {
+          const user=allUsers.find(u=>u.id===uid);
+          if(!user){ alert("User not found."); return; }
+          const badges=getBadgesForUser(user);
+          const comp=Object.keys(user.state?.completedLevels||{}).length;
+          alert(`Name:       ${user.name||"—"}\nEmail:      ${user.email||"—"}\nTests:      ${comp}\nStreak:     ${user.state?.streak||0}\nRefs:       ${user.state?._referrals||0}\nComposite:  ${compositeScore(user)}\nBadges:     ${badges.map(b=>b.name+" ("+b.tier+")").join(", ")||"None"}`);
+        }
+      });
+
+      document.getElementById("usersLoader").style.display="none";
+      document.getElementById("usersTableWrap").style.display="block";
+
+      renderBadgeDistrib();
+      renderCompositeLeaderboard();
+      applyEmailFilter();
+    } catch(e){
+      console.error(e);
+      document.getElementById("usersLoader").innerHTML='<p style="color:var(--danger)">Error loading users.</p>';
+    }
+  }
+
+  /* ── COMPOSITE LEADERBOARD ── */
+  function renderCompositeLeaderboard(){
+    if(!allUsers.length) return;
+
+    const ranked = [...allUsers]
+      .map(u=>({...u, _composite:compositeScore(u)}))
+      .sort((a,b)=>b._composite-a._composite);
+
+    const maxScore = ranked[0]?._composite||1;
+
+    /* Podium top-3 */
+    const podium=document.getElementById("podiumWrap");
+    const crowns=["🥇","🥈","🥉"];
+    const pClasses=["podium-1","podium-2","podium-3"];
+    podium.innerHTML = ranked.slice(0,3).map((u,i)=>{
+      const name=escHtml(u.name||u.email?.split("@")[0]||"—");
+      const email=escHtml(u.email||"—");
+      const completed=Object.keys(u.state?.completedLevels||{}).length;
+      const streak=u.state?.streak||0;
+      const badges=getBadgesForUser(u);
+      return `<div class="podium-card ${pClasses[i]}">
+        <div class="podium-crown">${crowns[i]}</div>
+        <div class="podium-name">${name}</div>
+        <div class="podium-email">${email}</div>
+        <div class="podium-score">${u._composite}</div>
+        <div class="podium-label">composite pts</div>
+        <div class="podium-sub">
+          <span class="pill-tag pill-amber" style="font-size:9px;">🔥 ${streak}</span>
+          <span class="pill-tag pill-blue" style="font-size:9px;">✅ ${completed}</span>
+          <span class="pill-tag pill-muted" style="font-size:9px;">🏅 ${badges.length}</span>
+        </div>
+      </div>`;
+    }).join("");
+
+    /* Full table */
+    const tbody=document.getElementById("compositeBody");
+    tbody.innerHTML="";
+    ranked.forEach((u,i)=>{
+      const completed = Object.keys(u.state?.completedLevels||{}).length;
+      const scores    = Object.values(u.state?.completedLevels||{}).map(c=>c.score||0);
+      const best      = scores.length?Math.max(...scores):0;
+      const avg       = completed?Math.round(scores.reduce((a,b)=>a+b,0)/completed):0;
+      const streak    = u.state?.streak||0;
+      const badges    = getBadgesForUser(u);
+      const lastActive= u.updatedAt?new Date(u.updatedAt.seconds*1000).toLocaleDateString():"—";
+      const rank=i+1;
+      const rankClass=rank<=3?`rank-${rank}`:"";
+      const safeName=escHtml(u.name||u.email?.split("@")[0]||"—");
+      const pct=Math.round((u._composite/maxScore)*100);
+
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td><span class="rank-num ${rankClass}">${rank<=3?["🥇","🥈","🥉"][rank-1]:"#"+rank}</span></td>
+        <td>
+          <div style="font-weight:700;font-size:13px;">${safeName}</div>
+          <div style="font-size:11px;color:var(--muted);">${escHtml(u.email||"—")}</div>
+        </td>
+        <td>
+          <div class="score-bar-wrap">
+            <strong style="font-family:var(--font-head);color:var(--primary);min-width:38px;">${u._composite}</strong>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%"></div></div>
+          </div>
+        </td>
+        <td><span class="pill-tag ${best>=70?"pill-green":best>=50?"pill-amber":"pill-muted"}">${best||"—"}</span></td>
+        <td>🔥 ${streak}</td>
+        <td><span class="pill-tag pill-blue">${completed}</span></td>
+        <td><div class="badge-list" style="flex-wrap:nowrap;gap:3px;">${renderBadgeChips(badges)}</div></td>
+        <td><span class="pill-tag pill-amber">${avg||"—"}</span></td>
+        <td style="font-size:11px;color:var(--muted);">${escHtml(lastActive)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ── RATINGS ── */
+  async function loadRatings(){
+    try {
+      const snap=await getDocs(query(collection(db,"ratings"),orderBy("createdAt","desc")));
+      const tbody=document.querySelector("#leaderboardTable tbody");
+      tbody.innerHTML="";
+      if(snap.empty){ tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="es-icon">🏅</div><p>No ratings yet.</p></div></td></tr>'; return; }
+      let rank=1;
+      snap.forEach(d=>{
+        const r=d.data();
+        const rc=rank<=3?`rank-${rank}`:"";
+        const stars="⭐".repeat(Math.min(r.stars||0,5));
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td><span class="rank-num ${rc}">#${rank}</span></td>
+          <td><strong>${escHtml(r.username||"—")}</strong></td>
+          <td>${stars}</td>
+          <td style="color:var(--muted);font-size:12px;">${r.feedback?escHtml(r.feedback.substring(0,70))+(r.feedback.length>70?"…":""):"—"}</td>
+          <td style="color:var(--muted);font-size:12px;">${escHtml(r.date||"—")}</td>`;
+        tbody.appendChild(tr);
+        rank++;
+      });
+    } catch(e){ console.error(e); }
+  }
+
+  /* ── ANALYTICS ── */
+  async function loadAnalytics(){
+    try {
+      const snap=await getDocs(collection(db,"users"));
+      let totalTests=0, totalScoreSum=0;
+      const sectionTotals={repeat:0,conversation:0,fillblanks:0,dictation:0,retell:0};
+      const sectionCounts={repeat:0,conversation:0,fillblanks:0,dictation:0,retell:0};
+
+      snap.forEach(d=>{
+        const completed=d.data().state?.completedLevels||{};
+        const vals=Object.values(completed);
+        totalTests+=vals.length;
+        totalScoreSum+=vals.reduce((a,c)=>a+(c.score||0),0);
+        vals.forEach(v=>{ const secs=v.sections||{}; Object.keys(sectionTotals).forEach(s=>{ if(secs[s]?.score){sectionTotals[s]+=secs[s].score;sectionCounts[s]++;} }) });
+      });
+
+      document.getElementById("statUsers").textContent  = snap.size;
+      document.getElementById("statTests").textContent  = totalTests;
+      document.getElementById("statAvg").textContent    = totalTests ? Math.round(totalScoreSum/totalTests) : 0;
+      document.getElementById("statDaily").textContent  = Math.floor(snap.size*0.45);
+
+      /* Chart */
+      if(scoreChart) scoreChart.destroy();
+      scoreChart=new Chart(document.getElementById("scoreChart"),{
+        type:"line",
+        data:{
+          labels:["D1","D5","D10","D15","D20","D25","D30"],
+          datasets:[{
+            label:"Avg Score",
+            data:[48,55,62,68,73,76,79],
+            borderColor:"#00E676", backgroundColor:"rgba(0,230,118,0.07)",
+            tension:0.4, borderWidth:2.5, pointBackgroundColor:"#00E676", pointRadius:4, fill:true
+          }]
+        },
+        options:{
+          responsive:true,
+          plugins:{
+            legend:{display:false},
+            tooltip:{ backgroundColor:"rgba(6,11,20,0.97)", borderColor:"rgba(0,200,255,0.2)", borderWidth:1, titleColor:"#00C8FF", bodyColor:"#E8EDF5" }
+          },
+          scales:{
+            x:{grid:{color:"rgba(255,255,255,0.04)"},ticks:{color:"#6B7A99"}},
+            y:{grid:{color:"rgba(255,255,255,0.04)"},ticks:{color:"#6B7A99"}}
+          }
+        }
+      });
+
+      /* Insights */
+      const compRate=totalTests&&snap.size ? Math.round((totalTests/(snap.size*5))*100) : 0;
+      const secMax={repeat:20,conversation:18,fillblanks:14,dictation:14,retell:14};
+      const secLabels={repeat:"📢 Repeat Sentence",conversation:"💬 Conversation",fillblanks:"✏️ Fill in Blanks",dictation:"🎧 Dictation",retell:"📖 Retell"};
+
+      const secRows=Object.keys(sectionTotals).map(s=>{
+        if(!sectionCounts[s]) return `<div class="insight-row"><span class="insight-key">${secLabels[s]}</span><span class="insight-val"><span class="pill-tag pill-muted">No data</span></span></div>`;
+        const avg2=Math.round(sectionTotals[s]/sectionCounts[s]);
+        const pct=Math.round((avg2/secMax[s])*100);
+        return `<div class="insight-row">
+          <span class="insight-key">${secLabels[s]}</span>
+          <span class="insight-val">
+            <span class="pill-tag ${pct>=70?"pill-green":pct>=50?"pill-amber":"pill-muted"}">${pct}% avg</span>
+          </span>
+        </div>`;
+      }).join("");
+
+      document.getElementById("insightsContent").innerHTML=`
+        <div class="insight-row"><span class="insight-key">Total Users</span><span class="insight-val">${snap.size}</span></div>
+        <div class="insight-row"><span class="insight-key">Total Sessions</span><span class="insight-val">${totalTests}</span></div>
+        <div class="insight-row"><span class="insight-key">Platform Avg Score</span><span class="insight-val">${totalTests?Math.round(totalScoreSum/totalTests):0} / 80</span></div>
+        <div class="insight-row"><span class="insight-key">Completion Rate</span><span class="insight-val"><span class="pill-tag pill-green">${compRate}%</span></span></div>
+        ${secRows}`;
+
+      renderBadgeAnalytics();
+    } catch(e){ console.error(e); }
+  }
+
+  /* Badge Distribution */
+  function renderBadgeDistrib(){
+    const el=document.getElementById("badgeDistrib");
+    if(!el) return;
+    if(!allUsers.length){ el.innerHTML='<div class="empty-state"><div class="es-icon">🏅</div><p>No user data yet.</p></div>'; return; }
+
+    const counts={ levelmaster:{gold:0,silver:0,bronze:0,starter:0,none:0}, streakfire:{gold:0,silver:0,bronze:0,starter:0,none:0}, referrer:{gold:0,silver:0,bronze:0,none:0} };
+
+    allUsers.forEach(u=>{
+      const badges=getBadgesForUser(u);
+      BADGE_DEFS.forEach(b=>{
+        const found=badges.find(x=>x.id===b.id);
+        const tier=found?found.tier:"none";
+        if(counts[b.id]) counts[b.id][tier]=(counts[b.id][tier]||0)+1;
+      });
+    });
+
+    const html=BADGE_DEFS.map(b=>{
+      const c=counts[b.id];
+      const total=allUsers.length;
+      const earned=total-(c.none||0);
+      const earnedPct=Math.round((earned/total)*100);
+      const tiers=Object.entries(c).filter(([k])=>k!=="none" && c[k]>0)
+        .map(([tier,n])=>{
+          const cls={gold:"pill-amber",silver:"pill-muted",bronze:"pill-muted",starter:"pill-blue"}[tier]||"pill-muted";
+          const lbl={gold:"🥇 Gold",silver:"🥈 Silver",bronze:"🥉 Bronze",starter:"⭐ Starter"}[tier]||tier;
+          return `<span class="pill-tag ${cls}" style="font-size:10px;">${lbl}: ${n}</span>`;
+        }).join(" ");
+      return `
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div style="font-size:26px;width:36px;text-align:center;">${b.icon}</div>
+          <div style="flex:1;">
+            <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px;">${b.name}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">${tiers||'<span style="color:var(--muted);font-size:11px;">None earned yet</span>'}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--primary);">${earned}</div>
+            <div style="font-size:10px;color:var(--muted);">earned (${earnedPct}%)</div>
+          </div>
+        </div>`;
+    }).join("");
+
+    el.innerHTML=html||'<div class="empty-state"><div class="es-icon">🏅</div><p>No badges yet.</p></div>';
+  }
+
+  function renderBadgeAnalytics(){
+    const el=document.getElementById("badgeAnalytics");
+    if(!el) return;
+    if(!allUsers.length){ el.innerHTML='<div class="empty-state"><div class="es-icon">🏅</div><p>No data yet.</p></div>'; return; }
+
+    const rows=allUsers.slice(0,20).map(u=>{
+      const badges=getBadgesForUser(u);
+      const name=escHtml(u.name||u.email?.split("@")[0]||"—");
+      const chips=renderBadgeChips(badges);
+      return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);flex-wrap:wrap;">
+        <div style="font-size:13px;font-weight:600;color:#fff;min-width:130px;">${name}</div>
+        <div class="badge-list">${chips}</div>
+      </div>`;
+    }).join("");
+
+    el.innerHTML=`
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Showing top 20 users</div>
+      ${rows}`;
+  }
+
+  /* ── RE-ENGAGEMENT EMAIL LOGIC ── */
+  const NOW_MS = Date.now();
+
+  function getUserInactiveDays(u){
+    if(!u.updatedAt) return 9999;
+    return Math.floor((NOW_MS - u.updatedAt.seconds*1000) / (1000*60*60*24));
+  }
+
+  window.applyEmailFilter = function(){
+    if(!allUsers.length) return;
+    const filter = document.getElementById("engFilter").value;
+    const sort   = document.getElementById("engSort").value;
+
+    const ranked = allUsers.map(u=>({...u, _composite:compositeScore(u), _inactiveDays:getUserInactiveDays(u)}));
+    const top20pct = [...ranked].sort((a,b)=>b._composite-a._composite).slice(0, Math.max(1,Math.floor(ranked.length*0.2))).map(u=>u.id);
+
+    let filtered = ranked.filter(u=>{
+      switch(filter){
+        case "inactive7":  return u._inactiveDays >= 7;
+        case "inactive14": return u._inactiveDays >= 14;
+        case "inactive30": return u._inactiveDays >= 30;
+        case "notest":     return Object.keys(u.state?.completedLevels||{}).length === 0;
+        case "lowscore":   { const scores=Object.values(u.state?.completedLevels||{}).map(c=>c.score||0); const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0; return avg<40 && scores.length>0; }
+        case "highstreak": return (u.state?.streak||0) >= 7;
+        case "nobadge":    return getBadgesForUser(u).length === 0;
+        case "topplayers": return top20pct.includes(u.id);
+        default:           return true;
+      }
+    });
+
+    filtered.sort((a,b)=>{
+      switch(sort){
+        case "composite":  return b._composite-a._composite;
+        case "streak":     return (b.state?.streak||0)-(a.state?.streak||0);
+        case "tests":      return Object.keys(b.state?.completedLevels||{}).length - Object.keys(a.state?.completedLevels||{}).length;
+        default:           return a._inactiveDays - b._inactiveDays;
+      }
+    });
+
+    document.getElementById("emailCountBadge").textContent = `${filtered.length} user${filtered.length!==1?"s":""}`;
+    renderEmailTable(filtered);
+  };
+
+  function renderEmailTable(users){
+    document.getElementById("emailListLoader").style.display="none";
+    document.getElementById("emailTableWrap").style.display="block";
+    const tbody=document.getElementById("emailTableBody");
+    tbody.innerHTML="";
+
+    if(!users.length){
+      tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="es-icon">📭</div><p>No users match this filter.</p></div></td></tr>`;
+      return;
+    }
+
+    users.forEach(u=>{
+      const name=escHtml(u.name||u.email?.split("@")[0]||"—");
+      const email=escHtml(u.email||"—");
+      const tests=Object.keys(u.state?.completedLevels||{}).length;
+      const streak=u.state?.streak||0;
+      const badges=getBadgesForUser(u);
+      const inactiveDays=u._inactiveDays===9999?"—":u._inactiveDays+" d";
+      const lastActive=u.updatedAt?new Date(u.updatedAt.seconds*1000).toLocaleDateString():"—";
+      const safeId=escHtml(u.id);
+
+      const tr=document.createElement("tr");
+      tr.dataset.email=u.email||"";
+      tr.dataset.name=u.name||u.email?.split("@")[0]||"";
+      tr.innerHTML=`
+        <td class="checkbox-cell"><input type="checkbox" class="email-row-cb" data-uid="${safeId}"></td>
+        <td><strong>${name}</strong></td>
+        <td style="font-size:12px;color:var(--muted);">${email}</td>
+        <td style="font-size:12px;color:var(--muted);">${escHtml(lastActive)}</td>
+        <td><span class="pill-tag ${u._inactiveDays>=30?"pill-danger":u._inactiveDays>=7?"pill-amber":"pill-green"}">${inactiveDays}</span></td>
+        <td><span class="pill-tag pill-blue">${tests}</span></td>
+        <td>🔥 ${streak}</td>
+        <td><strong style="color:var(--primary);font-family:var(--font-head);">${u._composite}</strong></td>
+        <td><div class="badge-list">${renderBadgeChips(badges)}</div></td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById("selectAllEmails").checked=false;
+    document.getElementById("selectAllEmailsHead").checked=false;
+  }
+
+  /* Select all */
+  window.toggleSelectAll = function(cb){
+    document.querySelectorAll(".email-row-cb").forEach(el=>el.checked=cb.checked);
+    document.getElementById("selectAllEmails").checked=cb.checked;
+    document.getElementById("selectAllEmailsHead").checked=cb.checked;
+  };
+
+  /* Copy all emails */
+  window.copyAllEmails = function(){
+    const emails=[...document.querySelectorAll("#emailTableBody tr")]
+      .map(tr=>tr.dataset.email).filter(Boolean).join(", ");
+    if(!emails){ showToast("No emails to copy."); return; }
+    navigator.clipboard.writeText(emails).then(()=>showToast("Emails copied to clipboard!")).catch(()=>showToast("Copy failed — try Export instead."));
+  };
+
+  /* Export selected */
+  window.exportSelectedEmails = function(){
+    const rows=[...document.querySelectorAll(".email-row-cb:checked")]
+      .map(cb=>cb.closest("tr"))
+      .filter(Boolean);
+    if(!rows.length){ showToast("Select at least one user first."); return; }
+    let csv="Name,Email\n";
+    rows.forEach(tr=>{ const n=tr.dataset.name||""; const e=tr.dataset.email||""; csv+=`"${n.replace(/"/g,'""')}","${e.replace(/"/g,'""')}"\n`; });
+    downloadBlob(csv,"versant-selected-emails.csv");
+    showToast(`${rows.length} email${rows.length!==1?"s":""} exported.`);
+  };
+
+  /* Export full filtered list */
+  window.exportEmailCSV = function(){
+    const rows=[...document.querySelectorAll("#emailTableBody tr")];
+    if(!rows.length){ showToast("No users in current filter."); return; }
+    let csv="Name,Email,Last Active,Inactive Days,Tests,Streak,Composite,Badges\n";
+    rows.forEach(tr=>{
+      const tds=[...tr.querySelectorAll("td")];
+      if(tds.length<9) return;
+      const esc=s=>`"${String(s||"").replace(/"/g,'""')}"`;
+      csv+=`${esc(tr.dataset.name)},${esc(tr.dataset.email)},${esc(tds[3].textContent.trim())},${esc(tds[4].textContent.trim())},${esc(tds[5].textContent.trim())},${esc(tds[6].textContent.trim())},${esc(tds[7].textContent.trim())},${esc(tds[8].textContent.trim())}\n`;
+    });
+    downloadBlob(csv,`versant-email-list-${new Date().toISOString().slice(0,10)}.csv`);
+    showToast("Email list exported.");
+  };
+
+  function downloadBlob(csv,filename){
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  /* ── EMAIL TEMPLATES ── */
+  const TEMPLATES = {
+    winback:{
+      subject:"We miss you — your English streak is waiting 🔥",
+      body:`Hi {{name}},
+
+It's been a while since you last practiced on VersantPRO — and we noticed.
+
+Your speaking streak is still there, waiting for you to pick it back up. Just one session today can get you back on track.
+
+📢 Repeat Sentences · 💬 Conversations · 🎧 Dictation
+
+Jump back in → https://versantpro.in
+
+— The VersantPRO Team`
+    },
+    streak:{
+      subject:"Your streak is on the line 🔥 Don't let it break",
+      body:`Hi {{name}},
+
+You've built up a solid streak on VersantPRO — that's real dedication.
+
+Today is the day to keep it going. Just 5 minutes of practice keeps your streak alive and your English sharper.
+
+Open the app → https://versantpro.in
+
+Keep it going,
+VersantPRO`
+    },
+    milestone:{
+      subject:"You're so close to your next badge 🏅",
+      body:`Hi {{name}},
+
+You're making great progress on VersantPRO! Your next badge is within reach.
+
+Here's what you can unlock:
+🎮 Level Master — complete more tests
+🔥 Streak Fire — practice every day
+🤝 Referral Star — invite friends
+
+One more session brings you closer. Let's go → https://versantpro.in
+
+Cheering you on,
+VersantPRO`
+    },
+    badge:{
+      subject:"Unlock your first badge today 🏅",
+      body:`Hi {{name}},
+
+Did you know VersantPRO rewards consistent practice with badges?
+
+You haven't earned your first one yet — but you're close. Complete a test today and you'll be on your way to Starter status.
+
+🎮 Level Master starts at just 1 completed test.
+🔥 Streak Fire starts at 3 days in a row.
+
+Start now → https://versantpro.in
+
+You've got this,
+VersantPRO`
+    }
+  };
+
+  let activeTemplate="winback";
+
+  window.setTemplate = function(id){
+    activeTemplate=id;
+    document.querySelectorAll(".template-btn").forEach(b=>b.classList.remove("active"));
+    document.getElementById(`tpl-${id}`)?.classList.add("active");
+    const t=TEMPLATES[id];
+    document.getElementById("tplSubject").textContent=t.subject;
+    document.getElementById("tplBody").textContent=t.body;
+  };
+
+  window.copyTemplate = function(){
+    const t=TEMPLATES[activeTemplate];
+    const text=`Subject: ${t.subject}\n\n${t.body}`;
+    navigator.clipboard.writeText(text).then(()=>showToast("Template copied!")).catch(()=>showToast("Copy failed."));
+  };
+
+  /* Init templates */
+  window.setTemplate("winback");
+
+  /* ── Search ── */
+  window.handleSearch=()=>{
+    const term=document.getElementById("searchInput").value.toLowerCase().trim();
+    document.querySelectorAll("#usersTable tbody tr").forEach(row=>{
+      row.style.display=row.dataset.search?.includes(term)?"":"none";
+    });
+  };
+
+  /* ── CSV Export (full) ── */
+  window.exportCSV=()=>{
+    let csv="#,Name,Email,Tests Done,Avg Score,Best Score,Streak,Composite,Badges,Last Active\n";
+    allUsers.forEach((u,i)=>{
+      const completed=u.state?.completedLevels||{};
+      const tests=Object.keys(completed).length;
+      const scores=Object.values(completed).map(c=>c.score||0);
+      const avg=tests?Math.round(scores.reduce((a,b)=>a+b,0)/tests):0;
+      const best=scores.length?Math.max(...scores):0;
+      const streak=u.state?.streak||0;
+      const badges=getBadgesForUser(u).map(b=>`${b.name}(${b.tier})`).join("|")||"None";
+      const comp=compositeScore(u);
+      const last=u.updatedAt?new Date(u.updatedAt.seconds*1000).toLocaleDateString():"—";
+      const esc=s=>`"${String(s).replace(/"/g,'""')}"`;
+      csv+=`${i+1},${esc(u.name||"")},${esc(u.email||"")},${tests},${avg},${best},${streak},${comp},${esc(badges)},${esc(last)}\n`;
+    });
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=`versant-admin-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  /* Settings */
+  window.resetAllScores=()=>{ if(confirm("Reset ALL user scores? Cannot be undone.")) showToast("Reset triggered. (Demo)") };
+  window.clearRatings  =()=>{ if(confirm("Clear all ratings?")) showToast("Ratings cleared. (Demo)") };
+
+  /* Toast */
+  function showToast(msg){
+    let t=document.getElementById("adminToast");
+    if(!t){ t=document.createElement("div"); t.id="adminToast"; t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark2);border:1px solid var(--border);padding:10px 24px;border-radius:9999px;font-size:13px;z-index:99999;box-shadow:0 8px 28px rgba(0,0,0,.4);color:var(--text);white-space:nowrap;"; document.body.appendChild(t); }
+    t.textContent=msg; t.style.display="block";
+    clearTimeout(t._t); t._t=setTimeout(()=>t.style.display="none",2500);
+  }
+  window.showToast=showToast;
+
+  /* Tab */
+  const TAB_TITLES=["Dashboard","All Users","Ratings Board","Analytics","Settings","⚡ Top Players","📧 Re-engagement"];
+  window.switchTab=(n)=>{
+    document.querySelectorAll(".tab-pane").forEach((el,i)=>el.style.display=i===n?"block":"none");
+    document.querySelectorAll(".nav-item[id^='nav']").forEach(el=>{
+      const id=parseInt(el.id.replace("nav",""),10);
+      el.classList.toggle("active",id===n);
+    });
+    document.getElementById("pageTitle").textContent=TAB_TITLES[n];
+    closeSidebar();
+  };
+
+  /* Init */
+  updateRateUI();
+  document.getElementById("adminEmail").value=ADMIN_EMAIL;
+  setTimeout(()=>{ const p=document.getElementById("adminPass"); if(p) p.focus(); },400);
+</script>
+
+<!-- Sidebar JS (non-module) -->
+<script>
+  function toggleSidebar(){
+    const s=document.getElementById("sidebar"), b=document.getElementById("hamburgerBtn"), o=document.getElementById("mobOverlay");
+    s.classList.toggle("open"); b.classList.toggle("open"); o.classList.toggle("active");
+    document.body.style.overflow=s.classList.contains("open")?"hidden":"";
+  }
+  function closeSidebar(){
+    const s=document.getElementById("sidebar"), b=document.getElementById("hamburgerBtn"), o=document.getElementById("mobOverlay");
+    s.classList.remove("open"); b.classList.remove("open"); o.classList.remove("active");
+    document.body.style.overflow="";
+  }
+</script>
+</body>
+</html>
