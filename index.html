@@ -1225,9 +1225,8 @@ function renderProfileAnalytics() {
       }
     });
   });
-  
-  const secMax = { repeat: 15, conversation: 15, fillblanks: 12, dictation: 12, retell: 11 };
-  const secLabels = {
+    const secMax = { repeat: 16, conversation: 16, fillblanks: 16, dictation: 16, retell: 16 };
+    const secLabels = {
     repeat: "📢 Repeat",
     conversation: "💬 Conversation",
     fillblanks: "✏️ Fill Blanks",
@@ -1482,11 +1481,11 @@ function renderAnalyticsForLevel(lvl) {
       <div class="an-card"><div class="an-icon">📅</div><div class="an-label">Date</div><div class="an-val" style="font-size:16px;margin-top:4px;">${data.date||"—"}</div></div>
     </div>
     <div class="section-results">
-      ${renderSectionResult("📢", "Repeat Sentence", secs.repeat, 15)}
-      ${renderSectionResult("💬", "Conversation", secs.conversation, 15)}
-      ${renderSectionResult("🎧", "Dictation", secs.dictation, 12)}
-      ${renderSectionResult("✏️", "Fill in Blanks", secs.fillblanks, 12)}
-      ${renderSectionResult("📖", "Retell Paragraph", secs.retell, 11)}
+      ${renderSectionResult("📢", "Repeat Sentence", secs.repeat, 16)}
+      ${renderSectionResult("💬", "Conversation", secs.conversation, 16)}
+      ${renderSectionResult("🎧", "Dictation", secs.dictation, 16)}
+      ${renderSectionResult("✏️", "Fill in Blanks", secs.fillblanks, 16)}
+      ${renderSectionResult("📖", "Retell Paragraph", secs.retell, 16)}
     </div>
   `;
 }
@@ -1517,11 +1516,11 @@ function renderSectionResult(icon, name, data, maxScore) {
 let TEST = null; // current test state
 
 const SECTIONS = [
-  { id: "repeat", label: "📢 Repeat Sentence", maxScore: 15, questions: 3 },
-  { id: "conversation", label: "💬 Conversation", maxScore: 15, questions: 3 },
-  { id: "dictation", label: "🎧 Dictation", maxScore: 12, questions: 3 },
-  { id: "fillblanks", label: "✏️ Fill in Blanks", maxScore: 12, questions: 3 },
-  { id: "retell", label: "📖 Retell Paragraph", maxScore: 11, questions: 3 },
+  { id: "repeat",       label: "📢 Repeat Sentence",   maxScore: 16, questions: 3 },
+  { id: "conversation", label: "💬 Conversation",       maxScore: 16, questions: 3 },
+  { id: "dictation",    label: "🎧 Dictation",          maxScore: 16, questions: 3 },
+  { id: "fillblanks",   label: "✏️ Fill in Blanks",     maxScore: 16, questions: 3 },
+  { id: "retell",       label: "📖 Retell Paragraph",   maxScore: 16, questions: 3 },
 ];
 
 function startLevel(level) {
