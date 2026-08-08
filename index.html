@@ -525,7 +525,13 @@
       🔥 <span id="streakCount">0</span>d
     </div>
     <a href="profile.html" class="pill" style="cursor:pointer;" title="My Profile">👤</a>
-
+    <div class="pill" onclick="openProfile()" style="cursor:pointer;" title="View Profile">
+  👋 <span id="greetingName">Guest</span>
+  <a href="donate.html" onclick="event.stopPropagation();" 
+     style="margin-left:10px; color:inherit; text-decoration:none;">
+    💙 Support
+  </a>
+    </div>
     <button class="btn-logout" onclick="doLogout()">
       Logout
     </button>
