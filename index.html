@@ -1,0 +1,1077 @@
+<!-- VersantPro Complete - All-in-One | Last Updated: 11 Aug 2026 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Versant Practice PRO - Free English fluency trainer with 6 speaking sections and mock tests.">
+  <meta name="keywords" content="Versant test, English practice, speaking test, fluency trainer, HCL TechBee">
+  <meta name="theme-color" content="#00C8FF">
+  <title>Versant Practice PRO — AI English Fluency Trainer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4325315633009107" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --primary: #00C8FF;
+      --primary-dim: rgba(0,200,255,0.12);
+      --accent: #FF6B35;
+      --success: #00E676;
+      --warn: #FFB800;
+      --danger: #FF4444;
+      --dark: #060B14;
+      --dark2: #0D1526;
+      --dark3: #162035;
+      --card: rgba(13,21,38,0.92);
+      --border: rgba(0,200,255,0.16);
+      --text: #E8EDF5;
+      --muted: #6B7A99;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--dark); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.6; overflow-x:hidden; }
+    
+    .bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .bg-canvas::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,100,200,0.1) 0%,transparent 60%), radial-gradient(ellipse 60% 80% at 80% 80%, rgba(0,200,255,0.07) 0%,transparent 60%); }
+    .bg-grid { position:absolute; inset:0; background-image: linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px); background-size:60px 60px; }
+
+    /* INTRO SCREEN */
+    #introScreen { position:fixed; inset:0; background:var(--dark); display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:99999; }
+    .intro-emblem { width:100px; height:100px; border-radius:28px; background:linear-gradient(135deg,#0D1526,#162035); border:2px solid var(--primary); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-size:42px; font-weight:800; color:var(--primary); box-shadow:0 0 60px rgba(0,200,255,0.25); margin-bottom:28px; animation:embFloat 3s ease-in-out infinite; }
+    @keyframes embFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+    .intro-title { font-family:var(--font-head); font-size:28px; font-weight:800; letter-spacing:4px; color:#fff; }
+    .intro-sub { font-size:12px; color:var(--muted); margin-top:6px; letter-spacing:2px; text-transform:uppercase; }
+    .intro-bar { width:260px; height:3px; background:var(--dark3); border-radius:9999px; overflow:hidden; margin:28px 0 12px; }
+    .intro-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--primary),#67E8F9); box-shadow:0 0 12px var(--primary); transition:width .04s linear; }
+    .intro-count { font-family:var(--font-head); font-size:18px; font-weight:700; color:var(--primary); }
+
+    /* AUTH MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(4,8,18,0.97); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:100000; }
+    .modal-overlay.active { display:flex; }
+    .modal-box { background:var(--dark2); border:1px solid var(--border); border-radius:28px; padding:42px 36px; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+    .modal-logo { text-align:center; margin-bottom:24px; }
+    .emblem-sm { width:64px; height:64px; border-radius:16px; background:linear-gradient(135deg,#0D1526,#162035); border:1.5px solid var(--primary); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-size:32px; font-weight:800; color:var(--primary); margin:auto; }
+    .modal-box h2 { font-family:var(--font-head); font-size:24px; font-weight:800; margin-bottom:8px; text-align:center; }
+    .modal-desc { color:var(--muted); text-align:center; font-size:14px; margin-bottom:24px; }
+    .modal-tabs { display:flex; gap:12px; margin-bottom:24px; }
+    .modal-tab { flex:1; padding:12px; border:none; background:rgba(255,255,255,0.06); color:var(--muted); font-weight:700; cursor:pointer; border-radius:10px; transition:.2s; }
+    .modal-tab.active { background:var(--primary-dim); border:1px solid var(--border); color:var(--primary); }
+    .form-input { width:100%; padding:12px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:14px; margin-bottom:12px; }
+    .form-input::placeholder { color:var(--muted); }
+    .btn-full { width:100%; padding:12px; background:linear-gradient(135deg,var(--primary),#0084d9); border:none; border-radius:10px; color:#000; font-weight:700; font-family:var(--font-head); cursor:pointer; transition:.2s; margin-bottom:12px; }
+    .btn-full:hover { opacity:.9; }
+    .auth-error { color:var(--danger); font-size:12px; text-align:center; margin-top:12px; }
+
+    /* HEADER */
+    .header { position:sticky; top:0; z-index:100; background:rgba(6,11,20,.95); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:16px; display:flex; align-items:center; justify-content:space-between; }
+    .header-brand { display:flex; align-items:center; gap:12px; cursor:pointer; }
+    .header-emblem { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#0D1526,#162035); border:1px solid var(--primary); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-weight:800; color:var(--primary); font-size:20px; }
+    .header-name { font-family:var(--font-head); font-weight:800; font-size:18px; }
+    .header-name span { color:var(--primary); }
+    .header-right { display:flex; align-items:center; gap:12px; }
+    .pill { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:rgba(0,200,255,0.08); border:1px solid var(--border); border-radius:999px; font-size:13px; font-weight:700; color:var(--text); cursor:pointer; transition:.2s; }
+    .pill:hover { background:rgba(0,200,255,0.16); }
+    .pill-streak { color:var(--warn); }
+    .btn-logout { padding:8px 16px; background:rgba(255,68,68,0.1); border:1px solid rgba(255,68,68,0.2); border-radius:8px; color:var(--danger); font-weight:700; font-size:12px; cursor:pointer; transition:.2s; }
+    .btn-logout:hover { background:rgba(255,68,68,0.2); }
+
+    /* SCREENS */
+    .screen { display:none; position:relative; z-index:1; max-width:1100px; margin:0 auto; }
+    .screen.active { display:block; }
+
+    /* HOME SCREEN */
+    .hero { text-align:center; padding:60px 20px 40px; }
+    .hero-badge { display:inline-block; padding:8px 16px; border-radius:999px; border:1px solid var(--border); color:var(--primary); margin-bottom:20px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+    .hero h1 { font-family:var(--font-head); font-size:clamp(34px,6vw,64px); line-height:1.1; margin-bottom:20px; }
+    .hero h1 em { color:var(--primary); font-style:normal; }
+    .hero > p { color:var(--muted); margin-bottom:30px; max-width:800px; margin-left:auto; margin-right:auto; }
+    .stats-row { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:40px; }
+    .stat-item { text-align:center; }
+    .stat-num { font-size:34px; color:var(--primary); font-family:var(--font-head); font-weight:800; }
+    .stat-label { font-size:12px; color:var(--muted); margin-top:4px; }
+
+    /* SECTION BUTTONS */
+    .sections-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; padding:20px; max-width:1100px; margin:0 auto; }
+    .section-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; cursor:pointer; transition:.3s; position:relative; overflow:hidden; }
+    .section-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(0,200,255,0.1),transparent); opacity:0; transition:.3s; }
+    .section-card:hover { transform:translateY(-4px); border-color:var(--primary); box-shadow:0 12px 32px rgba(0,200,255,0.1); }
+    .section-card:hover::before { opacity:1; }
+    .section-icon { font-size:42px; margin-bottom:12px; }
+    .section-title { font-family:var(--font-head); font-size:18px; font-weight:800; color:var(--primary); margin-bottom:8px; }
+    .section-desc { font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:12px; }
+    .section-count { font-size:12px; color:var(--text); background:rgba(0,200,255,0.1); padding:6px 12px; border-radius:6px; display:inline-block; }
+
+    /* TEST SCREEN */
+    .test-header { padding:20px; display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--border); }
+    .back-btn { padding:8px 16px; background:rgba(0,200,255,0.08); border:1px solid var(--border); border-radius:8px; color:var(--primary); font-weight:700; cursor:pointer; transition:.2s; }
+    .back-btn:hover { background:rgba(0,200,255,0.16); }
+    .test-title { font-family:var(--font-head); font-size:20px; font-weight:800; flex:1; }
+
+    .test-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:32px; max-width:820px; margin:20px auto; min-height:300px; }
+    .instr-box { background:rgba(0,200,255,0.05); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:20px; }
+    .instr-box p { font-size:14px; line-height:1.6; }
+    .instr-box strong { color:var(--primary); }
+
+    .answer-input { width:100%; padding:12px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:14px; font-family:var(--font-body); resize:vertical; }
+    .answer-input::placeholder { color:var(--muted); }
+
+    .btn { display:inline-block; padding:12px 24px; background:linear-gradient(135deg,var(--primary),#0084d9); border:none; border-radius:10px; color:#000; font-weight:700; font-family:var(--font-head); cursor:pointer; transition:.2s; font-size:13px; }
+    .btn:hover { opacity:.9; }
+    .btn-cta { width:100%; padding:14px; margin-bottom:12px; }
+    .btn-row { display:flex; gap:12px; margin-top:16px; }
+    .btn-row .btn { flex:1; margin:0; }
+
+    .result-feedback { margin-top:20px; padding:16px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); border-radius:10px; display:none; }
+    .result-feedback.show { display:block; }
+    .result-feedback.error { background:rgba(255,68,68,0.1); border-color:rgba(255,68,68,0.3); }
+
+    .timer-wrap { display:flex; justify-content:center; margin:20px 0; }
+    .timer-circle { width:120px; height:120px; border-radius:50%; background:var(--dark3); border:2px solid var(--primary); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-size:42px; font-weight:800; color:var(--primary); }
+    .timer-circle.warn { color:var(--warn); border-color:var(--warn); }
+    .timer-circle.danger { color:var(--danger); border-color:var(--danger); }
+
+    .section-steps { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+    .step-pill { width:36px; height:36px; border-radius:50%; background:var(--dark3); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+    .step-pill.active { background:var(--primary-dim); border-color:var(--primary); color:var(--primary); }
+    .step-pill.done { background:var(--success); border-color:var(--success); color:#000; }
+
+    .waveform { display:flex; align-items:center; justify-content:center; gap:4px; height:40px; margin:20px 0; }
+    .wave-bar { width:4px; height:20px; background:var(--primary); border-radius:2px; transition:height .1s; }
+
+    /* PROFILE */
+    #profileModal { position:fixed; inset:0; background:rgba(4,8,18,0.97); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:100001; padding:16px; }
+    #profileModal.show { display:flex; }
+    .profile-box { background:var(--dark2); border:1px solid var(--border); border-radius:28px; width:100%; max-width:520px; max-height:92vh; overflow-y:auto; position:relative; }
+    .profile-close { position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.08); border:none; color:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.2s; }
+    .profile-close:hover { background:rgba(255,255,255,0.16); }
+    .profile-header { text-align:center; padding:28px 28px 0; }
+    .profile-avatar { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--primary),#0084d9); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 16px; }
+    .profile-name { font-family:var(--font-head); font-size:22px; font-weight:800; margin-bottom:4px; }
+    .profile-stats { display:flex; justify-content:center; gap:24px; margin-top:20px; }
+    .ps-item { text-align:center; }
+    .ps-num { font-family:var(--font-head); font-size:22px; font-weight:800; color:var(--primary); }
+    .ps-lbl { font-size:10px; color:var(--muted); margin-top:2px; }
+    .profile-body { padding:24px 28px; }
+    .profile-section-title { font-family:var(--font-head); font-size:13px; font-weight:700; color:var(--primary); letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+
+    /* CALENDAR */
+    #calModal { position:fixed; inset:0; background:rgba(4,8,18,0.97); backdrop-filter:blur(20px); z-index:200001; display:none; align-items:center; justify-content:center; padding:16px; }
+    #calModal.show { display:flex; }
+    .cal-box { background:var(--dark2); border:1px solid var(--border); border-radius:28px; width:100%; max-width:420px; padding:28px; max-height:92vh; overflow-y:auto; }
+    .cal-box h3 { font-family:var(--font-head); font-size:20px; font-weight:800; color:#fff; text-align:center; margin-bottom:4px; }
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; margin:16px 0 12px; }
+    .cal-nav-btn { background:none; border:none; color:var(--primary); font-size:24px; cursor:pointer; transition:.2s; }
+    .cal-nav-btn:hover { color:#fff; }
+    .cal-month-label { font-family:var(--font-head); font-size:16px; font-weight:700; color:#fff; }
+    .cal-days { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+    .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:13px; color:var(--muted); }
+    .cal-day.practiced { background:rgba(0,230,118,0.18); color:var(--success); font-weight:700; border:1px solid rgba(0,230,118,0.3); }
+    .cal-day.today { border:1.5px solid var(--primary); color:var(--primary); font-weight:700; }
+
+    /* TOAST */
+    #toastContainer { position:fixed; bottom:20px; right:20px; z-index:9999; }
+    .toast { background:var(--dark2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin-bottom:8px; font-size:13px; max-width:300px; animation:slideIn .3s ease-out; }
+    @keyframes slideIn { from { transform:translateX(400px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+    /* SYNC BADGE */
+    #syncBadge { position:fixed; top:20px; left:20px; z-index:999; padding:8px 12px; background:rgba(0,230,118,0.15); border:1px solid rgba(0,230,118,0.3); border-radius:8px; font-size:11px; color:var(--success); opacity:0; transition:.3s; pointer-events:none; }
+    #syncBadge.show { opacity:1; }
+
+    /* ADS */
+    .ad-banner { max-width:1100px; margin:0 auto 16px; overflow:hidden; }
+
+    @media(max-width:768px) {
+      .header { padding:12px; }
+      .header-right { gap:8px; }
+      .pill { font-size:11px; padding:6px 12px; }
+      .test-card { padding:20px 16px; }
+      .sections-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-canvas"><div class="bg-grid"></div></div>
+
+<!-- INTRO SCREEN -->
+<div id="introScreen">
+  <div class="intro-emblem">V</div>
+  <div class="intro-title">VERSANT PRO</div>
+  <div class="intro-sub">AI English Fluency Trainer</div>
+  <div class="intro-bar"><div class="intro-fill" id="introFill"></div></div>
+  <div class="intro-count" id="introCount">Loading…</div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-logo"><div class="emblem-sm">V</div></div>
+    <h2>Welcome Back</h2>
+    <p class="modal-desc">Sign in to sync your progress</p>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+      <button class="modal-tab" id="tabRegister" onclick="switchTab('register')">Register</button>
+    </div>
+    <div id="loginForm">
+      <input class="form-input" type="email" id="loginEmail" placeholder="Email address">
+      <input class="form-input" type="password" id="loginPass" placeholder="Password">
+      <button class="btn-full" onclick="doLogin()">Sign In</button>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <input class="form-input" type="text" id="regName" placeholder="Username">
+      <input class="form-input" type="email" id="regEmail" placeholder="Email">
+      <input class="form-input" type="password" id="regPass" placeholder="Password">
+      <button class="btn-full" onclick="doRegister()">Create Account</button>
+    </div>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+<div id="syncBadge">☁ Synced</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand" onclick="location.reload(); window.scrollTo(0,0);" style="cursor:pointer;" title="Reload">
+    <div class="header-emblem">V</div>
+    <div class="header-name"><span>Versant</span> Pro</div>
+  </div>
+  <div class="header-right">
+    <div class="pill" onclick="openProfile()" style="cursor:pointer;" title="Profile">👋 <span id="greetingName">Guest</span></div>
+    <div class="pill pill-streak" onclick="openCalendar()" style="cursor:pointer;" title="Streak">🔥 <span id="streakCount">0</span>d</div>
+    <button class="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<!-- AD BANNER -->
+<div class="ad-banner" style="padding:6px 16px 0;">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4325315633009107" data-ad-slot="4567742062" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
+
+<!-- HOME SCREEN -->
+<div id="homeScreen" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">🎯 6 Speaking Sections + Mock Test</div>
+    <h1>AI-Powered <em>English Speaking</em><br>Practice Platform</h1>
+    <p>Master pronunciation, fluency, and comprehension with infinite practice questions.</p>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Speaking Parts</div></div>
+      <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Questions</div></div>
+      <div class="stat-item"><div class="stat-num">66</div><div class="stat-label">Mock Test Q's</div></div>
+      <div class="stat-item"><div class="stat-num" id="heroStreak">—</div><div class="stat-label">Streak 🔥</div></div>
+    </div>
+  </div>
+
+  <div class="sections-grid" id="sectionsGrid">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="testScreen" class="screen">
+  <div class="test-header">
+    <button class="back-btn" onclick="confirmBackToHome()">← Home</button>
+    <div class="test-title" id="testTitle">Part A</div>
+  </div>
+
+  <div style="max-width:820px;margin:0 auto 20px;padding:0 16px;">
+    <div class="section-steps" id="sectionSteps">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <div class="test-card" id="testCard">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profileModal">
+  <div class="profile-box">
+    <button class="profile-close" onclick="closeProfile()">✕</button>
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">👤</div>
+      <div class="profile-name" id="profileName">Loading…</div>
+      <div class="profile-stats">
+        <div class="ps-item">
+          <div class="ps-num" id="statTests">0</div>
+          <div class="ps-lbl">Tests</div>
+        </div>
+        <div class="ps-item">
+          <div class="ps-num" id="statScore">0%</div>
+          <div class="ps-lbl">Avg Score</div>
+        </div>
+        <div class="ps-item">
+          <div class="ps-num" id="statStreak">0</div>
+          <div class="ps-lbl">Streak</div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-section-title">Recent Practice</div>
+      <div id="profileRecent" style="font-size:12px;color:var(--muted);">No practice yet</div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR MODAL -->
+<div id="calModal">
+  <div class="cal-box">
+    <h3>Practice Streak 🔥</h3>
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrevMonth()">‹</button>
+      <div class="cal-month-label" id="calMonthLabel">January 2026</div>
+      <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
+    </div>
+    <div class="cal-days" id="calGrid">
+      <!-- Rendered by JS -->
+    </div>
+    <button class="btn-full" onclick="closeCalendar()" style="margin-top:16px;">Close</button>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- FIREBASE + MAIN SCRIPT -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+
+<script type="module">
+  // ═══ FIREBASE WITH LEGACY USER SUPPORT ════════════════════════════════════════
+  (async () => {
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+      const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+      const { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyASKI0u0KBCPz0vg5ro0XhJlSSuWxrW8OU",
+        authDomain: "versantpro-7a2af.firebaseapp.com",
+        projectId: "versantpro-7a2af",
+        storageBucket: "versantpro-7a2af.firebasestorage.app",
+        messagingSenderId: "1032992540620",
+        appId: "1:1032992540620:web:a77017677625c1fdedff69"
+      };
+      
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      
+      window._fb = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile };
+      
+      // Load user data from Firebase (supports old & new format)
+      async function loadUserData(uid) {
+        try { 
+          const snap = await getDoc(doc(db, "users", uid));
+          if (snap.exists()) {
+            const data = snap.data();
+            // Migrate old format to new format if needed
+            return migrateUserData(data);
+          }
+          return null;
+        } catch(e) { 
+          console.error("Error loading user data:", e);
+          return null;
+        }
+      }
+      
+      // Migrate old data format to new format
+      function migrateUserData(oldData) {
+        if (!oldData) return null;
+        
+        // If data already has 'state' property, it's already migrated
+        if (oldData.state) return oldData;
+        
+        // Migrate from old 5000-level format to new 7-part format
+        const newState = {
+          partA: oldData.partA || 0,
+          partB: oldData.partB || 0,
+          partC: oldData.partC || 0,
+          partD: oldData.partD || 0,
+          partE: oldData.partE || 0,
+          partF: oldData.partF || 0,
+          mockTest: oldData.mockTest || 0,
+          totalTests: oldData.totalTests || 0,
+          totalScore: oldData.totalScore || 0,
+          streak: oldData.streak || 0,
+          lastPractice: oldData.lastPractice || null,
+          history: oldData.history || [],
+          // Keep any old level data as archived
+          archivedLevels: oldData.levels || {}
+        };
+        
+        return {
+          ...oldData,
+          state: newState,
+          migrated: true,
+          migratedAt: new Date().toISOString()
+        };
+      }
+      
+      async function saveUserData(uid, data) {
+        try { 
+          await setDoc(doc(db, "users", uid), { 
+            ...data, 
+            updatedAt: serverTimestamp(),
+            lastActiveAt: serverTimestamp()
+          }, { merge: true }); 
+        } catch(e) {
+          console.error("Error saving user data:", e);
+        }
+      }
+      
+      window._fbLoad = { loadUserData, saveUserData, migrateUserData };
+      
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          window._currentUser = user;
+          const cloudData = await loadUserData(user.uid);
+          
+          if (cloudData) {
+            // Use cloud data (including migrated old data)
+            const mergedState = {
+              ...window._state,
+              ...cloudData.state
+            };
+            window._state = mergedState;
+            localStorage.setItem("vstate", JSON.stringify(window._state));
+            
+            // Save migrated data back to Firebase
+            if (cloudData.migrated) {
+              await saveUserData(user.uid, { 
+                state: mergedState,
+                name: user.displayName || cloudData.name || "",
+                email: user.email
+              });
+            }
+          } else {
+            // New user - save initial state
+            await saveUserData(user.uid, { 
+              state: window._state, 
+              name: user.displayName || "",
+              email: user.email,
+              createdAt: serverTimestamp()
+            });
+          }
+          
+          window._userName = user.displayName || cloudData?.name || user.email.split("@")[0];
+          localStorage.setItem("vsession", "1");
+          console.log("✓ User logged in:", window._userName, "| Data migrated:", cloudData?.migrated || false);
+          
+          if (window._appReady) onLoginSuccess();
+          else window._pendingLogin = true;
+        } else {
+          window._currentUser = null;
+          localStorage.removeItem("vsession");
+        }
+      });
+      
+      window._firebaseLoaded = true;
+      console.log("✓ Firebase initialized successfully");
+    } catch(e) { 
+      console.error("Firebase error:", e); 
+      window._firebaseError = true;
+      showToast("⚠️ Firebase connection error - using local storage only");
+    }
+  })();
+</script>
+
+<script>
+  // ═══ GLOBAL STATE ═════════════════════════════════════════════════════════════
+  window._state = JSON.parse(localStorage.getItem("vstate")) || {
+    partA: 0,
+    partB: 0,
+    partC: 0,
+    partD: 0,
+    partE: 0,
+    partF: 0,
+    mockTest: 0,
+    totalTests: 0,
+    totalScore: 0,
+    streak: 0,
+    lastPractice: null,
+    history: []
+  };
+
+  window._currentUser = null;
+  window._userName = "Guest";
+  window._appReady = false;
+  window._pendingLogin = false;
+  window._firebaseLoaded = false;
+  window._firebaseError = false;
+
+  let TEST = {
+    part: null,
+    qNum: 0,
+    qIdx: 0,
+    totalQ: 0,
+    scores: {
+      partA: 0,
+      partB: 0,
+      partC: 0,
+      partD: 0,
+      partE: 0,
+      partF: 0
+    },
+    isMockTest: false,
+    questions: [],
+    currentQ: null,
+    submitted: false,
+    audioPlayed: false
+  };
+
+  // ═══ QUESTION POOLS ═══════════════════════════════════════════════════════════
+
+  const PART_A_POOL = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Technology has transformed the way we communicate.",
+    "Learning a new language opens doors to different cultures.",
+    "Time management is essential for professional success.",
+    "Environmental conservation is everyone's responsibility.",
+    "Reading improves vocabulary and critical thinking skills.",
+    "The importance of teamwork cannot be overstated.",
+    "Innovation drives economic growth and development.",
+    "Physical exercise promotes mental and physical health.",
+    "Effective communication requires active listening.",
+    "Digital transformation has changed business operations.",
+    "Cultural diversity strengthens organizations and societies.",
+    "Climate change requires immediate global action.",
+    "Education empowers individuals to achieve their goals.",
+    "Cybersecurity is crucial in the modern digital age.",
+    "Work-life balance improves employee productivity.",
+    "Artificial intelligence is reshaping multiple industries.",
+    "Sustainable practices benefit both people and the planet."
+  ];
+
+  const PART_B_POOL = [
+    "The meeting will start at nine o'clock tomorrow.",
+    "Please submit your report by Friday.",
+    "She completed the project three weeks ago.",
+    "We need to discuss the budget allocation.",
+    "The conference is scheduled for next month.",
+    "Can you provide the updated information?",
+    "They arrived at the office before noon.",
+    "The product launch was very successful."
+  ];
+
+  const PART_C_POOL = [
+    { q: "What is your favorite color?", a: "blue" },
+    { q: "How many days are in a week?", a: "seven" },
+    { q: "What is the capital of France?", a: "Paris" },
+    { q: "Who is the current president of India?", a: "Ram Nath Kovind" },
+    { q: "What do you do for exercise?", a: "running" },
+    { q: "How long have you worked here?", a: "five years" },
+    { q: "What is your native language?", a: "English" },
+    { q: "Where did you go last weekend?", a: "park" },
+    { q: "What is your job title?", a: "engineer" },
+    { q: "How do you prefer to communicate?", a: "email" },
+    { q: "What time do you usually wake up?", a: "seven" },
+    { q: "What is your hobby?", a: "reading" }
+  ];
+
+  const PART_D_POOL = [
+    { words: ["is", "the", "meeting", "when"], answer: "When is the meeting?" },
+    { words: ["completed", "project", "the", "they"], answer: "They completed the project." },
+    { words: ["you", "help", "can", "me"], answer: "Can you help me?" },
+    { words: ["conference", "next", "the", "month", "is"], answer: "The conference is next month." },
+    { words: ["did", "you", "arrive", "what", "time"], answer: "What time did you arrive?" },
+    { words: ["presentation", "the", "was", "successful"], answer: "The presentation was successful." },
+    { words: ["need", "I", "information", "more"], answer: "I need more information." },
+    { words: ["has", "he", "experience", "much"], answer: "He has much experience." },
+    { words: ["will", "the", "start", "meeting", "when"], answer: "When will the meeting start?" },
+    { words: ["report", "submit", "you", "can"], answer: "Can you submit the report?" },
+    { words: ["language", "your", "is", "what", "native"], answer: "What is your native language?" },
+    { words: ["budget", "discuss", "we", "need", "the"], answer: "We need to discuss the budget." },
+    { words: ["was", "launch", "the", "successful", "product"], answer: "The product launch was successful." },
+    { words: ["you", "thank", "for", "help", "the"], answer: "Thank you for the help." }
+  ];
+
+  const PART_E_POOL = [
+    "A software engineer joined a new company last month. She learned their systems quickly and impressed her manager with her dedication. Her team appreciated her collaborative approach, and she was promoted to team lead within a year.",
+    "An entrepreneur faced a business challenge during a recession. He adapted his strategy to focus on cost-cutting measures. His company not only survived but grew stronger by implementing innovative solutions.",
+    "A student struggled with mathematics initially. She hired a tutor and practiced daily. Through consistent effort, she improved her grades significantly and eventually scored well in her final exams.",
+    "A project manager noticed the team was behind schedule. He organized daily stand-ups and removed blocking issues. The team regained momentum and delivered the project two weeks ahead of the revised deadline.",
+    "An employee requested flexible work hours due to family commitments. Her manager agreed to a hybrid arrangement. This resulted in better work quality and improved employee satisfaction across the department.",
+    "A startup had limited resources for marketing. The founder created a viral social media campaign. With minimal budget, the campaign reached thousands of potential customers and significantly increased brand awareness.",
+    "A customer complained about a product defect. The support team investigated immediately and offered a replacement. The customer appreciated the prompt response and became a loyal advocate for the brand.",
+    "A team faced a critical system outage affecting clients. The technical lead coordinated a rapid response effort. They restored the system within two hours and implemented preventive measures to avoid future incidents.",
+    "A junior developer proposed an innovative solution to a complex problem. The senior team was skeptical initially but approved testing. The solution worked and reduced processing time by forty percent.",
+    "A company decided to transition to remote work permanently. They invested in collaboration tools and training. Employee productivity increased, and many workers reported improved work-life balance.",
+    "A manager discovered a discrepancy in the budget. She investigated thoroughly and found a calculation error from the previous year. Correcting it saved the company significant funds and improved financial accuracy.",
+    "An HR specialist implemented a mentorship program in the organization. Senior employees guided junior staff through structured sessions. This program improved knowledge transfer and retention of new talent significantly."
+  ];
+
+  const PART_F_POOL = [
+    "Do you think remote work is beneficial for employees? Why or why not?",
+    "What skills do you think are most important for success in your field?",
+    "How do you handle stress in your work environment?",
+    "What is the most important factor in building a strong team?",
+    "How has technology changed the way you work?",
+    "What advice would you give to someone starting their career?",
+    "How do you balance professional and personal responsibilities?",
+    "What qualities do you value most in a colleague?",
+    "How do you approach learning new skills at work?",
+    "What changes would you like to see in your workplace?",
+    "How do you stay motivated when facing challenges?",
+    "What is the most important aspect of effective communication?"
+  ];
+
+  // ═══ SECTIONS CONFIGURATION ═══════════════════════════════════════════════════
+  const SECTIONS = [
+    { id: "partA", label: "Part A: Reading Aloud", icon: "📖", desc: "Read sentences with proper pronunciation and fluency", questions: 18, pool: PART_A_POOL },
+    { id: "partB", label: "Part B: Repeat", icon: "🎧", desc: "Listen and repeat sentences word-for-word", questions: 8, pool: PART_B_POOL },
+    { id: "partC", label: "Part C: Short Answer", icon: "❓", desc: "Answer questions with single words or short phrases", questions: 12, pool: PART_C_POOL },
+    { id: "partD", label: "Part D: Sentence Builds", icon: "🧩", desc: "Arrange words into correct grammatical sentences", questions: 14, pool: PART_D_POOL },
+    { id: "partE", label: "Part E: Story Retelling", icon: "📚", desc: "Retell a story in your own words", questions: 12, pool: PART_E_POOL },
+    { id: "partF", label: "Part F: Open Questions", icon: "💬", desc: "Answer open-ended questions with personal opinions", questions: 2, pool: PART_F_POOL },
+    { id: "mockTest", label: "Mock Test", icon: "🎯", desc: "Practice all 66 questions in one complete test", questions: 66, isMock: true }
+  ];
+
+  // ═══ UTILITY FUNCTIONS ═════════════════════════════════════════════════════════
+  function showToast(msg) {
+    const container = document.getElementById("toastContainer");
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function syncBadge() {
+    const badge = document.getElementById("syncBadge");
+    badge.classList.add("show");
+    setTimeout(() => badge.classList.remove("show"), 2000);
+  }
+
+  async function saveState() {
+    localStorage.setItem("vstate", JSON.stringify(window._state));
+    if (window._currentUser && window._fbLoad) {
+      await window._fbLoad.saveUserData(window._currentUser.uid, { state: window._state });
+      syncBadge();
+    }
+  }
+
+  function switchTab(tab) {
+    document.getElementById("tabLogin").classList.toggle("active", tab === "login");
+    document.getElementById("tabRegister").classList.toggle("active", tab === "register");
+    document.getElementById("loginForm").style.display = tab === "login" ? "block" : "none";
+    document.getElementById("registerForm").style.display = tab === "register" ? "block" : "none";
+  }
+
+  async function doLogin() {
+    const email = document.getElementById("loginEmail").value;
+    const pass = document.getElementById("loginPass").value;
+    if (!email || !pass) { showToast("⚠️ Fill in all fields"); return; }
+    try {
+      await window._fb.signInWithEmailAndPassword(window._fb.auth, email, pass);
+      document.getElementById("authModal").classList.remove("active");
+    } catch(e) {
+      document.getElementById("authError").textContent = "Login failed: " + e.message;
+    }
+  }
+
+  async function doRegister() {
+    const name = document.getElementById("regName").value;
+    const email = document.getElementById("regEmail").value;
+    const pass = document.getElementById("regPass").value;
+    if (!name || !email || !pass) { showToast("⚠️ Fill in all fields"); return; }
+    try {
+      const res = await window._fb.createUserWithEmailAndPassword(window._fb.auth, email, pass);
+      await window._fb.updateProfile(res.user, { displayName: name });
+      document.getElementById("authModal").classList.remove("active");
+    } catch(e) {
+      document.getElementById("authError").textContent = "Registration failed: " + e.message;
+    }
+  }
+
+  function doLogout() {
+    if (window._fb) window._fb.signOut(window._fb.auth);
+  }
+
+  function onLoginSuccess() {
+    document.getElementById("greetingName").textContent = window._userName || "User";
+    updateStats();
+    if (document.getElementById("authModal").classList.contains("active")) {
+      document.getElementById("authModal").classList.remove("active");
+    }
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // ═══ INTRO & LOADING ══════════════════════════════════════════════════════════
+  function showIntro() {
+    let p = 0;
+    const hasSession = localStorage.getItem("vsession") === "1";
+    const speed = hasSession ? 14 : 5;
+    const tickMs = hasSession ? 16 : 35;
+    const fill = document.getElementById("introFill");
+    const ctr = document.getElementById("introCount");
+
+    const iv = setInterval(() => {
+      p += speed;
+      if (p > 100) p = 100;
+      fill.style.width = p + "%";
+      if (ctr) ctr.textContent = "Loading sections…";
+      if (p >= 100) {
+        clearInterval(iv);
+        setTimeout(() => {
+          const el = document.getElementById("introScreen");
+          el.style.transition = "opacity .3s";
+          el.style.opacity = "0";
+          setTimeout(() => {
+            el.style.display = "none";
+            window._appReady = true;
+            if (window._currentUser || window._pendingLogin) onLoginSuccess();
+            else document.getElementById("authModal").classList.add("active");
+          }, 300);
+        }, hasSession ? 80 : 400);
+      }
+    }, tickMs);
+  }
+
+  // ═══ HOME SCREEN ══════════════════════════════════════════════════════════════
+  function renderHome() {
+    const grid = document.getElementById("sectionsGrid");
+    grid.innerHTML = SECTIONS.map((sec, idx) => `
+      <div class="section-card" onclick="startPart('${sec.id}')">
+        <div class="section-icon">${sec.icon}</div>
+        <div class="section-title">${sec.label}</div>
+        <div class="section-desc">${sec.desc}</div>
+        <div class="section-count">${sec.isMock ? '66 Questions' : sec.questions + ' Questions'}</div>
+      </div>
+    `).join("");
+  }
+
+  // ═══ TEST SCREEN ══════════════════════════════════════════════════════════════
+  function startPart(partId) {
+    const sec = SECTIONS.find(s => s.id === partId);
+    if (!sec) return;
+
+    TEST = {
+      part: partId,
+      isMockTest: sec.isMock || false,
+      totalQ: sec.isMock ? 66 : sec.questions,
+      qNum: 1,
+      qIdx: 0,
+      scores: {},
+      submitted: false,
+      audioPlayed: false,
+      currentQ: null
+    };
+
+    // Generate mock test questions
+    if (TEST.isMockTest) {
+      TEST.questions = [
+        ...generateQuestions("partA", 18),
+        ...generateQuestions("partB", 8),
+        ...generateQuestions("partC", 12),
+        ...generateQuestions("partD", 14),
+        ...generateQuestions("partE", 12),
+        ...generateQuestions("partF", 2)
+      ];
+    } else {
+      TEST.questions = generateQuestions(partId, sec.questions);
+    }
+
+    document.getElementById("testTitle").textContent = sec.label + ` (${TEST.qNum}/${TEST.totalQ})`;
+    showScreen("testScreen");
+    renderQuestion();
+  }
+
+  function generateQuestions(partId, count) {
+    const sec = SECTIONS.find(s => s.id === partId);
+    const pool = sec?.pool || [];
+    const questions = [];
+    for (let i = 0; i < count; i++) {
+      const q = pool[Math.floor(Math.random() * pool.length)];
+      questions.push({ ...q, part: partId });
+    }
+    return questions;
+  }
+
+  function renderQuestion() {
+    const q = TEST.questions[TEST.qIdx];
+    if (!q) { finishTest(); return; }
+
+    TEST.currentQ = q;
+    TEST.submitted = false;
+    TEST.audioPlayed = false;
+
+    const sec = SECTIONS.find(s => s.id === q.part);
+    const card = document.getElementById("testCard");
+
+    if (q.part === "partA") {
+      card.innerHTML = `
+        <div class="instr-box"><p>Read the following sentence aloud with proper pronunciation and fluency.</p></div>
+        <div style="background:rgba(0,200,255,0.1);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;font-size:16px;line-height:1.8;color:var(--text);">${q}</div>
+        <div class="btn-row">
+          <button class="btn btn-cta" onclick="submitAnswer()">I Read It</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);" onclick="nextQuestion()">Skip</button>
+        </div>
+      `;
+    } else if (q.part === "partB") {
+      card.innerHTML = `
+        <div class="instr-box"><p>Listen to the sentence and repeat it word-for-word.</p></div>
+        <div style="text-align:center;padding:20px 0;">
+          <button class="btn btn-cta" id="playBtn" onclick="playSentence()">▶ Play Audio</button>
+        </div>
+        <textarea class="answer-input" id="answerInput" rows="3" placeholder="Type what you heard…" style="display:none;" disabled></textarea>
+        <div class="btn-row" id="btnRow" style="display:none;">
+          <button class="btn btn-cta" onclick="submitAnswer()">Submit</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);" onclick="nextQuestion()">Skip</button>
+        </div>
+      `;
+    } else if (q.part === "partC") {
+      card.innerHTML = `
+        <div class="instr-box"><p>Answer the following question in a word or few words.</p></div>
+        <div style="background:rgba(0,200,255,0.1);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;font-size:16px;font-weight:700;color:var(--primary);">${q.q}</div>
+        <input class="answer-input" id="answerInput" type="text" placeholder="Your answer…">
+        <div class="btn-row">
+          <button class="btn btn-cta" onclick="submitAnswer()">Submit</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);" onclick="nextQuestion()">Skip</button>
+        </div>
+      `;
+    } else if (q.part === "partD") {
+      const words = q.words || [];
+      card.innerHTML = `
+        <div class="instr-box"><p>Arrange the words to form a correct sentence.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0;padding:16px;background:rgba(0,200,255,0.05);border-radius:10px;" id="wordButtons">
+          ${words.map((w, i) => `<button style="padding:8px 16px;background:var(--primary-dim);border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;font-weight:700;" onclick="addWord(this,'${w}')">${w}</button>`).join("")}
+        </div>
+        <textarea class="answer-input" id="answerInput" rows="3" placeholder="Click words to build your sentence…" disabled></textarea>
+        <div class="btn-row">
+          <button class="btn btn-cta" onclick="submitAnswer()">Submit</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);flex:0;" onclick="clearSentence()">Clear</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);" onclick="nextQuestion()">Skip</button>
+        </div>
+      `;
+    } else if (q.part === "partE") {
+      card.innerHTML = `
+        <div class="instr-box"><p>Read the story and retell it in your own words.</p></div>
+        <div style="background:rgba(0,200,255,0.1);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;font-size:14px;line-height:1.8;color:var(--text);max-height:150px;overflow-y:auto;">${q}</div>
+        <textarea class="answer-input" id="answerInput" rows="5" placeholder="Retell the story in your own words…"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-cta" onclick="submitAnswer()">Submit</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);" onclick="nextQuestion()">Skip</button>
+        </div>
+      `;
+    } else if (q.part === "partF") {
+      card.innerHTML = `
+        <div class="instr-box"><p>Listen to the question and express your personal opinion with details.</p></div>
+        <div style="text-align:center;padding:20px 0;">
+          <button class="btn btn-cta" id="playBtn" onclick="playQuestion()">▶ Play Question</button>
+        </div>
+        <div style="background:rgba(0,200,255,0.1);border:1px solid var(--border);border-radius:12px;padding:16px;margin:20px 0;font-size:15px;font-weight:600;color:var(--primary);">${q}</div>
+        <textarea class="answer-input" id="answerInput" rows="5" placeholder="Share your opinion…" style="display:none;" disabled></textarea>
+        <div class="btn-row" id="btnRow" style="display:none;">
+          <button class="btn btn-cta" onclick="submitAnswer()">Submit</button>
+          <button class="btn btn-cta" style="background:rgba(0,200,255,0.1);border:1px solid var(--border);color:var(--primary);" onclick="nextQuestion()">Skip</button>
+        </div>
+      `;
+    }
+
+    updateStepPills();
+  }
+
+  function playSentence() {
+    if (TEST.audioPlayed) { showToast("⚠️ Audio plays once only!"); return; }
+    TEST.audioPlayed = true;
+    const btn = document.getElementById("playBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "🔊 Playing…"; }
+    
+    const timeoutId = setTimeout(() => showAnswerField(), 3000);
+    speakText(TEST.currentQ, () => {
+      clearTimeout(timeoutId);
+      showAnswerField();
+    });
+  }
+
+  function playQuestion() {
+    if (TEST.audioPlayed) { showToast("⚠️ Audio plays once only!"); return; }
+    TEST.audioPlayed = true;
+    const btn = document.getElementById("playBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "🔊 Playing…"; }
+    
+    const timeoutId = setTimeout(() => showAnswerField(), 3000);
+    speakText(TEST.currentQ, () => {
+      clearTimeout(timeoutId);
+      showAnswerField();
+    });
+  }
+
+  function showAnswerField() {
+    const input = document.getElementById("answerInput");
+    const btnRow = document.getElementById("btnRow");
+    if (input) { input.style.display = "block"; input.disabled = false; input.focus(); }
+    if (btnRow) btnRow.style.display = "flex";
+  }
+
+  function addWord(btn, word) {
+    const textarea = document.getElementById("answerInput");
+    if (textarea) {
+      const current = textarea.value.trim();
+      textarea.value = current ? current + " " + word : word;
+    }
+  }
+
+  function clearSentence() {
+    const textarea = document.getElementById("answerInput");
+    if (textarea) textarea.value = "";
+  }
+
+  function speakText(text, onDone) {
+    if (!("speechSynthesis" in window)) { onDone && onDone(); return; }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.9;
+    u.pitch = 1.0;
+    u.onend = onDone || null;
+    u.onerror = onDone || null;
+    try { speechSynthesis.speak(u); } catch(e) { onDone && onDone(); }
+  }
+
+  function submitAnswer() {
+    const input = document.getElementById("answerInput");
+    const answer = (input?.value || "").trim();
+    if (!answer) { showToast("⚠️ Please provide an answer"); return; }
+    
+    // Simple scoring
+    const q = TEST.currentQ;
+    let score = 0;
+    if (q.part === "partC" && q.a) {
+      score = answer.toLowerCase().includes(q.a.toLowerCase()) ? 1 : 0.5;
+    } else if (q.part === "partD" && q.answer) {
+      score = answer.toLowerCase() === q.answer.toLowerCase() ? 1 : 0.5;
+    } else {
+      score = answer.length > 5 ? 1 : 0.5;
+    }
+    
+    window._state[q.part === "mockTest" ? "mockTest" : q.part] = (window._state[q.part === "mockTest" ? "mockTest" : q.part] || 0) + score;
+    saveState();
+    showToast("✓ Answer recorded");
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    TEST.qIdx++;
+    TEST.qNum++;
+    if (TEST.qIdx < TEST.questions.length) {
+      document.getElementById("testTitle").textContent = SECTIONS.find(s => s.id === TEST.part).label + ` (${TEST.qNum}/${TEST.totalQ})`;
+      renderQuestion();
+    } else {
+      finishTest();
+    }
+  }
+
+  function finishTest() {
+    showToast("✓ Test completed!");
+    window._state.totalTests++;
+    window._state.lastPractice = new Date().toLocaleDateString();
+    saveState();
+    updateStats();
+    setTimeout(() => showScreen("homeScreen"), 1500);
+  }
+
+  function confirmBackToHome() {
+    if (confirm("Exit test? Your progress will be saved.")) {
+      window._state.totalTests++;
+      saveState();
+      updateStats();
+      showScreen("homeScreen");
+    }
+  }
+
+  function updateStepPills() {
+    const container = document.getElementById("sectionSteps");
+    const total = TEST.totalQ;
+    let html = "";
+    for (let i = 1; i <= Math.min(total, 10); i++) {
+      const isDone = i < TEST.qNum;
+      const isActive = i === TEST.qNum;
+      html += `<div class="step-pill ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}">${i}</div>`;
+    }
+    if (total > 10) html += `<div class="step-pill">+${total - 10}</div>`;
+    container.innerHTML = html;
+  }
+
+  // ═══ PROFILE & CALENDAR ═══════════════════════════════════════════════════════
+  function updateStats() {
+    const totalTests = window._state.totalTests || 0;
+    const totalScore = Object.values(window._state).reduce((a, b) => typeof b === 'number' && b > 0 ? a + (b || 0) : a, 0);
+    const avgScore = totalTests > 0 ? Math.round((totalScore / (totalTests * 6)) * 100) : 0;
+    
+    document.getElementById("heroCompleted").textContent = totalTests;
+    document.getElementById("heroStreak").textContent = (window._state.streak || 0) + "d";
+    document.getElementById("streakCount").textContent = window._state.streak || 0;
+  }
+
+  function openProfile() {
+    document.getElementById("profileModal").classList.add("show");
+    document.getElementById("profileName").textContent = window._userName || "Guest";
+    document.getElementById("statTests").textContent = window._state.totalTests || 0;
+    document.getElementById("statScore").textContent = "N/A";
+    document.getElementById("statStreak").textContent = window._state.streak || 0;
+    document.getElementById("profileRecent").textContent = window._state.lastPractice ? "Last practiced: " + window._state.lastPractice : "No practice yet";
+  }
+
+  function closeProfile() {
+    document.getElementById("profileModal").classList.remove("show");
+  }
+
+  function openCalendar() {
+    document.getElementById("calModal").classList.add("show");
+    renderCalendar();
+  }
+
+  function closeCalendar() {
+    document.getElementById("calModal").classList.remove("show");
+  }
+
+  function renderCalendar() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    
+    document.getElementById("calMonthLabel").textContent = monthNames[month] + " " + year;
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    let html = "";
+    for (let i = 0; i < firstDay; i++) html += `<div class="cal-day"></div>`;
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateStr = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(i).padStart(2, "0");
+      const isPracticed = window._state.lastPractice === dateStr;
+      const isToday = i === now.getDate();
+      html += `<div class="cal-day ${isPracticed ? 'practiced' : ''} ${isToday ? 'today' : ''}">${i}</div>`;
+    }
+    document.getElementById("calGrid").innerHTML = html;
+  }
+
+  function calPrevMonth() { /* Implement month navigation */ }
+  function calNextMonth() { /* Implement month navigation */ }
+
+  // ═══ INIT ═════════════════════════════════════════════════════════════════════
+  window.onload = function() {
+    showIntro();
+    renderHome();
+    updateStats();
+  };
+</script>
+
+</body>
+</html>
