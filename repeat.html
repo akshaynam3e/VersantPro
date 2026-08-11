@@ -1,0 +1,418 @@
+<html>
+<head>
+<title>VersantPro - Repeat</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:black;
+    color:white;
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+}
+
+#sentence{
+    border:2px solid white;
+    border-radius:20px;
+    padding:30px;
+    font-size:24px;
+    text-align:center;
+    line-height:1.6;
+
+    transition:
+    transform .5s ease,
+    box-shadow .5s ease;
+}
+
+#sentence:hover{
+    transform:scale(1.05);
+
+    box-shadow:
+    0 0 20px rgba(255,255,255,.2);
+}
+
+.buttons{
+    margin-top:25px;
+
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+button{
+    width:170px;
+    height:55px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:16px;
+    font-weight:bold;
+
+    transition:
+    background .3s ease,
+    color .3s ease,
+    transform .3s ease,
+    filter .3s ease,
+    opacity .3s ease;
+}
+
+button:hover{
+    background:white;
+    color:black;
+    transform:scale(1.05);
+}
+
+.buttons:has(button:hover) button:not(:hover){
+    filter:blur(2px);
+    opacity:.4;
+    transform:scale(.95);
+}
+
+#spoken{
+    margin-top:25px;
+    padding:20px;
+
+    border:1px solid #444;
+    border-radius:15px;
+}
+
+#feedback{
+    margin-top:20px;
+    padding:20px;
+
+    border:1px solid #444;
+    border-radius:15px;
+}
+
+.score{
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.back-btn{
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    width:120px;
+    height:45px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.back-btn:hover{
+    background:white;
+    color:black;
+}
+
+
+</style>
+</head>
+
+<body><button
+class="back-btn"
+onclick="location.href='index.html'">
+Back
+</button>
+
+<div class="container">
+
+<div id="sentence">
+🎧 Click Play Audio and repeat what you hear
+</div>
+
+<div class="buttons">
+
+<button onclick="nextQuestion()">
+Next
+</button>
+
+<button onclick="playAudio()">
+Play Audio
+</button>
+
+<button onclick="startRecognition()">
+Speak
+</button>
+
+</div>
+
+<div id="spoken">
+Your answer will appear here...
+</div>
+
+<div id="feedback">
+Waiting for response...
+</div>
+
+</div>
+
+<script>
+
+const sentences = [
+
+"I left my hat in the restaurant.",
+"Have you had breakfast yet?",
+"It is not too late to change your mind.",
+"I will try to do my best.",
+"Enter through the door on your right.",
+"Do you have time to talk?",
+"Where is the exit located?",
+"I need help with the new printer.",
+"This model is currently out of stock.",
+"The expenses are more than the budget allowed.",
+"I have a good idea.",
+"I think I will buy this hat too.",
+"He can fix anything.",
+"I am never late for work.",
+"We almost missed the train.",
+"Which car is yours?",
+"Please join us for lunch next Tuesday.",
+"How long have you been studying French?",
+"It took several months.",
+"In this area agriculture is the major industry.",
+"Have you ever tried Mexican food?",
+"People should not text while walking.",
+"Good afternoon, do you have a reservation with us?",
+"Let's wash the dishes before we leave.",
+"His car is being repaired.",
+"The new office is across the street from the cafe.",
+"I saw him yesterday but not today.",
+"Bring your resume and list of references to the meeting.",
+"Don't eat while you are working.",
+"I always wanted to learn how to play guitar.",
+"The reason is not at all clear to me.",
+"It is the right thing to do.",
+"Your business card should arrive soon.",
+"The pay is too low for me to work there anymore.",
+"Highly motivated people are always valued by our company.",
+"Can you tell them we are going to be late?",
+"How many people do you expect to attend the meeting?",
+"Do you have a final written approval for the project?",
+"Have you tried applying for a job?",
+"Are there any customer support services available?"
+
+];
+
+let currentSentence = "";
+
+nextQuestion();
+
+function nextQuestion(){
+
+    const random =
+    Math.floor(
+    Math.random() * sentences.length
+    );
+
+    currentSentence =
+    sentences[random];
+
+    document.getElementById("sentence")
+    .innerHTML =
+    "🎧 Click Play Audio";
+
+    document.getElementById("spoken")
+    .innerHTML =
+    "Your answer will appear here...";
+
+    document.getElementById("feedback")
+    .innerHTML =
+    "Waiting for response...";
+}
+
+function playAudio(){
+
+    document.getElementById("sentence")
+    .innerHTML =
+    "🔊 Playing Audio...";
+
+    let speech =
+    new SpeechSynthesisUtterance(
+    currentSentence
+    );
+
+    speech.lang = "en-US";
+    speech.rate = 0.85;
+
+    speech.onend = function(){
+
+        document.getElementById("sentence")
+        .innerHTML =
+        "🎤 Click Speak and repeat the sentence";
+
+    }
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(speech);
+}
+
+function startRecognition(){
+
+    if(!("webkitSpeechRecognition" in window)){
+
+        alert(
+        "Please use Google Chrome."
+        );
+
+        return;
+    }
+
+    const recognition =
+    new webkitSpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    recognition.start();
+
+    document.getElementById("sentence")
+    .innerHTML =
+    "🎤 Listening...";
+
+    recognition.onresult = function(event){
+
+        const spoken =
+        event.results[0][0].transcript;
+
+        document.getElementById("spoken")
+        .innerHTML =
+        "<b>You Said:</b><br><br>" +
+        spoken;
+
+        evaluate(spoken);
+    };
+}
+
+function clean(text){
+
+    return text
+    .toLowerCase()
+    .replace(/[.,!?]/g,'')
+    .trim()
+    .split(/\s+/);
+}
+
+function evaluate(userSpeech){
+
+    const original =
+    clean(currentSentence);
+
+    const user =
+    clean(userSpeech);
+
+    let correct = 0;
+    let missing = [];
+
+    original.forEach(word=>{
+
+        if(user.includes(word)){
+            correct++;
+        }
+        else{
+            missing.push(word);
+        }
+
+    });
+
+    let score =
+    (correct / original.length) * 10;
+
+    score =
+    Math.round(score * 10) / 10;
+
+    let tips = [];
+
+    if(score < 5){
+
+        tips = [
+            "Listen carefully to every word.",
+            "Speak slower and clearly.",
+            "Avoid skipping words."
+        ];
+
+    }
+    else if(score < 8){
+
+        tips = [
+            "Improve fluency.",
+            "Avoid missing small words.",
+            "Maintain sentence rhythm."
+        ];
+
+    }
+    else{
+
+        tips = [
+            "Excellent repetition.",
+            "Work on pronunciation clarity.",
+            "Keep a natural pace."
+        ];
+
+    }
+
+    document.getElementById("feedback")
+    .innerHTML =
+
+    `
+    <div class="score">
+        Score: ${score}/10
+    </div>
+
+    <b>Missing Words:</b><br>
+    ${
+        missing.length
+        ? missing.join(", ")
+        : "None ✅"
+    }
+
+    <br><br>
+
+    <b>Improvement Areas:</b>
+
+    <ul style="margin-top:10px;">
+        ${
+            tips.map(
+            item => `<li>${item}</li>`
+            ).join("")
+        }
+    </ul>
+    `;
+}
+
+</script>
+
+</body>
+</html>

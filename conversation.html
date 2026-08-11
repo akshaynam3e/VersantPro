@@ -1,0 +1,423 @@
+<html>
+<head>
+<title>VersantPro - Conversation</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:black;
+    color:white;
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+}
+
+#sentence{
+    border:2px solid white;
+    border-radius:20px;
+    padding:30px;
+    font-size:24px;
+    text-align:center;
+    line-height:1.6;
+
+    transition:
+    transform .5s ease,
+    box-shadow .5s ease;
+}
+
+#sentence:hover{
+    transform:scale(1.05);
+
+    box-shadow:
+    0 0 20px rgba(255,255,255,.2);
+}
+
+.buttons{
+    margin-top:25px;
+
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+button{
+    width:170px;
+    height:55px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:16px;
+    font-weight:bold;
+
+    transition:
+    background .3s ease,
+    color .3s ease,
+    transform .3s ease,
+    filter .3s ease,
+    opacity .3s ease;
+}
+
+.buttons button:hover{
+    background:white;
+    color:black;
+    transform:scale(1.05);
+}
+
+.buttons:has(button:hover) button:not(:hover){
+    filter:blur(2px);
+    opacity:.4;
+    transform:scale(.95);
+}
+
+#spoken{
+    margin-top:25px;
+    padding:20px;
+    border:1px solid #444;
+    border-radius:15px;
+}
+
+#feedback{
+    margin-top:20px;
+    padding:20px;
+    border:1px solid #444;
+    border-radius:15px;
+}
+
+.score{
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.back-btn{
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    width:120px;
+    height:45px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    z-index:9999;
+}
+
+.back-btn:hover{
+    background:white;
+    color:black;
+}
+
+
+
+</style>
+</head>
+
+<body>
+<button
+class="back-btn"
+onclick="location.href='index.html'">
+Back
+</button>
+
+<div class="container">
+
+<div id="sentence">
+🎧 Click Play Audio and listen carefully
+</div>
+
+<div class="buttons">
+
+<button onclick="nextQuestion()">
+Next
+</button>
+
+<button onclick="playAudio()">
+Play Audio
+</button>
+
+<button onclick="startRecognition()">
+Answer
+</button>
+
+</div>
+
+<div id="spoken">
+Your answer will appear here...
+</div>
+
+<div id="feedback">
+Waiting for response...
+</div>
+
+</div>
+
+<script>
+
+const conversations = [
+
+{
+conversation:
+"Male. I bought a new phone yesterday. Female. Did it work properly. Male. No it would not turn on. Female. What did you do. Male. I returned to the store. Female. Did they fix it. Male. Yes the salesperson showed me how to insert the battery.",
+question:
+"What problem did the man have with his phone?",
+keywords:[
+"would not turn on",
+"battery",
+"phone"
+]
+},
+
+{
+conversation:
+"Female. We are planning to take time off this summer. Male. Did you inform your manager. Female. Not yet. Male. You should ask early because many employees will be away.",
+question:
+"What advice did the man give?",
+keywords:[
+"manager",
+"ask early",
+"time off"
+]
+},
+
+{
+conversation:
+"Male. I went to a restaurant yesterday. Female. Did everything go well. Male. No I could not find my wallet. Female. What happened then. Male. The waiter found it under my table.",
+question:
+"Where was the wallet found?",
+keywords:[
+"under table",
+"table",
+"waiter"
+]
+},
+
+{
+conversation:
+"Female. Why were James and Ann late. Male. James forgot his passport. Female. Where was it. Male. In his jacket pocket at home. Female. Did they make the flight. Male. Yes just in time.",
+question:
+"What did James forget?",
+keywords:[
+"passport"
+]
+},
+
+{
+conversation:
+"Male. Mary received an award. Female. Why. Male. For her creative teaching style. Female. What was the prize. Male. A trip to Paris.",
+question:
+"What prize did Mary receive?",
+keywords:[
+"paris",
+"trip",
+"trip to paris"
+]
+},
+
+{
+conversation:
+"Female. Sam was on a delayed flight. Male. What happened. Female. Another passenger's bag fell and hit him. Male. How did he feel. Female. He decided he did not want to fly again soon.",
+question:
+"What happened to Sam on the plane?",
+keywords:[
+"bag",
+"hit him",
+"head"
+]
+}
+
+];
+
+let currentConversation;
+
+nextQuestion();
+
+function nextQuestion(){
+
+    const random =
+    Math.floor(
+    Math.random()*conversations.length
+    );
+
+    currentConversation =
+    conversations[random];
+
+    document.getElementById("sentence")
+    .innerHTML =
+    "🎧 Click Play Audio";
+
+    document.getElementById("spoken")
+    .innerHTML =
+    "Your answer will appear here...";
+
+    document.getElementById("feedback")
+    .innerHTML =
+    "Waiting for response...";
+}
+
+function playAudio(){
+
+    document.getElementById("sentence")
+    .innerHTML =
+    "🔊 Playing Conversation...";
+
+    const fullText =
+    currentConversation.conversation
+    +
+    " Question. "
+    +
+    currentConversation.question;
+
+    let speech =
+    new SpeechSynthesisUtterance(
+    fullText
+    );
+
+    speech.lang = "en-US";
+    speech.rate = 0.85;
+
+    speech.onend = function(){
+
+        document.getElementById("sentence")
+        .innerHTML =
+        "🎤 Click Answer and speak";
+
+    }
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(speech);
+}
+
+function startRecognition(){
+
+    if(!("webkitSpeechRecognition" in window)){
+
+        alert("Please use Google Chrome.");
+
+        return;
+    }
+
+    const recognition =
+    new webkitSpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    recognition.start();
+
+    document.getElementById("sentence")
+    .innerHTML =
+    "🎤 Listening...";
+
+    recognition.onresult = function(event){
+
+        const spoken =
+        event.results[0][0].transcript;
+
+        document.getElementById("spoken")
+        .innerHTML =
+        "<b>You Said:</b><br><br>"
+        +
+        spoken;
+
+        evaluate(spoken);
+    };
+
+}
+
+function evaluate(userSpeech){
+
+    const answer =
+    userSpeech.toLowerCase();
+
+    let matches = 0;
+
+    currentConversation.keywords
+    .forEach(word=>{
+
+        if(answer.includes(word.toLowerCase())){
+            matches++;
+        }
+
+    });
+
+    let score =
+    (matches /
+    currentConversation.keywords.length)
+    * 10;
+
+    score =
+    Math.round(score);
+
+    let feedback;
+
+    if(score >= 8){
+
+        feedback =
+        "Excellent understanding of the conversation.";
+
+    }
+    else if(score >= 5){
+
+        feedback =
+        "Good answer but you missed some important details.";
+
+    }
+    else{
+
+        feedback =
+        "Listen more carefully and include more information from the conversation.";
+
+    }
+
+    document.getElementById("feedback")
+    .innerHTML =
+
+    `
+    <div class="score">
+    Score: ${score}/10
+    </div>
+
+    <b>Question:</b><br><br>
+    ${currentConversation.question}
+
+    <br><br>
+
+    <b>Feedback:</b><br><br>
+    ${feedback}
+    `;
+}
+
+</script>
+
+</body>
+</html>

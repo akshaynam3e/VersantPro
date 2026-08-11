@@ -1,0 +1,557 @@
+<html>
+<head>
+<title>VersantPro - Passage</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:black;
+    color:white;
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding:100px 0 50px;
+}
+
+.container{
+    width:90%;
+    max-width:1000px;
+}
+
+.section-title{
+    position:fixed;
+    top:20px;
+    left:20px;
+
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:8px;
+}
+
+.section-title:hover{
+    color:cyan;
+}
+
+.back-btn{
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    width:120px;
+    height:45px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+}
+
+.back-btn:hover{
+    background:white;
+    color:black;
+}
+
+#passage{
+    border:2px solid white;
+    border-radius:20px;
+
+    padding:30px;
+
+    min-height:220px;
+
+    font-size:22px;
+    line-height:1.7;
+
+    user-select:none;
+    -webkit-user-select:none;
+}
+
+#passage:hover{
+    transform:scale(1.02);
+}
+
+.timer{
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+textarea{
+    width:100%;
+    min-height:220px;
+
+    margin-top:20px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:15px;
+
+    padding:20px;
+
+    font-size:18px;
+
+    resize:vertical;
+
+    display:none;
+}
+
+.buttons{
+    margin-top:20px;
+
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+button{
+    width:170px;
+    height:55px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.buttons button:hover{
+    background:white;
+    color:black;
+    transform:scale(1.05);
+}
+
+.buttons:has(button:hover) button:not(:hover){
+    filter:blur(2px);
+    opacity:.4;
+}
+
+#feedback{
+    margin-top:20px;
+
+    border:1px solid #444;
+    border-radius:15px;
+
+    padding:20px;
+}
+
+.score{
+    font-size:32px;
+    font-weight:bold;
+}
+
+ul{
+    margin-left:20px;
+    margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="section-title">
+PASSAGE
+</div>
+
+<button
+class="back-btn"
+onclick="location.href='index.html'">
+Back
+</button>
+
+<div class="container">
+
+<div id="passage">
+Press Start
+</div>
+
+<div class="timer" id="timer">
+Reading Time: 30s
+</div>
+
+<textarea
+id="answer"
+placeholder="Rewrite the passage in your own words...">
+</textarea>
+
+<div class="buttons">
+
+<button onclick="startPassage()">
+Start
+</button>
+
+<button
+id="submitBtn"
+onclick="submitAnswer()"
+style="display:none;">
+Submit
+</button>
+
+</div>
+
+<div id="feedback">
+Waiting for response...
+</div>
+
+</div>
+
+<script>
+
+const passages = [
+
+{
+text:"Robert went to a restaurant for dinner. When the waiter brought the bill, Robert reached for his wallet but it was missing. The waiter searched around the table and found the wallet underneath it.",
+points:[
+"restaurant",
+"dinner",
+"bill",
+"wallet",
+"missing",
+"waiter",
+"found",
+"under table"
+]
+},
+
+{
+text:"Mary won the best teacher award at her university. She was famous for her creative teaching style. The award included a trip to Paris. Mary and her husband were excited because they had never visited Paris before.",
+points:[
+"teacher award",
+"university",
+"creative teaching style",
+"trip to paris",
+"husband",
+"excited"
+]
+},
+
+{
+text:"James and Ann were driving to the airport. James realized he had forgotten his passport at home. They returned to get it and arrived just in time for their flight.",
+points:[
+"airport",
+"ann",
+"passport",
+"home",
+"returned",
+"flight"
+]
+},
+
+{
+text:"Sam was travelling on a delayed flight. Another passenger accidentally dropped a bag from the overhead compartment. The bag hit Sam on the head and he later decided he did not want to fly again soon.",
+points:[
+"delayed flight",
+"bag",
+"overhead compartment",
+"head",
+"sam",
+"fly again"
+]
+},
+
+{
+text:"Employees who want summer leave should talk to their managers first. The company wants enough staff available before approving leave requests.",
+points:[
+"employees",
+"summer",
+"manager",
+"time off",
+"staff",
+"leave requests"
+]
+}
+
+];
+
+let currentPassage = null;
+let readingCountdown;
+let writingCountdown;
+
+function startPassage(){
+
+    currentPassage =
+    passages[
+        Math.floor(
+            Math.random() *
+            passages.length
+        )
+    ];
+
+    document.getElementById("passage")
+    .innerHTML =
+    currentPassage.text;
+
+    document.getElementById("answer")
+    .style.display =
+    "none";
+
+    document.getElementById("submitBtn")
+    .style.display =
+    "none";
+
+    document.getElementById("answer")
+    .value = "";
+
+    document.getElementById("feedback")
+    .innerHTML =
+    "Read carefully. Writing will begin after 30 seconds.";
+
+    let readingTime = 30;
+
+    clearInterval(readingCountdown);
+    clearInterval(writingCountdown);
+
+    document.getElementById("timer")
+    .innerHTML =
+    "Reading Time: 30s";
+
+    readingCountdown =
+    setInterval(function(){
+
+        readingTime--;
+
+        document.getElementById("timer")
+        .innerHTML =
+        "Reading Time: "
+        + readingTime
+        + "s";
+
+        if(readingTime <= 0){
+
+            clearInterval(readingCountdown);
+
+            document.getElementById("passage")
+            .innerHTML =
+            "⛔ Passage Hidden. Start Writing.";
+
+            startWritingPhase();
+        }
+
+    },1000);
+}
+function startWritingPhase(){
+
+    document.getElementById("answer")
+    .style.display =
+    "block";
+
+    document.getElementById("submitBtn")
+    .style.display =
+    "inline-block";
+
+    let writingTime = 90;
+
+    document.getElementById("timer")
+    .innerHTML =
+    "Writing Time: 90s";
+
+    writingCountdown =
+    setInterval(function(){
+
+        writingTime--;
+
+        document.getElementById("timer")
+        .innerHTML =
+        "Writing Time: "
+        + writingTime
+        + "s";
+
+        if(writingTime <= 0){
+
+            clearInterval(
+                writingCountdown
+            );
+
+            submitAnswer();
+
+        }
+
+    },1000);
+}
+
+function submitAnswer(){
+
+    clearInterval(
+        writingCountdown
+    );
+
+    if(!currentPassage){
+
+        alert(
+        "Please start a passage first."
+        );
+
+        return;
+    }
+
+    const answer =
+    document.getElementById("answer")
+    .value
+    .toLowerCase();
+
+    let matched = 0;
+
+    let missing = [];
+
+    currentPassage.points
+    .forEach(point=>{
+
+        let found = false;
+
+        point.split(" ")
+        .forEach(word=>{
+
+            if(
+                answer.includes(
+                word.toLowerCase()
+                )
+            ){
+                found = true;
+            }
+
+        });
+
+        if(found){
+
+            matched++;
+
+        }else{
+
+            missing.push(point);
+
+        }
+
+    });
+
+    let score =
+    Math.round(
+        (
+        matched /
+        currentPassage.points.length
+        ) * 10
+    );
+
+    let feedback = "";
+
+    if(score >= 8){
+
+        feedback =
+        "Excellent reconstruction. Most important details were included.";
+
+    }
+    else if(score >= 5){
+
+        feedback =
+        "Good attempt. Some information was missing.";
+
+    }
+    else{
+
+        feedback =
+        "Several key details were missing. Focus on remembering important facts.";
+
+    }
+
+    document.getElementById("feedback")
+    .innerHTML =
+
+    `
+    <div class="score">
+    Score: ${score}/10
+    </div>
+
+    <br>
+
+    <b>Content Coverage:</b>
+    ${matched}/${currentPassage.points.length}
+
+    <br><br>
+
+    <b>Missing Information:</b>
+
+    <ul>
+    ${
+    missing.length
+    ?
+    missing.map(
+    item =>
+    `<li>${item}</li>`
+    ).join("")
+    :
+    "<li>None ✅</li>"
+    }
+    </ul>
+
+    <br>
+
+    <b>Feedback:</b><br>
+    ${feedback}
+    `;
+}
+
+/* Copy Paste Blocking */
+
+document.addEventListener(
+"contextmenu",
+e => e.preventDefault()
+);
+
+document.addEventListener(
+"copy",
+e => e.preventDefault()
+);
+
+document.addEventListener(
+"cut",
+e => e.preventDefault()
+);
+
+document.addEventListener(
+"paste",
+e => e.preventDefault()
+);
+
+document.addEventListener(
+"keydown",
+function(e){
+
+if(
+    (e.ctrlKey || e.metaKey)
+    &&
+    (
+        e.key.toLowerCase()==="c" ||
+        e.key.toLowerCase()==="v" ||
+        e.key.toLowerCase()==="x" ||
+        e.key.toLowerCase()==="a"
+    )
+){
+    e.preventDefault();
+}
+
+});
+
+</script>
+
+</body>
+</html>

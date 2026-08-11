@@ -1,0 +1,491 @@
+<html>
+<head>
+<title>VersantPro - Dictation</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:black;
+    color:white;
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+}
+
+.section-title{
+    position:fixed;
+    top:20px;
+    left:20px;
+
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:8px;
+
+    transition:.4s;
+}
+
+.section-title:hover{
+    color:cyan;
+    text-shadow:
+    0 0 10px cyan,
+    0 0 20px cyan;
+}
+
+.back-btn{
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    width:120px;
+    height:45px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+}
+
+.back-btn:hover{
+    background:white;
+    color:black;
+}
+
+#status{
+    border:2px solid white;
+    border-radius:20px;
+    padding:30px;
+
+    font-size:24px;
+    text-align:center;
+
+    transition:
+    transform .5s ease,
+    box-shadow .5s ease;
+}
+
+#status:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px rgba(255,255,255,.2);
+}
+
+.buttons{
+    margin-top:25px;
+
+    display:flex;
+    justify-content:center;
+    gap:20px;
+
+    flex-wrap:wrap;
+}
+
+button{
+    width:170px;
+    height:55px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:
+    background .3s ease,
+    color .3s ease,
+    transform .3s ease,
+    filter .3s ease,
+    opacity .3s ease;
+}
+
+.buttons button:hover{
+    background:white;
+    color:black;
+    transform:scale(1.05);
+}
+
+.buttons:has(button:hover) button:not(:hover){
+    filter:blur(2px);
+    opacity:.4;
+    transform:scale(.95);
+}
+
+textarea{
+    width:100%;
+    margin-top:25px;
+    min-height:150px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:15px;
+
+    padding:15px;
+
+    resize:none;
+
+    font-size:18px;
+}
+
+#feedback{
+    margin-top:20px;
+
+    border:1px solid #444;
+    border-radius:15px;
+
+    padding:20px;
+}
+
+.score{
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<button
+class="back-btn"
+onclick="location.href='index.html'">
+Back
+</button>
+
+<div class="container">
+
+<div id="status">
+🎧 Click Play Audio and type exactly what you hear
+</div>
+
+<div class="buttons">
+
+<button onclick="nextQuestion()">
+Next
+</button>
+
+<button onclick="playAudio()">
+Play Audio
+</button>
+
+<button onclick="submitAnswer()">
+Submit
+</button>
+
+</div>
+
+<textarea
+id="answer"
+placeholder="Type exactly what you hear including punctuation and capitalization...">
+</textarea>
+
+<div id="feedback">
+Waiting for response...
+</div>
+
+</div>
+
+<script>
+
+const dictations = [
+
+"I have to agree with you.",
+"The company first opened when I was much younger.",
+"I don't have any information.",
+"It's a good idea to create a different version of your resume.",
+"You can use the computer in a minute.",
+"I would love to go.",
+"Do you live here?",
+"Please note that the phone and the fax number will remain the same.",
+"The hotels are so nice here.",
+"I'll see you on Thursday.",
+"Having a pet can reduce stress.",
+"I'll be finished by Friday.",
+"Report any computer issues to technical support.",
+"We need to make sure that our department is ready for inspection.",
+"The proposal is finished.",
+"It's raining at the moment.",
+"Please reply to this email if you're attending the seminar.",
+"The train comes here every twenty minutes.",
+"I like to visit my parents on the weekends.",
+"It's a good day for being outdoors.",
+"The document needs to be edited.",
+"I'll be back in the middle of September.",
+"When is the game?",
+"They presented a plan to reduce the large debt.",
+"The company has grown too large over the years.",
+"Many companies operate in more than one country.",
+"I eat there every night.",
+"She had taken her father's advice literally.",
+"This situation affected him greatly.",
+"My siblings always study diligently."
+
+];
+
+let currentSentence = "";
+
+nextQuestion();
+
+function nextQuestion(){
+
+    currentSentence =
+    dictations[
+    Math.floor(Math.random()*dictations.length)
+    ];
+
+    document.getElementById("answer").value="";
+
+    document.getElementById("feedback")
+    .innerHTML =
+    "Waiting for response...";
+
+    document.getElementById("status")
+    .innerHTML =
+    "🎧 Click Play Audio";
+}
+
+speechSynthesis.getVoices();
+
+window.speechSynthesis.onvoiceschanged = () => {
+    speechSynthesis.getVoices();
+};
+
+function playAudio(){
+
+    speechSynthesis.cancel();
+
+    document.getElementById("status").innerHTML =
+    "🔊 Playing Audio...";
+
+    const speech =
+    new SpeechSynthesisUtterance();
+
+    speech.text = currentSentence;
+
+    speech.lang = "en-US";
+    speech.rate = 0.60;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    const voices =
+    speechSynthesis.getVoices();
+
+    const preferredVoice =
+    voices.find(v =>
+        v.lang.startsWith("en-US")
+    ) ||
+    voices.find(v =>
+        v.lang.startsWith("en")
+    );
+
+    if(preferredVoice){
+        speech.voice = preferredVoice;
+    }
+
+    speech.onend = function(){
+
+        document.getElementById("status")
+        .innerHTML =
+        "⌨️ Type exactly what you heard";
+
+    };
+
+    setTimeout(() => {
+        speechSynthesis.speak(speech);
+    }, 500);
+
+}
+function normalize(text){
+
+    return text
+    .toLowerCase()
+    .replace(/[.,!?']/g,'')
+    .trim();
+}
+
+function submitAnswer(){
+
+    const user =
+    document.getElementById("answer")
+    .value.trim();
+
+    let wordScore = 0;
+    let capsScore = 0;
+    let punctuationScore = 0;
+
+    if(
+    normalize(user) ===
+    normalize(currentSentence)
+    ){
+        wordScore = 4;
+    }
+    else{
+
+        const originalWords =
+        normalize(currentSentence)
+        .split(" ");
+
+        const userWords =
+        normalize(user)
+        .split(" ");
+
+        let correct=0;
+
+        originalWords.forEach(word=>{
+
+            if(userWords.includes(word)){
+                correct++;
+            }
+
+        });
+
+        wordScore =
+        (correct/originalWords.length)*4;
+    }
+
+    if(
+    user.charAt(0)
+    ===
+    currentSentence.charAt(0)
+    ){
+        capsScore=2;
+    }
+
+    const expectedPunctuation =
+    currentSentence.match(/[.!?]+$/);
+
+    const userPunctuation =
+    user.match(/[.!?]+$/);
+
+    if(
+    expectedPunctuation &&
+    userPunctuation &&
+    expectedPunctuation[0]
+    ===
+    userPunctuation[0]
+    ){
+        punctuationScore = 2;
+    }
+
+    if(
+    user === currentSentence
+    ){
+        capsScore = 2;
+        punctuationScore = 2;
+    }
+
+    let grammarScore = 2;
+
+    let total =
+    wordScore +
+    capsScore +
+    punctuationScore +
+    grammarScore;
+
+    total =
+    Math.round(total*10)/10;
+
+    let tips=[];
+
+    if(capsScore < 2){
+
+        tips.push(
+        "Use correct capitalization."
+        );
+
+    }
+
+    if(punctuationScore < 2){
+
+        tips.push(
+        "Use correct punctuation."
+        );
+
+    }
+
+    if(wordScore < 4){
+
+        tips.push(
+        "Listen carefully and avoid missing words."
+        );
+
+    }
+
+    if(tips.length===0){
+
+        tips.push(
+        "Excellent dictation accuracy."
+        );
+
+    }
+
+    document.getElementById("feedback")
+    .innerHTML =
+
+    `
+    <div class="score">
+    Score: ${total}/10
+    </div>
+
+    <b>Your Answer:</b><br>
+    ${user || "No answer"}
+
+    <br><br>
+
+    <b>Expected Answer:</b><br>
+    ${currentSentence}
+
+    <br><br>
+
+    <b>Word Accuracy:</b> ${wordScore.toFixed(1)}/4
+    <br>
+
+    <b>Capitalization:</b> ${capsScore}/2
+    <br>
+
+    <b>Punctuation:</b> ${punctuationScore}/2
+    <br>
+
+    <b>Grammar Format:</b> ${grammarScore}/2
+
+    <br><br>
+
+    <b>Improvement Areas:</b>
+
+    <ul style="margin-top:10px;">
+    ${
+    tips.map(
+    tip=>`<li>${tip}</li>`
+    ).join("")
+    }
+    </ul>
+    `;
+}
+
+</script>
+
+</body>
+</html>

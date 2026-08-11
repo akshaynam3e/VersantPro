@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VersantPro - Profile</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+
+
+body{
+    background:black;
+    color:white;
+    min-height:100vh;
+    padding:40px;
+}
+
+.back-btn{
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    width:120px;
+    height:45px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+}
+
+.back-btn:hover{
+    background:white;
+    color:black;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.title h1{
+    font-size:50px;
+    letter-spacing:5px;
+}
+
+.profile-card{
+
+    border:2px solid white;
+    border-radius:20px;
+
+    padding:30px;
+
+    margin-bottom:25px;
+}
+
+.info-row{
+
+    display:flex;
+    justify-content:space-between;
+
+    margin:15px 0;
+
+    border-bottom:1px solid #333;
+
+    padding-bottom:10px;
+}
+
+.label{
+    color:#999;
+}
+
+.value{
+    font-weight:bold;
+}
+
+.section{
+
+    border:2px solid white;
+    border-radius:20px;
+
+    padding:25px;
+    margin-top:20px;
+}
+
+.progress-bar{
+
+    width:100%;
+    height:25px;
+
+    background:#222;
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+    margin-top:15px;
+}
+
+.progress{
+
+    height:100%;
+    width:0%;
+
+    background:cyan;
+
+    transition:1s;
+}
+
+.score-grid{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:15px;
+}
+
+.score-box{
+
+    border:1px solid #444;
+
+    border-radius:15px;
+
+    padding:20px;
+
+    text-align:center;
+}
+
+.logout{
+
+    width:200px;
+    height:50px;
+
+    margin-top:25px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:12px;
+
+    cursor:pointer;
+}
+
+.logout:hover{
+
+    background:white;
+    color:black;
+}
+.announcement{
+
+    border:2px solid cyan;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-top:20px;
+
+    background:
+    rgba(0,255,255,.05);
+
+    box-shadow:
+    0 0 15px rgba(0,255,255,.15);
+
+    transition:.3s;
+}
+
+.announcement:hover{
+
+    transform:scale(1.01);
+
+    box-shadow:
+    0 0 25px rgba(0,255,255,.25);
+}
+
+.announcement h2{
+
+    margin-bottom:15px;
+
+    color:cyan;
+
+    letter-spacing:1px;
+}
+
+.announcement p{
+
+    line-height:1.9;
+
+    color:#ddd;
+}
+
+.announcement strong{
+
+    color:white;
+}
+
+.announcement::-webkit-scrollbar{
+
+    width:8px;
+}
+
+.announcement::-webkit-scrollbar-thumb{
+
+    background:cyan;
+
+    border-radius:10px;
+}
+`
+</style>
+</head>
+
+<body>
+
+<button
+class="back-btn"
+onclick="location.href='index.html'">
+Back
+</button>
+
+<div class="container">
+
+<div class="title">
+<h1>PROFILE</h1>
+</div>
+
+<div class="profile-card">
+
+<div class="info-row">
+<span class="label">Name</span>
+<span class="value" id="name">
+Loading...
+</span>
+</div>
+
+<div class="info-row">
+<span class="label">Email</span>
+<span class="value" id="email">
+Loading...
+</span>
+</div>
+
+<div class="info-row">
+<span class="label">User UID</span>
+<span class="value" id="uid">
+Loading...
+</span>
+</div>
+
+<div class="info-row">
+<span class="label">Account Created</span>
+<span class="value" id="created">
+Loading...
+</span>
+</div>
+
+<div class="info-row">
+<span class="label">Last Login</span>
+<span class="value" id="lastlogin">
+Loading...
+</span>
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Overall Progress</h2>
+
+<div class="progress-bar">
+
+<div
+class="progress"
+id="progress">
+</div>
+
+</div>
+
+<p style="margin-top:15px;"
+id="progressText">
+
+0% Complete
+
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>Practice Performance</h2>
+
+<div class="score-grid">
+
+<div class="score-box">
+<h3>Read</h3>
+<p id="readingScore">0/10</p>
+</div>
+
+<div class="score-box">
+<h3>Repeat</h3>
+<p id="repeatScore">0/10</p>
+</div>
+
+<div class="score-box">
+<h3>Conversation</h3>
+<p id="conversationScore">0/10</p>
+</div>
+
+<div class="score-box">
+<h3>Dictation</h3>
+<p id="dictationScore">0/10</p>
+</div>
+
+<div class="score-box">
+<h3>Blanks</h3>
+<p id="blankScore">0/10</p>
+</div>
+
+<div class="score-box">
+<h3>Passage</h3>
+<p id="passageScore">0/10</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Area To Improve</h2>
+
+<p id="improve">
+
+Start practicing to generate insights.
+
+</p>
+
+</div>
+<div class="section announcement">
+
+<h2>❤️ A Small Message From the Developer</h2>
+
+<p style="line-height:1.9;color:#ddd;">
+
+Thank you for being part of the VersantPro community.
+
+What started as a small personal project has now grown into a platform used by hundreds of learners. Seeing students improve their English communication skills and prepare for placements motivates me to continue building and improving VersantPro every day.
+
+VersantPro is currently built, maintained, and updated entirely by a single student developer.
+
+As some of you may know, I am currently under 18 years of age. Because of this, I am not yet able to officially integrate supporter subscriptions and donation systems in my own name.
+
+After September 2026, once I turn 18, I plan to introduce an optional Supporter Program for users who would like to help contribute toward hosting costs, Firebase services, maintenance, infrastructure, question bank updates, and future development.
+
+All current practice sections will continue to remain completely free. The Supporter Program will simply be a voluntary way for community members to support the platform if they find it useful.
+
+Supporters will receive special profile badges, supporter levels, contribution history, community recognition, and early access to future features.
+
+There is absolutely no obligation to contribute. Your feedback, suggestions, and continued use of VersantPro are already a huge source of support and motivation.
+
+Thank you for helping this project grow and for being part of the journey. 🚀❤️
+
+<br><br>
+
+<strong>Planned Supporter Levels</strong>
+
+<br><br>
+
+☕ Supporter — ₹49+
+
+<br>
+
+❤️ Contributor — ₹99+
+
+<br>
+
+🚀 Champion — ₹299+
+
+<br>
+
+🏆 Patron — ₹999+
+
+<br>
+
+💎 Founding Supporter — ₹2499+
+
+<br>
+
+👑 Legend — ₹5000+
+
+<br><br>
+
+Every supporter will be remembered and appreciated.
+
+</p>
+
+</div>
+<button
+class="logout"
+onclick="logoutUser()">
+
+Logout
+
+</button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyASKI0u0KBCPz0vg5ro0XhJlSSuWxrW8OU",
+authDomain: "versantpro-7a2af.firebaseapp.com",
+projectId: "versantpro-7a2af",
+storageBucket: "versantpro-7a2af.firebasestorage.app",
+messagingSenderId: "1032992540620",
+appId: "1:1032992540620:web:49d9ff4238223a08edff69",
+measurementId: "G-TN5TJE64YZ"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+
+location.href =
+"login.html";
+
+return;
+
+}
+
+document.getElementById("name")
+.innerHTML =
+user.displayName ||
+user.email.split("@")[0];
+
+document.getElementById("email")
+.innerHTML =
+user.email;
+
+document.getElementById("uid")
+.innerHTML =
+user.uid;
+
+document.getElementById("created")
+.innerHTML =
+new Date(
+user.metadata.creationTime
+).toLocaleString();
+
+document.getElementById("lastlogin")
+.innerHTML =
+new Date(
+user.metadata.lastSignInTime
+).toLocaleString();
+
+/* demo values */
+
+const scores = {
+
+reading:8,
+repeat:7,
+conversation:9,
+dictation:6,
+blank:8,
+passage:7
+
+};
+
+document.getElementById(
+"readingScore"
+).innerHTML =
+scores.reading + "/10";
+
+document.getElementById(
+"repeatScore"
+).innerHTML =
+scores.repeat + "/10";
+
+document.getElementById(
+"conversationScore"
+).innerHTML =
+scores.conversation + "/10";
+
+document.getElementById(
+"dictationScore"
+).innerHTML =
+scores.dictation + "/10";
+
+document.getElementById(
+"blankScore"
+).innerHTML =
+scores.blank + "/10";
+
+document.getElementById(
+"passageScore"
+).innerHTML =
+scores.passage + "/10";
+
+
+const total =
+scores.reading +
+scores.repeat +
+scores.conversation +
+scores.dictation +
+scores.blank +
+scores.passage;
+
+const percentage =
+Math.round(
+(total/60)*100
+);
+
+document.getElementById(
+"progress"
+).style.width =
+percentage + "%";
+
+document.getElementById(
+"progressText"
+).innerHTML =
+percentage +
+"% Complete";
+
+let lowest =
+Object.entries(scores)
+.sort((a,b)=>a[1]-b[1])[0];
+
+document.getElementById(
+"improve"
+).innerHTML =
+"Focus on improving " +
+lowest[0] +
+". This is currently your weakest area.";
+
+});
+
+window.logoutUser =
+function(){
+
+signOut(auth)
+.then(()=>{
+
+location.href =
+"login.html";
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

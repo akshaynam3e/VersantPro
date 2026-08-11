@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VersantPro - Login</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:black;
+    color:white;
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+
+    width:380px;
+
+    padding:30px;
+
+    border:2px solid white;
+    border-radius:20px;
+
+    background:#111;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo h1{
+    font-size:60px;
+    letter-spacing:5px;
+}
+
+.logo h2{
+    font-weight:500;
+}
+
+input{
+
+    width:100%;
+    height:50px;
+
+    margin:10px 0;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:10px;
+
+    padding:10px;
+
+    font-size:15px;
+}
+
+button{
+
+    width:100%;
+    height:50px;
+
+    margin-top:10px;
+
+    background:black;
+    color:white;
+
+    border:2px solid white;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+    font-weight:bold;
+
+    transition:.3s;
+}
+
+button:hover{
+
+    background:white;
+    color:black;
+
+    transform:scale(1.02);
+}
+
+.or{
+    text-align:center;
+    margin:15px 0;
+    color:#aaa;
+}
+
+#message{
+    margin-top:15px;
+    text-align:center;
+    color:cyan;
+    min-height:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">
+<h1>V</h1>
+<h2>Versant PRO</h2>
+</div>
+
+<input
+type="email"
+id="email"
+placeholder="Enter Email">
+
+<input
+type="password"
+id="password"
+placeholder="Enter Password">
+
+<button onclick="loginUser()">
+Login
+</button>
+
+<div class="or">
+OR
+</div>
+
+<button onclick="registerUser()">
+Register
+</button>
+
+<div id="message"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyASKI0u0KBCPz0vg5ro0XhJlSSuWxrW8OU",
+authDomain: "versantpro-7a2af.firebaseapp.com",
+projectId: "versantpro-7a2af",
+storageBucket: "versantpro-7a2af.firebasestorage.app",
+messagingSenderId: "1032992540620",
+appId: "1:1032992540620:web:49d9ff4238223a08edff69",
+measurementId: "G-TN5TJE64YZ"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth,(user)=>{
+
+    if(user){
+
+        location.href =
+        "index.html";
+
+    }
+
+});
+
+window.registerUser = function(){
+
+    const email =
+    document.getElementById("email").value;
+
+    const password =
+    document.getElementById("password").value;
+
+    createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+    )
+    .then(()=>{
+
+        document.getElementById(
+        "message"
+        ).innerHTML =
+        "Registration Successful ✅";
+
+        location.href =
+        "index.html";
+
+    })
+    .catch(error=>{
+
+        document.getElementById(
+        "message"
+        ).innerHTML =
+        error.message;
+
+    });
+
+}
+
+window.loginUser = function(){
+
+    const email =
+    document.getElementById("email").value;
+
+    const password =
+    document.getElementById("password").value;
+
+    signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+    )
+    .then(()=>{
+
+        location.href =
+        "index.html";
+
+    })
+    .catch(error=>{
+
+        document.getElementById(
+        "message"
+        ).innerHTML =
+        error.message;
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
