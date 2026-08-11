@@ -914,11 +914,7 @@
   let allUsers=[], scoreChart=null;
 
   window.loadAllData = async()=>{
-    if(!auth.currentUser || auth.currentUser.email!==ADMIN_EMAIL){
-      console.warn("Admin not authenticated. Skipping Firestore fetch.");
-      return;
-    }
-    await Promise.allSettled([loadUsers(), loadRatings(), loadAnalytics()]);
+    await Promise.all([loadUsers(), loadRatings(), loadAnalytics()]);
   };
 
   /* USERS */
@@ -926,13 +922,7 @@
     document.getElementById("usersLoader").style.display="flex";
     document.getElementById("usersTableWrap").style.display="none";
     try {
-      if(!auth.currentUser){
-        throw new Error("AUTH_REQUIRED: Admin is not signed in.");
-      }
-
-      console.log("Fetching Firestore collection: users");
       const snap=await getDocs(collection(db,"users"));
-      console.log(`Firestore users fetched: ${snap.size}`);
       allUsers=[];
       const tbody=document.querySelector("#usersTable tbody");
       tbody.innerHTML="";
@@ -976,10 +966,8 @@
         idx++;
       });
 
-      /* Event delegation — attach only once */
-      if(!tbody.dataset.bound){
-        tbody.dataset.bound="1";
-        tbody.addEventListener("click", async e=>{
+      /* Event delegation */
+      tbody.addEventListener("click", async e=>{
         const btn=e.target.closest("button[data-uid]");
         if(!btn) return;
         const uid=btn.dataset.uid;
@@ -994,8 +982,7 @@
           const comp=Object.keys(user.state?.completedLevels||{}).length;
           alert(`Name:       ${user.name||"—"}\nEmail:      ${user.email||"—"}\nTests:      ${comp}\nStreak:     ${user.state?.streak||0}\nRefs:       ${user.state?._referrals||0}\nComposite:  ${compositeScore(user)}\nBadges:     ${badges.map(b=>b.name+" ("+b.tier+")").join(", ")||"None"}`);
         }
-        });
-      }
+      });
 
       document.getElementById("usersLoader").style.display="none";
       document.getElementById("usersTableWrap").style.display="block";
@@ -1004,16 +991,8 @@
       renderCompositeLeaderboard();
       applyEmailFilter();
     } catch(e){
-      console.error("USER FETCH ERROR:", e);
-      const code=e?.code||"unknown-error";
-      const message=e?.message||String(e);
-      document.getElementById("usersLoader").innerHTML=`
-        <div style="text-align:center;max-width:720px;">
-          <p style="color:var(--danger);font-weight:700;margin-bottom:8px;">Error loading users</p>
-          <p style="color:var(--muted);font-size:11px;word-break:break-word;">${escHtml(code)}</p>
-          <p style="color:var(--muted);font-size:11px;word-break:break-word;margin-top:4px;">${escHtml(message)}</p>
-          <button onclick="loadUsers()" class="btn btn-ghost" style="margin-top:12px;">Retry</button>
-        </div>`;
+      console.error(e);
+      document.getElementById("usersLoader").innerHTML='<p style="color:var(--danger)">Error loading users.</p>';
     }
   }
 
@@ -1112,21 +1091,13 @@
         tbody.appendChild(tr);
         rank++;
       });
-    } catch(e){
-      console.error("RATINGS FETCH ERROR:", e);
-      const tbody=document.querySelector("#leaderboardTable tbody");
-      if(tbody) tbody.innerHTML=`<tr><td colspan="5"><div class="empty-state"><p style="color:var(--danger)">Unable to load ratings.</p><p style="font-size:11px;margin-top:6px;word-break:break-word;">${escHtml(e?.code||e?.message||String(e))}</p></div></td></tr>`;
-    }
+    } catch(e){ console.error(e); }
   }
 
   /* ── ANALYTICS ── */
   async function loadAnalytics(){
     try {
-      if(!auth.currentUser){
-        throw new Error("AUTH_REQUIRED: Admin is not signed in.");
-      }
       const snap=await getDocs(collection(db,"users"));
-      console.log(`Analytics users fetched: ${snap.size}`);
       let totalTests=0, totalScoreSum=0;
       const sectionTotals={repeat:0,conversation:0,fillblanks:0,dictation:0,retell:0};
       const sectionCounts={repeat:0,conversation:0,fillblanks:0,dictation:0,retell:0};
@@ -1195,11 +1166,7 @@
         ${secRows}`;
 
       renderBadgeAnalytics();
-    } catch(e){
-      console.error("ANALYTICS FETCH ERROR:", e);
-      const el=document.getElementById("insightsContent");
-      if(el) el.innerHTML=`<div class="empty-state"><p style="color:var(--danger)">Unable to load analytics.</p><p style="font-size:11px;margin-top:6px;word-break:break-word;">${escHtml(e?.code||e?.message||String(e))}</p></div>`;
-    }
+    } catch(e){ console.error(e); }
   }
 
   /* Badge Distribution */
