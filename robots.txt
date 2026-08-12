@@ -1,7 +1,14 @@
+# =========================================================
 # VersantPro - Robots.txt
+# AI English Fluency & Versant Practice Platform
+# Worldwide SEO + GEO Crawling Configuration
 # Updated: 2026-08-12
+# =========================================================
 
-# Allow search engines and AI crawlers to access public content
+# ---------------------------------------------------------
+# DEFAULT: Allow all search engines and eligible crawlers
+# ---------------------------------------------------------
+
 User-agent: *
 Allow: /
 
@@ -10,8 +17,66 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
 
-# Do not expose raw JSON files to search results
+# Raw JSON files should not appear in search results
 Disallow: /*.json$
 
-# Sitemap
+# ---------------------------------------------------------
+# GOOGLE
+# ---------------------------------------------------------
+
+User-agent: Googlebot
+Allow: /
+
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+Disallow: /*.json$
+
+# ---------------------------------------------------------
+# BING
+# ---------------------------------------------------------
+
+User-agent: Bingbot
+Allow: /
+
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+Disallow: /*.json$
+
+# ---------------------------------------------------------
+# OTHER SEARCH ENGINES
+# ---------------------------------------------------------
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# ---------------------------------------------------------
+# SEO CRAWLERS
+# Keep these blocked as in the original configuration
+# ---------------------------------------------------------
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# ---------------------------------------------------------
+# SITEMAP
+# ---------------------------------------------------------
+
 Sitemap: https://versantpro.in/sitemap.xml
+
+# =========================================================
+# END
+# =========================================================
