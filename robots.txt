@@ -1,53 +1,17 @@
-# Versant Practice PRO - robots.txt
-# Last Updated: December 2024
-# Purpose: Guide search engine crawlers and control indexing
+# VersantPro - Robots.txt
+# Updated: 2026-08-12
 
-# Allow all search engines
+# Allow search engines and AI crawlers to access public content
 User-agent: *
 Allow: /
 
-# Specific rules for Google
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-
-# Specific rules for Bing
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-# Specific rules for other crawlers
-User-agent: Slurp
-Allow: /
-
-User-agent: DuckDuckBot
-Allow: /
-
-# Block bad bots and scrapers
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: SemrushBot
-Disallow: /
-
-User-agent: MJ12bot
-Disallow: /
-
-User-agent: YandexBot
-Allow: /
-
-# Disallow private/admin pages (none in this case, but good practice)
-User-agent: *
+# Private / administrative areas
 Disallow: /admin/
 Disallow: /private/
-Disallow: /*.json$
-Disallow: /*.xml$
 Disallow: /api/
 
-# Allow sitemap
-Sitemap: https://versantpro.in/sitemap.xml
+# Do not expose raw JSON files to search results
+Disallow: /*.json$
 
-# Request rate for Google (crawl budget)
-# Every 2 seconds - helps prevent server overload
-Request-rate: 0.5/2s
-Visit-time: 0000-2359
+# Sitemap
+Sitemap: https://versantpro.in/sitemap.xml
