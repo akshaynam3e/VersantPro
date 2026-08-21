@@ -397,7 +397,328 @@
 </head>
 
 <body>
+<!-- VersantPro 770 Users Community Popup -->
+<div id="versantProPopup">
+    <div class="vp-popup-box">
 
+        <!-- Close Button -->
+        <button class="vp-close-btn" onclick="closeVersantProPopup()">
+            &times;
+        </button>
+
+        <!-- Icon -->
+        <div class="vp-popup-icon">🎉</div>
+
+        <!-- Heading -->
+        <h2>We’re Now 770 Users Strong!</h2>
+
+        <!-- Message -->
+        <p>
+            Thank you for being a part of the <strong>VersantPro</strong> community.
+            We’re excited to announce that our community has officially reached
+            <strong>770 users</strong>!
+        </p>
+
+        <p>
+            We would love to stay connected with you. Join our Telegram community
+            to share your valuable feedback, suggestions, and ideas.
+            Every piece of feedback helps us improve VersantPro.
+        </p>
+
+        <p class="vp-thank-you">
+            Thank you for your continued support. ❤️
+        </p>
+
+        <!-- Buttons -->
+        <div class="vp-popup-buttons">
+
+            <a href="https://t.me/versantpro"
+               target="_blank"
+               class="vp-join-btn">
+                Join Telegram
+            </a>
+
+            <button class="vp-later-btn"
+                    onclick="closeVersantProPopup()">
+                Maybe Later
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+<style>
+
+    /* Popup Background */
+    #versantProPopup {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 999999;
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+
+    /* Popup Box */
+    .vp-popup-box {
+        position: relative;
+
+        width: 100%;
+        max-width: 480px;
+
+        background: #ffffff;
+
+        border-radius: 22px;
+
+        padding: 35px 30px 30px;
+
+        text-align: center;
+
+        box-sizing: border-box;
+
+        box-shadow:
+            0 25px 70px rgba(0, 0, 0, 0.30);
+
+        animation: vpPopupAnimation 0.4s ease;
+    }
+
+
+    /* Popup Icon */
+    .vp-popup-icon {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+
+    /* Heading */
+    .vp-popup-box h2 {
+        margin: 0 0 16px;
+
+        font-size: 26px;
+        line-height: 1.3;
+
+        color: #0f4c5c;
+
+        font-weight: 700;
+    }
+
+
+    /* Paragraphs */
+    .vp-popup-box p {
+        margin: 10px 0;
+
+        color: #555555;
+
+        font-size: 15px;
+
+        line-height: 1.65;
+    }
+
+
+    /* Thank You */
+    .vp-popup-box .vp-thank-you {
+        margin-top: 15px;
+
+        font-weight: 600;
+
+        color: #0f4c5c;
+    }
+
+
+    /* Close X */
+    .vp-close-btn {
+        position: absolute;
+
+        top: 12px;
+        right: 15px;
+
+        width: 35px;
+        height: 35px;
+
+        border: none;
+        background: transparent;
+
+        font-size: 28px;
+
+        line-height: 35px;
+
+        color: #777777;
+
+        cursor: pointer;
+
+        border-radius: 50%;
+
+        transition: 0.2s;
+    }
+
+
+    .vp-close-btn:hover {
+        background: #f2f2f2;
+        color: #333333;
+    }
+
+
+    /* Buttons Container */
+    .vp-popup-buttons {
+        display: flex;
+
+        gap: 12px;
+
+        margin-top: 25px;
+    }
+
+
+    /* Join Telegram Button */
+    .vp-join-btn {
+        flex: 1;
+
+        padding: 13px 18px;
+
+        border-radius: 11px;
+
+        background: #0f4c5c;
+
+        color: #ffffff;
+
+        text-decoration: none;
+
+        font-size: 15px;
+
+        font-weight: 600;
+
+        border: none;
+
+        cursor: pointer;
+
+        transition: 0.25s;
+    }
+
+
+    .vp-join-btn:hover {
+        transform: translateY(-2px);
+
+        opacity: 0.92;
+    }
+
+
+    /* Maybe Later Button */
+    .vp-later-btn {
+        flex: 1;
+
+        padding: 13px 18px;
+
+        border-radius: 11px;
+
+        background: #f1f3f4;
+
+        color: #444444;
+
+        border: none;
+
+        font-size: 15px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: 0.25s;
+    }
+
+
+    .vp-later-btn:hover {
+        background: #e4e6e7;
+    }
+
+
+    /* Popup Animation */
+    @keyframes vpPopupAnimation {
+
+        from {
+            opacity: 0;
+            transform: translateY(25px) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+    }
+
+
+    /* Mobile */
+    @media (max-width: 500px) {
+
+        .vp-popup-box {
+            padding: 32px 20px 23px;
+
+            border-radius: 19px;
+        }
+
+        .vp-popup-box h2 {
+            font-size: 22px;
+        }
+
+        .vp-popup-box p {
+            font-size: 14px;
+        }
+
+        .vp-popup-buttons {
+            flex-direction: column;
+        }
+
+        .vp-join-btn,
+        .vp-later-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    /* Show popup after 1 second */
+    window.addEventListener("load", function () {
+
+        setTimeout(function () {
+
+            const popup = document.getElementById("versantProPopup");
+
+            if (popup) {
+                popup.style.display = "flex";
+            }
+
+        }, 1000);
+
+    });
+
+
+    /* Close popup */
+    function closeVersantProPopup() {
+
+        const popup = document.getElementById("versantProPopup");
+
+        if (popup) {
+            popup.style.display = "none";
+        }
+
+    }
+
+</script>
 <button
 class="profile-btn"
 id="profileBtn"
