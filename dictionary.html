@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VersantPro Translator</title>
-<link rel="icon" type="image/png" href="icon.png">
+<title>VersantPro | Translator</title>
 <style>
 :root {
   --primary: #1a73e8;
@@ -25,6 +24,9 @@ body {
 .container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
 header { text-align: center; margin-bottom: 24px; }
 header h1 { font-size: 1.75rem; font-weight: 500; color: var(--primary); }
+.topbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text); text-decoration: none; font-size: 0.9rem; cursor: pointer; }
+.back-btn:hover { background: #f1f3f4; color: var(--primary); border-color: var(--primary); }
 
 .lang-row {
   display: flex; align-items: center; gap: 12px;
@@ -105,14 +107,28 @@ footer {
   text-align: center; margin-top: 36px;
   font-size: 0.8rem; color: var(--muted);
 }
+.example-panel {
+  margin-top: 18px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.example-header { padding: 10px 14px; background: #f8f9fa; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 500; }
+.example-body { padding: 14px 16px 16px; }
+.example-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 700px) { .example-row { grid-template-columns: 1fr; } }
+.example-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.8rem; }
+.example-text { width: 100%; min-height: 76px; padding: 10px 12px; resize: vertical; border: 1px solid var(--border); border-radius: 8px; font: inherit; line-height: 1.45; background: #fff; }
+.example-text[readonly] { background: #fafafa; }
+.example-hint { margin-top: 10px; color: var(--muted); font-size: 0.8rem; }
 </style>
 </head>
 <body>
 <div class="container">
+  <div class="topbar">
+    <a class="back-btn" href="index.html" aria-label="Go back to the home page">← Back</a>
+  </div>
   <header>
     <h1>VersantPro Translator</h1>
   </header>
-
   <div class="lang-row">
     <select id="sourceLang" class="lang-select"></select>
     <button class="swap-btn" id="swapBtn" title="Swap">
@@ -169,8 +185,25 @@ footer {
   <button class="translate-btn" id="translateBtn">Translate</button>
   <div class="status" id="status"></div>
 
+  <section class="example-panel" aria-labelledby="exampleTitle">
+    <div class="example-header" id="exampleTitle">Sample sentence</div>
+    <div class="example-body">
+      <div class="example-row">
+        <div>
+          <label class="example-label" for="exampleSource">Example in source language</label>
+          <textarea id="exampleSource" class="example-text" placeholder="A sample sentence will appear here..."></textarea>
+        </div>
+        <div>
+          <label class="example-label" for="exampleTarget">Example in target language</label>
+          <textarea id="exampleTarget" class="example-text" readonly placeholder="The translated example will appear here..."></textarea>
+        </div>
+      </div>
+      <div class="example-hint">The example is created from your translated word or phrase and then translated into the target language.</div>
+    </div>
+  </section>
+
   <footer>
-    Powered by VersantPro 
+    Powered by VersantPro
   </footer>
 </div>
 
@@ -272,6 +305,8 @@ const output      = document.getElementById('output');
 const translateBtn= document.getElementById('translateBtn');
 const statusEl    = document.getElementById('status');
 const charCount   = document.getElementById('charCount');
+const exampleSource = document.getElementById('exampleSource');
+const exampleTarget = document.getElementById('exampleTarget');
 
 Object.entries(languages).forEach(([code, name]) => {
   sourceSelect.add(new Option(name, code));
@@ -289,6 +324,8 @@ inputText.addEventListener('input', () => {
 document.getElementById('clearBtn').onclick = () => {
   inputText.value = '';
   output.value = '';
+  exampleSource.value = '';
+  exampleTarget.value = '';
   charCount.textContent = '0';
   statusEl.textContent = '';
 };
@@ -309,12 +346,17 @@ document.getElementById('swapBtn').onclick = () => {
     const tmp = inputText.value;
     inputText.value = output.value;
     output.value = tmp;
+    exampleSource.value = '';
+    exampleTarget.value = '';
   } else {
     sourceSelect.value = t;
     targetSelect.value = s;
     const tmp = inputText.value;
     inputText.value = output.value;
     output.value = tmp;
+    const exampleTmp = exampleSource.value;
+    exampleSource.value = exampleTarget.value;
+    exampleTarget.value = exampleTmp;
   }
   charCount.textContent = inputText.value.length;
 };
@@ -394,6 +436,19 @@ function splitText(text) {
   return chunks;
 }
 
+async function translateExample(sourceText, source, target) {
+  const chunks = splitText(sourceText);
+  let result = '';
+  for (const chunk of chunks) {
+    result += (result ? ' ' : '') + await translateChunk(chunk, source, target);
+  }
+  return result;
+}
+
+function makeExample(phrase) {
+  return `The word or phrase "${phrase}" is useful in everyday conversation.`;
+}
+
 async function translate() {
   const text = inputText.value.trim();
   if (!text) {
@@ -407,6 +462,9 @@ async function translate() {
 
   if (source === target && source !== 'autodetect') {
     output.value = text;
+    const example = makeExample(text);
+    exampleSource.value = example;
+    exampleTarget.value = example;
     statusEl.textContent = 'Same language';
     return;
   }
@@ -426,6 +484,14 @@ async function translate() {
       if (i < chunks.length - 1) await new Promise(r => setTimeout(r, 300));
     }
     output.value = result;
+    const englishExample = makeExample(result);
+    statusEl.textContent = 'Creating sample sentence...';
+    exampleSource.value = source === 'en' || source === 'autodetect'
+      ? englishExample
+      : await translateExample(englishExample, 'en', source);
+    exampleTarget.value = target === 'en'
+      ? englishExample
+      : await translateExample(englishExample, 'en', target);
     statusEl.textContent = 'Done';
     statusEl.className = 'status success';
   } catch (err) {
