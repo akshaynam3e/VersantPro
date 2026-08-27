@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VersantPro Translator</title>
+<style>
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --bg: #f8f9fa;
+  --card: #fff;
+  --text: #202124;
+  --muted: #5f6368;
+  --border: #dadce0;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.container { max-width: 920px; margin: 0 auto; padding: 20px 16px 40px; }
+header { text-align: center; margin-bottom: 24px; }
+header h1 { font-size: 1.75rem; font-weight: 500; color: var(--primary); }
+
+.lang-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px; flex-wrap: wrap;
+}
+.lang-select {
+  flex: 1; min-width: 150px;
+  padding: 10px 12px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 0.95rem; background: #fff;
+  cursor: pointer; outline: none;
+}
+.lang-select:focus { border-color: var(--primary); }
+.swap-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid var(--border); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.swap-btn:hover { background: #f1f3f4; }
+.swap-btn svg { width: 20px; height: 20px; color: var(--muted); }
+
+.boxes {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+@media (max-width: 700px) { .boxes { grid-template-columns: 1fr; } }
+
+.box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  display: flex; flex-direction: column; min-height: 240px;
+}
+.box-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: #f8f9fa;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem; color: var(--muted);
+}
+.box-actions { display: flex; gap: 4px; }
+.icon-btn {
+  width: 34px; height: 34px; border: none; border-radius: 50%;
+  background: transparent; color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.icon-btn:hover { background: #e8f0fe; color: var(--primary); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+textarea {
+  flex: 1; border: none; outline: none; resize: none;
+  padding: 16px; font-size: 1.1rem; line-height: 1.5;
+  font-family: inherit; background: transparent;
+}
+#output { background: #fafafa; }
+
+.char-count {
+  padding: 6px 14px; font-size: 0.8rem; color: var(--muted);
+  text-align: right; border-top: 1px solid var(--border);
+}
+
+.translate-btn {
+  display: block; width: 100%; max-width: 260px;
+  margin: 22px auto 0; padding: 13px 24px;
+  background: var(--primary); color: #fff; border: none;
+  border-radius: 24px; font-size: 1rem; font-weight: 500;
+  cursor: pointer;
+}
+.translate-btn:hover { background: var(--primary-dark); }
+.translate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.status {
+  text-align: center; margin-top: 12px;
+  font-size: 0.9rem; color: var(--muted); min-height: 22px;
+}
+.status.error { color: #d93025; }
+.status.success { color: #188038; }
+
+footer {
+  text-align: center; margin-top: 36px;
+  font-size: 0.8rem; color: var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>VersantPro Translator</h1>
+  </header>
+
+  <div class="lang-row">
+    <select id="sourceLang" class="lang-select"></select>
+    <button class="swap-btn" id="swapBtn" title="Swap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M7 16V4M7 4L3 8M7 4L11 8"/>
+        <path d="M17 8V20M17 20L21 16M17 20L13 16"/>
+      </svg>
+    </button>
+    <select id="targetLang" class="lang-select"></select>
+  </div>
+
+  <div class="boxes">
+    <div class="box">
+      <div class="box-header">
+        <span>Source</span>
+        <div class="box-actions">
+          <button class="icon-btn" id="speakSource" title="Listen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="clearBtn" title="Clear">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <textarea id="inputText" placeholder="Type or paste text here..." maxlength="5000"></textarea>
+      <div class="char-count"><span id="charCount">0</span> / 5000</div>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <span>Translation</span>
+        <div class="box-actions">
+          <button class="icon-btn" id="speakTarget" title="Listen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="copyBtn" title="Copy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <textarea id="output" readonly placeholder="Translation appears here..."></textarea>
+    </div>
+  </div>
+
+  <button class="translate-btn" id="translateBtn">Translate</button>
+  <div class="status" id="status"></div>
+
+  <footer>
+    Powered by VersantPro 
+  </footer>
+</div>
+
+<script>
+const languages = {
+  "autodetect": "Detect language",
+  "en": "English",
+  "es": "Spanish",
+  "fr": "French",
+  "de": "German",
+  "it": "Italian",
+  "pt": "Portuguese",
+  "ru": "Russian",
+  "zh-CN": "Chinese (Simplified)",
+  "zh-TW": "Chinese (Traditional)",
+  "ja": "Japanese",
+  "ko": "Korean",
+  "ar": "Arabic",
+  "hi": "Hindi",
+  "bn": "Bengali",
+  "pa": "Punjabi",
+  "ur": "Urdu",
+  "tr": "Turkish",
+  "vi": "Vietnamese",
+  "th": "Thai",
+  "id": "Indonesian",
+  "ms": "Malay",
+  "nl": "Dutch",
+  "pl": "Polish",
+  "uk": "Ukrainian",
+  "ro": "Romanian",
+  "cs": "Czech",
+  "sv": "Swedish",
+  "da": "Danish",
+  "fi": "Finnish",
+  "no": "Norwegian",
+  "el": "Greek",
+  "he": "Hebrew",
+  "fa": "Persian",
+  "ta": "Tamil",
+  "te": "Telugu",
+  "ml": "Malayalam",
+  "kn": "Kannada",
+  "mr": "Marathi",
+  "gu": "Gujarati",
+  "sw": "Swahili",
+  "af": "Afrikaans",
+  "sq": "Albanian",
+  "am": "Amharic",
+  "hy": "Armenian",
+  "az": "Azerbaijani",
+  "eu": "Basque",
+  "be": "Belarusian",
+  "bs": "Bosnian",
+  "bg": "Bulgarian",
+  "ca": "Catalan",
+  "hr": "Croatian",
+  "et": "Estonian",
+  "tl": "Filipino",
+  "gl": "Galician",
+  "ka": "Georgian",
+  "hu": "Hungarian",
+  "is": "Icelandic",
+  "ga": "Irish",
+  "jv": "Javanese",
+  "kk": "Kazakh",
+  "km": "Khmer",
+  "ku": "Kurdish",
+  "lo": "Lao",
+  "lv": "Latvian",
+  "lt": "Lithuanian",
+  "mk": "Macedonian",
+  "mg": "Malagasy",
+  "mt": "Maltese",
+  "mn": "Mongolian",
+  "my": "Myanmar",
+  "ne": "Nepali",
+  "ps": "Pashto",
+  "sr": "Serbian",
+  "si": "Sinhala",
+  "sk": "Slovak",
+  "sl": "Slovenian",
+  "so": "Somali",
+  "su": "Sundanese",
+  "tg": "Tajik",
+  "tt": "Tatar",
+  "uz": "Uzbek",
+  "cy": "Welsh",
+  "xh": "Xhosa",
+  "yi": "Yiddish",
+  "yo": "Yoruba",
+  "zu": "Zulu"
+};
+
+const sourceSelect = document.getElementById('sourceLang');
+const targetSelect = document.getElementById('targetLang');
+const inputText   = document.getElementById('inputText');
+const output      = document.getElementById('output');
+const translateBtn= document.getElementById('translateBtn');
+const statusEl    = document.getElementById('status');
+const charCount   = document.getElementById('charCount');
+
+Object.entries(languages).forEach(([code, name]) => {
+  sourceSelect.add(new Option(name, code));
+  if (code !== 'autodetect') {
+    targetSelect.add(new Option(name, code));
+  }
+});
+sourceSelect.value = 'autodetect';
+targetSelect.value = 'en';
+
+inputText.addEventListener('input', () => {
+  charCount.textContent = inputText.value.length;
+});
+
+document.getElementById('clearBtn').onclick = () => {
+  inputText.value = '';
+  output.value = '';
+  charCount.textContent = '0';
+  statusEl.textContent = '';
+};
+
+document.getElementById('copyBtn').onclick = () => {
+  if (!output.value) return;
+  navigator.clipboard.writeText(output.value).then(() => {
+    statusEl.textContent = 'Copied!';
+    statusEl.className = 'status success';
+    setTimeout(() => statusEl.textContent = '', 1500);
+  });
+};
+
+document.getElementById('swapBtn').onclick = () => {
+  const s = sourceSelect.value;
+  const t = targetSelect.value;
+  if (s === 'autodetect') {
+    const tmp = inputText.value;
+    inputText.value = output.value;
+    output.value = tmp;
+  } else {
+    sourceSelect.value = t;
+    targetSelect.value = s;
+    const tmp = inputText.value;
+    inputText.value = output.value;
+    output.value = tmp;
+  }
+  charCount.textContent = inputText.value.length;
+};
+
+// ========== SIMPLE WORKING SPEECH ==========
+function speak(text) {
+  if (!text || !text.trim()) {
+    statusEl.textContent = 'Nothing to speak';
+    statusEl.className = 'status error';
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text.trim());
+  u.lang = 'en-US';
+  u.rate = 0.9;
+  u.pitch = 1;
+  u.volume = 1;
+
+  // Use one of the English voices you have
+  const voices = speechSynthesis.getVoices();
+  const englishVoice = voices.find(v => v.lang === 'en-US' || v.name.includes('Aria') || v.name.includes('Zira') || v.name.includes('David'));
+  if (englishVoice) {
+    u.voice = englishVoice;
+  }
+
+  speechSynthesis.speak(u);
+}
+
+document.getElementById('speakSource').onclick = () => speak(inputText.value);
+document.getElementById('speakTarget').onclick = () => speak(output.value);
+
+// Load voices
+speechSynthesis.getVoices();
+speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+
+// ========== Translation ==========
+const MAX_CHUNK = 450;
+
+async function translateChunk(text, source, target) {
+  const langpair = `${source === 'autodetect' ? 'Autodetect' : source}|${target}`;
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(langpair)}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Network error');
+
+  const data = await res.json();
+
+  if (data.responseStatus && data.responseStatus !== 200) {
+    throw new Error(data.responseDetails || 'Translation failed');
+  }
+
+  const translated = data.responseData?.translatedText || '';
+  if (translated.toUpperCase().includes('MYMEMORY WARNING') ||
+      translated.toUpperCase().includes('QUERY NOT FOUND')) {
+    throw new Error(translated);
+  }
+  return translated;
+}
+
+function splitText(text) {
+  if (text.length <= MAX_CHUNK) return [text];
+  const chunks = [];
+  let remaining = text;
+  while (remaining.length > 0) {
+    if (remaining.length <= MAX_CHUNK) {
+      chunks.push(remaining);
+      break;
+    }
+    let cut = remaining.lastIndexOf('. ', MAX_CHUNK);
+    if (cut < MAX_CHUNK * 0.4) cut = remaining.lastIndexOf(' ', MAX_CHUNK);
+    if (cut < MAX_CHUNK * 0.3) cut = MAX_CHUNK;
+    chunks.push(remaining.slice(0, cut + 1).trim());
+    remaining = remaining.slice(cut + 1).trim();
+  }
+  return chunks;
+}
+
+async function translate() {
+  const text = inputText.value.trim();
+  if (!text) {
+    statusEl.textContent = 'Please enter text';
+    statusEl.className = 'status error';
+    return;
+  }
+
+  const source = sourceSelect.value;
+  const target = targetSelect.value;
+
+  if (source === target && source !== 'autodetect') {
+    output.value = text;
+    statusEl.textContent = 'Same language';
+    return;
+  }
+
+  translateBtn.disabled = true;
+  statusEl.textContent = 'Translating...';
+  statusEl.className = 'status';
+  output.value = '';
+
+  try {
+    const chunks = splitText(text);
+    let result = '';
+    for (let i = 0; i < chunks.length; i++) {
+      statusEl.textContent = `Translating part ${i + 1}/${chunks.length}...`;
+      const part = await translateChunk(chunks[i], source, target);
+      result += (result ? ' ' : '') + part;
+      if (i < chunks.length - 1) await new Promise(r => setTimeout(r, 300));
+    }
+    output.value = result;
+    statusEl.textContent = 'Done';
+    statusEl.className = 'status success';
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = err.message || 'Translation failed.';
+    statusEl.className = 'status error';
+  } finally {
+    translateBtn.disabled = false;
+  }
+}
+
+translateBtn.onclick = translate;
+inputText.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') translate();
+});
+</script>
+</body>
+</html>
