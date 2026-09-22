@@ -169,7 +169,7 @@ function saveSession(extra={}){
 function refillQuestionQueue(){ questionQueue=[...sentences].sort(()=>Math.random()-0.5); }
 function restoreSession(){
     document.getElementById("sentence").innerHTML=currentSentence;
-    document.getElementById("spoken").innerHTML=savedSession.lastSpoken?"<b>You said:</b><br><br>"+savedSession.lastSpoken:"<span class="status-dot"></span>Your answer will appear here...";
+    document.getElementById("spoken").innerHTML=savedSession.lastSpoken?"<b>You said:</b><br><br>"+savedSession.lastSpoken:"<span class=\"status-dot\"></span>Your answer will appear here...";
     document.getElementById("feedback").innerHTML=savedSession.lastFeedback||"Your saved feedback will appear here after speaking.";
     document.getElementById("questionCounter").textContent="Question "+(displayedCount||1);
 }
