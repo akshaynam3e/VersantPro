@@ -205,38 +205,78 @@ function readSentence(){
 }
 
 function startRecognition(){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const spokenBox = document.getElementById("spoken");
+    const sentenceBox = document.getElementById("sentence");
 
-    if(!('webkitSpeechRecognition' in window)){
-
-        alert(
-            "Use Google Chrome for speech recognition."
-        );
-
+    if(!SpeechRecognition){
+        spokenBox.innerHTML = "<b>Microphone unavailable.</b><br>Please open this page in the latest Google Chrome or Microsoft Edge.";
         return;
     }
 
-    const recognition =
-    new webkitSpeechRecognition();
+    if(!window.isSecureContext && location.hostname !== "localhost" && location.hostname !== "127.0.0.1"){
+        spokenBox.innerHTML = "<b>Secure connection required.</b><br>Open this page using HTTPS or localhost so the browser can access your microphone.";
+        return;
+    }
 
-    recognition.lang="en-US";
-    recognition.interimResults=false;
-    recognition.continuous=false;
+    const recognition = new SpeechRecognition();
+    let receivedResult = false;
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 1;
 
-    recognition.start();
+    recognition.onstart = function(){
+        sentenceBox.innerHTML = "🎤 Listening... Speak now";
+        spokenBox.innerHTML = "<span class=\"status-dot\"></span>Listening for your answer...";
+    };
 
-    recognition.onresult=function(event){
+    recognition.onspeechstart = function(){
+        spokenBox.innerHTML = "<span class=\"status-dot\"></span>Voice detected. Keep speaking...";
+    };
 
-        const spoken=
-        event.results[0][0].transcript;
-
-        document.getElementById("spoken")
-        .innerHTML=
-        "<b>You Said:</b><br><br>"+spoken;
-
+    recognition.onresult = function(event){
+        const result = event.results && event.results[0] && event.results[0][0];
+        if(!result || !result.transcript.trim()){
+            spokenBox.innerHTML = "<b>No words detected.</b><br>Please try again and speak closer to the microphone.";
+            return;
+        }
+        receivedResult = true;
+        const spoken = result.transcript.trim();
+        sentenceBox.innerHTML = "✅ Answer captured";
+        spokenBox.innerHTML = "<b>You said:</b><br><br>" + spoken;
         evaluate(spoken);
     };
-}
 
+    recognition.onerror = function(event){
+        const messages = {
+            "not-allowed": "Microphone permission was blocked. Click the lock icon in the address bar, allow Microphone, then try again.",
+            "service-not-allowed": "Speech recognition is not allowed by this browser or device.",
+            "audio-capture": "No microphone was found. Check that your microphone is connected and enabled.",
+            "no-speech": "No speech was detected. Click Start speaking and speak clearly after the listening message.",
+            "network": "Speech recognition needs an internet connection in this browser.",
+            "aborted": "Listening was stopped. Click Start speaking to try again."
+        };
+        spokenBox.innerHTML = "<b>Microphone message:</b><br>" + (messages[event.error] || "Could not capture the microphone. Please try again.");
+        sentenceBox.innerHTML = "🎤 Ready to listen again";
+    };
+
+    recognition.onnomatch = function(){
+        spokenBox.innerHTML = "<b>No matching speech detected.</b><br>Please repeat the full sentence clearly.";
+    };
+
+    recognition.onend = function(){
+        if(!receivedResult && sentenceBox.innerHTML.includes("Listening")){
+            sentenceBox.innerHTML = "🎤 Ready to listen again";
+        }
+    };
+
+    try{
+        recognition.start();
+    }catch(error){
+        spokenBox.innerHTML = "<b>Microphone is already starting.</b><br>Wait a moment, then try again.";
+    }
+}
 function clean(text){
 
     return text
