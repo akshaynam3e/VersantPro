@@ -20,16 +20,16 @@
     <title>VersantPro – AI English Fluency & Versant Practice</title>
     <link rel="icon" type="image/png" href="icon.png">
     <meta name="description"
-          content="VersantPro is an AI-powered English fluency practice platform for Versant-style assessment preparation. Practice reading, repetition, conversation, dictation, fill-in-the-blanks and passage exercises.">
+          content="VersantPro is a professional English fluency and Versant-style assessment practice platform for learners, students, and job candidates in India and worldwide. Practice reading, repetition, conversation, dictation, fill-in-the-blanks, and passage exercises online.">
 
     <meta name="keywords"
-          content="VersantPro, Versant practice, Versant test practice, Versant English test, Versant practice test, AI English fluency practice, Versant speaking practice, Versant dictation practice">
+          content="VersantPro, Versant English practice, Versant test preparation, English fluency practice India, spoken English practice, English assessment preparation, reading practice, repetition practice, conversation practice, dictation practice, interview English">
 
     <link rel="canonical"
           href="https://versantpro.in/">
 
     <meta name="theme-color"
-          content="#000000">
+          content="#102a43">
 
     <!-- =========================
          OPEN GRAPH
@@ -42,7 +42,7 @@
           content="VersantPro – AI English Fluency & Versant Practice">
 
     <meta property="og:description"
-          content="Practice English fluency with interactive Versant-style exercises covering reading, repetition, conversation, dictation, fill-in-the-blanks and passages.">
+          content="Professional Versant-style English fluency practice for reading, repetition, conversation, dictation, fill-in-the-blanks, and passage exercises.">
 
     <meta property="og:url"
           content="https://versantpro.in/">
@@ -64,7 +64,7 @@
           content="VersantPro – AI English Fluency & Versant Practice">
 
     <meta name="twitter:description"
-          content="AI-powered English fluency and Versant-style practice platform.">
+          content="Practice English fluency and Versant-style assessment tasks online with VersantPro.">
 
     <!-- =========================
          WEBSITE / ORGANIZATION
@@ -185,557 +185,36 @@
          ========================= -->
 
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
-
-        body{
-            min-height:100vh;
-            background:black;
-            color:white;
-
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            gap:50px;
-
-            font-family:Arial, sans-serif;
-        }
-
-        .title h1{
-            font-size:2.5rem;
-            letter-spacing:3px;
-        }
-
-        .buttons{
-            display:flex;
-            flex-wrap:wrap;
-            justify-content:center;
-            gap:25px;
-            max-width:900px;
-        }
-
-        .card{
-            width:130px;
-            height:130px;
-            background:#111;
-            color:white;
-            border:2px solid white;
-            border-radius:25px;
-            font-size:16px;
-            cursor:pointer;
-
-            transition:all .3s ease;
-        }
-
-        .card:hover{
-            transform:scale(1.08);
-            box-shadow:0 0 20px white;
-        }
-
-        .buttons:has(.card:hover) .card:not(:hover){
-            filter:blur(2px);
-            opacity:0.5;
-            transform:scale(0.95);
-        }
-
-        .title h1{
-            font-size:2.5rem;
-            letter-spacing:3px;
-        }
-
-        .title h1 span{
-            display:inline-block;
-            color:white;
-            transition:
-                color 0.4s ease,
-                transform 0.4s ease,
-                text-shadow 0.4s ease;
-            cursor:default;
-        }
-
-        .title h1 span:hover{
-            color:cyan;
-            transform:translateY(-5px) scale(1.1);
-            text-shadow:
-                0 0 10px cyan,
-                0 0 20px cyan,
-                0 0 40px cyan;
-        }
-
-        .card{
-            width:130px;
-            height:130px;
-
-            background:#111;
-            color:white;
-
-            border:2px solid white;
-            border-radius:25px;
-
-            font-family:'Segoe UI', Arial, sans-serif;
-            font-size:15px;
-            font-weight:600;
-            letter-spacing:1px;
-            line-height:1.4;
-
-            cursor:pointer;
-            transition:all .3s ease;
-
-            padding:10px;
-            text-align:center;
-        }
-
-        .footer{
-            position:fixed;
-            bottom:20px;
-            left:50%;
-
-            transform:translateX(-50%);
-
-            display:flex;
-            align-items:center;
-            gap:15px;
-
-            font-family:'Segoe UI',sans-serif;
-            font-size:14px;
-            letter-spacing:1px;
-        }
-
-        .footer a{
-            color:white;
-            text-decoration:none;
-
-            transition:
-                color .3s ease,
-                transform .3s ease,
-                text-shadow .3s ease;
-        }
-
-        .footer a:hover{
-            color:cyan;
-
-            transform:translateY(-2px);
-
-            text-shadow:
-                0 0 10px cyan,
-                0 0 20px cyan,
-                0 0 40px cyan;
-        }
-
-        .footer span{
-            color:#555;
-        }
-
-        .profile-btn{
-            position:fixed;
-
-            top:20px;
-            right:20px;
-
-            width:130px;
-            height:50px;
-
-            background:black;
-            color:white;
-
-            border:2px solid white;
-            border-radius:12px;
-
-            cursor:pointer;
-
-            font-size:15px;
-            font-weight:600;
-
-            transition:.3s;
-
-            z-index:9999;
-        }
-
-        @keyframes popupShow{
-
-            from{
-                opacity:0;
-                transform:scale(.8);
-            }
-
-            to{
-                opacity:1;
-                transform:scale(1);
-            }
-
-        }
-
-        @keyframes glow{
-
-            from{
-                box-shadow:
-                0 0 10px rgba(0,255,255,.15);
-            }
-
-            to{
-                box-shadow:
-                0 0 25px rgba(0,255,255,.35);
-            }
-
-        }
-
-        .profile-btn:hover{
-
-            background:white;
-            color:black;
-
-            transform:scale(1.05);
-
-            box-shadow:0 0 20px white;
-        }
-
-    </style>
+:root{--navy:#102a43;--deep:#0b1f33;--blue:#2369d1;--teal:#0f9d8a;--ink:#17324d;--muted:#6b7c93;--line:#dce6f0;--soft:#f4f8fc;--white:#fff;--shadow:0 22px 60px rgba(16,42,67,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;color:var(--ink);background:linear-gradient(135deg,#edf5fb 0%,#f8fbfe 48%,#eaf6f4 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.home-shell{width:min(1120px,calc(100% - 40px));margin:0 auto;padding:28px 0 105px}.home-topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:58px}.brand{display:flex;align-items:center;gap:13px}.brand-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;color:#fff;background:linear-gradient(135deg,var(--blue),var(--teal));font-size:22px;font-weight:900;box-shadow:0 10px 24px #1f6feb38}.brand-name{color:var(--navy);font-size:19px;font-weight:800;letter-spacing:-.02em}.brand-subtitle{margin-top:3px;color:var(--muted);font-size:12px}.profile-btn{position:static;width:auto;height:auto;border:1px solid var(--line);border-radius:10px;padding:10px 17px;color:var(--navy);background:#ffffffc9;cursor:pointer;font-size:13px;font-weight:800;transition:.2s;z-index:10}.profile-btn:hover{border-color:var(--blue);color:var(--blue);background:#fff;transform:translateY(-1px);box-shadow:0 8px 18px #1f6feb1f}.title{margin-bottom:31px}.title .eyebrow{margin-bottom:11px;color:var(--teal);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.title h1{color:var(--deep);font-size:clamp(32px,5vw,58px);line-height:1.06;letter-spacing:-.055em}.title h1 span{display:inline;color:inherit;cursor:default;transition:color .2s,transform .2s}.title h1 span:hover{color:var(--blue);transform:none;text-shadow:none}.home-intro{max-width:690px;margin-top:15px;color:var(--muted);font-size:16px;line-height:1.65}.section-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:var(--navy);font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.section-meta:before{content:"";width:25px;height:3px;border-radius:99px;background:var(--teal)}.buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;max-width:900px}.card{position:relative;width:auto;height:152px;border:1px solid var(--line);border-radius:18px;padding:22px;text-align:left;color:var(--navy);background:#ffffffe8;cursor:pointer;box-shadow:0 10px 28px rgba(16,42,67,.06);font-family:inherit;font-size:16px;font-weight:800;letter-spacing:-.01em;line-height:1.3;transition:.22s}.card:after{content:"→";position:absolute;right:20px;bottom:17px;color:var(--blue);font-size:19px;opacity:.7;transition:.2s}.card:hover{border-color:#a9c9ef;background:#fff;transform:translateY(-5px);box-shadow:0 18px 35px rgba(16,42,67,.13)}.card:hover:after{right:16px;color:var(--teal)}.card:before{display:block;width:34px;height:34px;margin-bottom:19px;padding:7px;border-radius:10px;color:var(--blue);background:#eaf2ff;font-size:16px;font-weight:900}.card:nth-child(1):before{content:"R"}.card:nth-child(2):before{content:"↻"}.card:nth-child(3):before{content:"C"}.card:nth-child(4):before{content:"D"}.card:nth-child(5):before{content:"B"}.card:nth-child(6):before{content:"P"}.buttons:has(.card:hover) .card:not(:hover){filter:none;opacity:.65;transform:scale(.985)}.footer{position:fixed;bottom:0;left:0;width:100%;display:flex;justify-content:center;flex-wrap:wrap;gap:12px;padding:17px 20px;border-top:1px solid #dce6f0b8;color:var(--muted);background:#f8fbfee8;backdrop-filter:blur(12px);font-size:12px;letter-spacing:.02em}.footer a{color:var(--muted);text-decoration:none;transition:.2s}.footer a:hover{color:var(--blue);transform:none;text-shadow:none}.footer span{color:#c4d0dc}
+@media(max-width:720px){.home-topbar{margin-bottom:39px}.buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.card{height:145px}}
+@media(max-width:480px){.home-shell{width:calc(100% - 24px);padding-top:18px}.home-topbar{margin-bottom:35px}.title h1{font-size:38px}.home-intro{font-size:14px}.buttons{grid-template-columns:1fr}.card{height:120px;padding:18px}.card:before{display:inline-block;margin:0 10px 0 0}.footer{position:static;margin-top:24px}}
+.seo-content{margin-top:64px;padding-top:28px;border-top:1px solid var(--line)}.seo-content h2{color:var(--navy);font-size:24px;letter-spacing:-.03em}.seo-content>p{max-width:780px;margin-top:10px;color:var(--muted);font-size:14px;line-height:1.7}.seo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:22px}.seo-grid>div{padding:19px;border:1px solid var(--line);border-radius:15px;background:#ffffffaa}.seo-grid h3{color:var(--navy);font-size:14px}.seo-grid p{margin-top:7px;color:var(--muted);font-size:12px;line-height:1.6}@media(max-width:720px){.seo-grid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.seo-content{margin-top:40px}.seo-grid{grid-template-columns:1fr}}
+</style>
+    <meta name="author" content="VersantPro">
+    <meta name="application-name" content="VersantPro">
+    <meta name="language" content="English">
+    <meta name="geo.region" content="IN">
+    <meta name="geo.placename" content="India">
+    <meta name="content-language" content="en-IN">
+    <meta name="format-detection" content="telephone=no">
 </head>
 
 <body>
-<!-- VersantPro 770 Users Community Popup -->
-<div id="versantProPopup">
-    <div class="vp-popup-box">
 
-        <!-- Close Button -->
-        <button class="vp-close-btn" onclick="closeVersantProPopup()">
-            &times;
-        </button>
-
-        <!-- Icon -->
-        <div class="vp-popup-icon">🎉</div>
-
-        <!-- Heading -->
-        <h2>We’re Now 857 Users Strong!</h2>
-
-        <!-- Message -->
-        <p>
-            Thank you for being a part of the <strong>VersantPro</strong> community.
-            We’re excited to announce that our community has officially reached
-            <strong>857 users</strong>!
-        </p>
-
-        <p>
-            We would love to stay connected with you. Join our Telegram community
-            to share your valuable feedback, suggestions, and ideas.
-            Every piece of feedback helps us improve VersantPro.
-        </p>
-
-        <p class="vp-thank-you">
-            Thank you for your continued support. ❤️
-        </p>
-
-        <!-- Buttons -->
-        <div class="vp-popup-buttons">
-
-            <a href="https://t.me/versantpro"
-               target="_blank"
-               class="vp-join-btn">
-                Join Telegram
-            </a>
-
-            <button class="vp-later-btn"
-                    onclick="closeVersantProPopup()">
-                Maybe Later
-            </button>
-
-        </div>
-
-    </div>
-</div>
-
-
-<style>
-
-    /* Popup Background */
-    #versantProPopup {
-        display: none;
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        z-index: 999999;
-
-        align-items: center;
-        justify-content: center;
-
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-
-    /* Popup Box */
-    .vp-popup-box {
-        position: relative;
-
-        width: 100%;
-        max-width: 480px;
-
-        background: #ffffff;
-
-        border-radius: 22px;
-
-        padding: 35px 30px 30px;
-
-        text-align: center;
-
-        box-sizing: border-box;
-
-        box-shadow:
-            0 25px 70px rgba(0, 0, 0, 0.30);
-
-        animation: vpPopupAnimation 0.4s ease;
-    }
-
-
-    /* Popup Icon */
-    .vp-popup-icon {
-        font-size: 42px;
-        margin-bottom: 10px;
-    }
-
-
-    /* Heading */
-    .vp-popup-box h2 {
-        margin: 0 0 16px;
-
-        font-size: 26px;
-        line-height: 1.3;
-
-        color: #0f4c5c;
-
-        font-weight: 700;
-    }
-
-
-    /* Paragraphs */
-    .vp-popup-box p {
-        margin: 10px 0;
-
-        color: #555555;
-
-        font-size: 15px;
-
-        line-height: 1.65;
-    }
-
-
-    /* Thank You */
-    .vp-popup-box .vp-thank-you {
-        margin-top: 15px;
-
-        font-weight: 600;
-
-        color: #0f4c5c;
-    }
-
-
-    /* Close X */
-    .vp-close-btn {
-        position: absolute;
-
-        top: 12px;
-        right: 15px;
-
-        width: 35px;
-        height: 35px;
-
-        border: none;
-        background: transparent;
-
-        font-size: 28px;
-
-        line-height: 35px;
-
-        color: #777777;
-
-        cursor: pointer;
-
-        border-radius: 50%;
-
-        transition: 0.2s;
-    }
-
-
-    .vp-close-btn:hover {
-        background: #f2f2f2;
-        color: #333333;
-    }
-
-
-    /* Buttons Container */
-    .vp-popup-buttons {
-        display: flex;
-
-        gap: 12px;
-
-        margin-top: 25px;
-    }
-
-
-    /* Join Telegram Button */
-    .vp-join-btn {
-        flex: 1;
-
-        padding: 13px 18px;
-
-        border-radius: 11px;
-
-        background: #0f4c5c;
-
-        color: #ffffff;
-
-        text-decoration: none;
-
-        font-size: 15px;
-
-        font-weight: 600;
-
-        border: none;
-
-        cursor: pointer;
-
-        transition: 0.25s;
-    }
-
-
-    .vp-join-btn:hover {
-        transform: translateY(-2px);
-
-        opacity: 0.92;
-    }
-
-
-    /* Maybe Later Button */
-    .vp-later-btn {
-        flex: 1;
-
-        padding: 13px 18px;
-
-        border-radius: 11px;
-
-        background: #f1f3f4;
-
-        color: #444444;
-
-        border: none;
-
-        font-size: 15px;
-
-        font-weight: 600;
-
-        cursor: pointer;
-
-        transition: 0.25s;
-    }
-
-
-    .vp-later-btn:hover {
-        background: #e4e6e7;
-    }
-
-
-    /* Popup Animation */
-    @keyframes vpPopupAnimation {
-
-        from {
-            opacity: 0;
-            transform: translateY(25px) scale(0.95);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-    }
-
-
-    /* Mobile */
-    @media (max-width: 500px) {
-
-        .vp-popup-box {
-            padding: 32px 20px 23px;
-
-            border-radius: 19px;
-        }
-
-        .vp-popup-box h2 {
-            font-size: 22px;
-        }
-
-        .vp-popup-box p {
-            font-size: 14px;
-        }
-
-        .vp-popup-buttons {
-            flex-direction: column;
-        }
-
-        .vp-join-btn,
-        .vp-later-btn {
-            width: 100%;
-        }
-
-    }
-
-</style>
-
-
-<script>
-
-    /* Show popup after 1 second */
-    window.addEventListener("load", function () {
-
-        setTimeout(function () {
-
-            const popup = document.getElementById("versantProPopup");
-
-            if (popup) {
-                popup.style.display = "flex";
-            }
-
-        }, 1000);
-
-    });
-
-
-    /* Close popup */
-    function closeVersantProPopup() {
-
-        const popup = document.getElementById("versantProPopup");
-
-        if (popup) {
-            popup.style.display = "none";
-        }
-
-    }
-
-</script>
-<button
-class="profile-btn"
-id="profileBtn"
-onclick="location.href='profile.html'">
-
-Profile
-
-</button>
-
-<div class="title">
-    <h1>
-        <span>V</span><span>E</span><span>R</span><span>S</span><span>A</span><span>N</span><span>T</span>
-        &nbsp;
-        <span>S</span><span>E</span><span>C</span><span>T</span><span>I</span><span>O</span><span>N</span><span>S</span>
-    </h1>
-</div>
-
+<main class="home-shell">
+<header class="home-topbar">
+    <div class="brand"><div class="brand-mark">V</div><div><div class="brand-name">VersantPro</div><div class="brand-subtitle">Secure English fluency practice</div></div></div>
+    <button class="profile-btn" id="profileBtn" onclick="location.href='profile.html'">Profile</button>
+</header>
+<section class="title">
+    <div class="eyebrow">Professional assessment workspace</div>
+    <h1>Versant Sections</h1>
+    <p class="home-intro">Practice English fluency with structured Versant-style exercises designed for learners, students, and job candidates in India and worldwide.</p>
+</section>
+<div class="section-meta">Choose a practice module</div>
 <div class="buttons">
 
     <button class="card"
@@ -769,7 +248,8 @@ Profile
     </button>
 
 </div>
-
+<section class="seo-content" aria-label="About VersantPro"><h2>English fluency practice for Versant-style assessments</h2><p>VersantPro helps you prepare for English communication assessments with focused browser-based practice. Improve pronunciation, listening, reading accuracy, sentence repetition, vocabulary, and everyday professional communication.</p><div class="seo-grid"><div><h3>Practice English online</h3><p>Choose a practice module and build confidence with structured exercises that fit your preparation routine.</p></div><div><h3>Prepare from anywhere</h3><p>Use VersantPro on desktop or mobile for convenient English fluency practice at home, in college, or at work.</p></div><div><h3>Build professional confidence</h3><p>Review feedback, repeat challenging sentences, and develop clear communication for interviews and workplace conversations.</p></div></div></section>
+</main>
 
 <!--
     GEO CONTEXT
