@@ -1,0 +1,32 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "matchmaking": {
+      "$queueId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (!data.exists() || data.child('uid').val() == auth.uid)",
+        ".validate": "newData.hasChildren(['uid', 'name', 'createdAt', 'status']) && newData.child('uid').val() == auth.uid"
+      }
+    },
+    "rooms": {
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (!data.exists() || data.child('hostUid').val() == auth.uid || newData.child('guestUid').val() == auth.uid)",
+        ".validate": "newData.hasChildren(['matchId', 'roomCode', 'hostUid', 'status'])"
+      }
+    },
+    "matches": {
+      "$matchId": {
+        ".read": "auth != null",
+        "players": {
+          "$uid": {
+            ".read": "auth != null",
+            ".write": "auth != null && $uid == auth.uid",
+            ".validate": "newData.hasChildren(['uid', 'name', 'health', 'prompt', 'updatedAt']) && newData.child('uid').val() == auth.uid && newData.child('health').isNumber()"
+          }
+        }
+      }
+    }
+  }
+}
