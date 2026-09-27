@@ -1,21 +1,5 @@
-# Security Policy
-
-## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
-## Reporting a Vulnerability
-
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Security PolicyVersantPro is an English fluency practice website with browser-based exercises, Firebase authentication, Firestore/Realtime Database features, and an administrative content workspace. We take reports about vulnerabilities affecting learner accounts, user-submitted feedback, assessment content, administrator access, and stored data seriously.Supported VersionsSecurity fixes are applied to the current production version and the current source code on the default branch.Version or branch Supported
+Current production release :white_check_mark:
+Current main branch :white_check_mark:
+Older releases not listed above :x:
+Unmodified forks or local copies :x:Because VersantPro is continuously updated rather than released as a long-lived versioned package, users should keep their deployed files and Firebase security rules up to date.Reporting a VulnerabilityPlease do not publish a suspected security issue in a public GitHub issue, discussion, review, or social-media post before it has been investigated.Use one of these private reporting channels:
