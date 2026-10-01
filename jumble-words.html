@@ -56,9 +56,20 @@ class TTSPlayer {
   constructor(){this.supported='speechSynthesis' in window}
   playOnce(sentence,onComplete,onError){
     if(!this.supported){onError('Text-to-speech is not supported in this browser.');return}
-    speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(sentence);utterance.lang='en-US';utterance.rate=.9;utterance.pitch=1;utterance.onend=()=>onComplete();utterance.onerror=()=>onError('The question audio could not be played.');speechSynthesis.speak(utterance)
+    speechSynthesis.cancel();speechSynthesis.resume();
+    const speak=()=>{
+      let started=false,finished=false;
+      const utterance=new SpeechSynthesisUtterance(sentence);utterance.lang='en-US';utterance.rate=.9;utterance.pitch=1;
+      const watchdog=setTimeout(()=>{if(!started&&!finished){speechSynthesis.cancel();onError('Your browser blocked automatic audio. Click Begin assessment once, then allow audio playback.')}},2500);
+      utterance.onstart=()=>{started=true;clearTimeout(watchdog)};
+      utterance.onend=()=>{finished=true;clearTimeout(watchdog);onComplete()};
+      utterance.onerror=()=>{finished=true;clearTimeout(watchdog);onError('The question audio could not be played. Check that your device is not muted.')};
+      speechSynthesis.speak(utterance)
+    };
+    const voices=speechSynthesis.getVoices();
+    if(voices.length){speak()}else{speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speak()};setTimeout(()=>{if(speechSynthesis.onvoiceschanged){speechSynthesis.onvoiceschanged=null;speak()}},500)}
   }
-  cancel(){if(this.supported)speechSynthesis.cancel()}
+  cancel(){if(this.supported){speechSynthesis.onvoiceschanged=null;speechSynthesis.cancel()}}
 }
 
 class SpeechRecognizer {
@@ -102,7 +113,7 @@ class AssessmentController {
   cleanupRecognition(){if(this.recognition){this.stt.stop(this.recognition);this.recognition=null}}
   stopSilence(){if(this.silenceTimer){clearInterval(this.silenceTimer);this.silenceTimer=null}}
   cleanup(){this.stopSilence();this.cleanupRecognition();this.tts.cancel()}
-  init(){this.updateCounter();setTimeout(()=>this.startQuestion(),250)}
+  init(){this.updateCounter();this.$('start').hidden=false;this.setStage('ready','▶','Begin the assessment','Click Begin assessment once. The first question will then play automatically and only once.');this.setStatus('Ready. Click Begin assessment to enable audio and microphone access.')}
 }
 
 const assessment=new AssessmentController();assessment.init();
