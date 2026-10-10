@@ -1,0 +1,5 @@
+Security PolicyVersantPro is an English fluency practice website with browser-based exercises, Firebase authentication, Firestore/Realtime Database features, and an administrative content workspace. We take reports about vulnerabilities affecting learner accounts, user-submitted feedback, assessment content, administrator access, and stored data seriously.Supported VersionsSecurity fixes are applied to the current production version and the current source code on the default branch.Version or branch Supported
+Current production release :white_check_mark:
+Current main branch :white_check_mark:
+Older releases not listed above :x:
+Unmodified forks or local copies :x:Because VersantPro is continuously updated rather than released as a long-lived versioned package, users should keep their deployed files and Firebase security rules up to date.Reporting a VulnerabilityPlease do not publish a suspected security issue in a public GitHub issue, discussion, review, or social-media post before it has been investigated.Use one of these private reporting channels:
