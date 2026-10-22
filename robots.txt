@@ -1,6 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /config.php
-Disallow: /includes/
 Sitemap: https://versantpro.in/sitemap.xml
