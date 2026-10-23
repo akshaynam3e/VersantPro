@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>VersantPro - Streak</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root { --cyan:#00e5ff; --muted:#9aa4b2; --panel:#111820; --line:#26313c; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:#050607; color:#fff; font-family:Arial, sans-serif; padding:28px 18px 50px; }
+    .wrap { width:min(980px, 100%); margin:auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:28px; }
+    h1 { margin:0; font-size:clamp(30px, 6vw, 52px); letter-spacing:2px; }
+    .back { border:1px solid #fff; border-radius:10px; padding:11px 18px; color:#fff; text-decoration:none; font-weight:700; }
+    .back:hover { background:#fff; color:#000; }
+    .hero { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-bottom:22px; }
+    .stat { background:linear-gradient(145deg,#17212a,#0d1116); border:1px solid var(--line); border-radius:18px; padding:22px; }
+    .stat strong { display:block; color:var(--cyan); font-size:36px; margin-bottom:5px; }
+    .stat span { color:var(--muted); font-size:13px; }
+    .section-title { margin:30px 0 12px; color:var(--cyan); }
+    .day { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin:12px 0; }
+    .day-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px; }
+    .day-date { font-size:18px; font-weight:700; }
+    .day-total { color:var(--cyan); font-weight:700; }
+    .bars { display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; }
+    .bar-item { text-align:center; min-width:0; }
+    .bar-track { height:82px; background:#080b0f; border-radius:9px; display:flex; align-items:flex-end; padding:5px; margin-bottom:7px; }
+    .bar-fill { width:100%; min-height:4px; border-radius:5px; background:linear-gradient(#00e5ff,#007a91); transition:height .35s ease; }
+    .bar-value { font-weight:700; font-size:14px; }
+    .bar-label { color:var(--muted); font-size:11px; margin-top:4px; overflow:hidden; text-overflow:ellipsis; }
+    .empty { border:1px dashed #394754; border-radius:16px; padding:28px; text-align:center; color:var(--muted); }
+    .message { color:var(--muted); margin:0 0 18px; }
+    @media (max-width:650px) {
+      body { padding:20px 13px 40px; }
+      .topbar { align-items:flex-start; }
+      .hero { grid-template-columns:1fr; }
+      .bars { gap:4px; }
+      .bar-label { font-size:9px; }
+      .day-head { align-items:flex-start; flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="topbar">
+      <h1>🔥 STREAK</h1>
+      <a class="back" href="index.html">Back to Practice</a>
+    </header>
+    <p id="message" class="message">Loading your practice history...</p>
+
+    <section class="hero" aria-label="Streak summary">
+      <div class="stat"><strong id="currentStreak">0</strong><span>Current streak days</span></div>
+      <div class="stat"><strong id="longestStreak">0</strong><span>Longest streak days</span></div>
+      <div class="stat"><strong id="totalQuestions">0</strong><span>Total questions solved</span></div>
+    </section>
+
+    <h2 class="section-title">Daily practice history</h2>
+    <section id="days" aria-live="polite"></section>
+  </main>
+
+  <script type="module">
+    import { getAuthInstance, getStreakSummary } from "./streak.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const labels = {
+      reading: "Reading",
+      repeat: "Repeat",
+      conversation: "Conversation",
+      dictation: "Dictation",
+      blanks: "Blanks",
+      passage: "Passage"
+    };
+
+    const message = document.getElementById("message");
+    const daysEl = document.getElementById("days");
+
+    function formatDate(value) {
+      return new Date(`${value}T12:00:00`).toLocaleDateString(undefined, {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      });
+    }
+
+    function render(summary) {
+      document.getElementById("currentStreak").textContent = summary.currentStreak;
+      document.getElementById("longestStreak").textContent = summary.longestStreak;
+      document.getElementById("totalQuestions").textContent = summary.totalQuestions;
+
+      if (!summary.days.length) {
+        daysEl.innerHTML = "<div class=\"empty\">No practice recorded yet. Complete a question to start your streak.</div>";
+        message.textContent = "Your daily activity will appear here after you solve questions.";
+        return;
+      }
+
+      message.textContent = "Each day shows the number of questions solved in every section.";
+      daysEl.innerHTML = "";
+      summary.days.forEach((day) => {
+        const sections = { reading:0, repeat:0, conversation:0, dictation:0, blanks:0, passage:0, ...(day.sections || {}) };
+        const max = Math.max(1, ...Object.values(sections));
+        const card = document.createElement("article");
+        card.className = "day";
+        card.innerHTML = `
+          <div class="day-head">
+            <div class="day-date">${formatDate(day.date)}</div>
+            <div class="day-total">${day.questionsSolved} question${day.questionsSolved === 1 ? "" : "s"} solved</div>
+          </div>
+          <div class="bars"></div>
+        `;
+        const bars = card.querySelector(".bars");
+        Object.entries(labels).forEach(([key, label]) => {
+          const count = Number(sections[key] || 0);
+          const item = document.createElement("div");
+          item.className = "bar-item";
+          item.innerHTML = `
+            <div class="bar-track"><div class="bar-fill" style="height:${Math.max(6, (count / max) * 100)}%"></div></div>
+            <div class="bar-value">${count}</div>
+            <div class="bar-label">${label}</div>
+          `;
+          bars.appendChild(item);
+        });
+        daysEl.appendChild(card);
+      });
+    }
+
+    async function start() {
+      const auth = getAuthInstance();
+      await new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, () => {
+          unsubscribe();
+          resolve();
+        });
+      });
+      try {
+        render(await getStreakSummary());
+      } catch (error) {
+        console.error(error);
+        message.textContent = "Unable to load activity right now. Please refresh and try again.";
+      }
+    }
+    start();
+  </script>
+</body>
+</html>
