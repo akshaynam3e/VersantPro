@@ -3,6 +3,16 @@
 <head>
     <meta name="google-adsense-account" content="ca-pub-4182322212044643">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script>if(window.top!==window.self){window.top.location=window.location.href;}</script>
+<style>html.auth-check-pending body{display:none!important}</style>
+<script>
+document.documentElement.classList.add('auth-check-pending');
+window.addEventListener('pagehide',function(event){if(event.persisted)document.documentElement.classList.add('auth-check-pending');});
+window.addEventListener('pageshow',function(event){if(event.persisted){document.documentElement.classList.add('auth-check-pending');window.location.reload();}});
+</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>Send Feedback | VersantPro</title>
@@ -26,7 +36,7 @@ const config={apiKey:"AIzaSyASKI0u0KBCPz0vg5ro0XhJlSSuWxrW8OU",authDomain:"versa
 const auth=getAuth(initializeApp(config)),db=getFirestore();const $=id=>document.getElementById(id);let user=null;
 function status(text,ok=false){$('status').textContent=text;$('status').className='status'+(ok?' ok':'')}
 function moderate(message){const text=message.trim(),words=text.split(/\s+/).filter(Boolean),letters=(text.match(/[A-Za-z]/g)||[]).length;const lower=text.toLowerCase();const blocked=['fuck','shit','bitch','asshole','idiot','stupid','hate you'];const reasons=[];if(text.length<20)reasons.push('too short');if(words.length<4)reasons.push('too few words');if(letters/Math.max(text.length,1)<.45)reasons.push('not enough readable text');if(/(.)\1{4,}/i.test(text))reasons.push('repeated characters');if(/^(.)\1+$/.test(text.replace(/\s/g,'')))reasons.push('repeated text');if(blocked.some(x=>lower.includes(x)))reasons.push('abusive language');if(/https?:\/\/|www\.|\+?\d[\d\s-]{7,}/i.test(text))reasons.push('link or contact data');const unique=new Set(words.map(x=>x.toLowerCase().replace(/[^a-z]/g,''))).size;if(words.length>=6&&unique/words.length<.4)reasons.push('repeated words');return{ok:!reasons.length,reasons}}
-onAuthStateChanged(auth,async u=>{user=u;$('loading').classList.add('hidden');if(u){$('feedbackCard').classList.remove('hidden');$('userEmail').textContent=u.email||u.displayName||'Signed-in user'}else $('loginRequired').classList.remove('hidden')});
+onAuthStateChanged(auth,async u=>{user=u;$('loading').classList.add('hidden');if(u){$('feedbackCard').classList.remove('hidden');$('userEmail').textContent=u.email||u.displayName||'Signed-in user'}else $('loginRequired').classList.remove('hidden');document.documentElement.classList.remove('auth-check-pending')});
 $('feedbackForm').addEventListener('submit',async e=>{e.preventDefault();if(!user)return;const message=$('message').value.trim(),check=moderate(message);if(!check.ok){status('Please provide specific, respectful feedback. This submission was not saved.');return}$('submitBtn').disabled=true;status('Checking and saving your feedback…');try{await addDoc(collection(db,'feedback'),{message,category:$('category').value,rating:Number(document.querySelector('input[name="rating"]:checked')?.value||3),moderationStatus:'approved',moderationReasons:[],submittedBy:user.uid,submittedEmail:user.email||'',submittedName:user.displayName||'',createdAt:serverTimestamp(),userAgent:navigator.userAgent.slice(0,240)});$('feedbackForm').reset();document.querySelector('input[name="rating"][value="3"]').checked=true;status('Thank you. Your feedback was saved for admin review.',true)}catch(err){console.error(err);status('Could not save feedback. Please try again later.')}finally{$('submitBtn').disabled=false}});
 </script>
 </body>

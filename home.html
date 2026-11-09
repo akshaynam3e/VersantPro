@@ -8,6 +8,16 @@
          ========================= -->
 
     <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script>if(window.top!==window.self){window.top.location=window.location.href;}</script>
+<style>html.auth-check-pending body{display:none!important}</style>
+<script>
+document.documentElement.classList.add('auth-check-pending');
+window.addEventListener('pagehide',function(event){if(event.persisted)document.documentElement.classList.add('auth-check-pending');});
+window.addEventListener('pageshow',function(event){if(event.persisted){document.documentElement.classList.add('auth-check-pending');window.location.reload();}});
+</script>
+
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
@@ -344,12 +354,8 @@ auth,
 
 (user)=>{
 
-if(!user){
-
-location.href =
-"login.html";
-
-}
+if(!user){location.replace("login.html");return;}
+document.documentElement.classList.remove('auth-check-pending');
 
 }
 

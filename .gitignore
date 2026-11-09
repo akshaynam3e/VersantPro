@@ -1,0 +1,22 @@
+# Local secrets and environment configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Repository and editor metadata
+.git/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Backups and temporary exports
+*.bak
+*.backup
+*.old
+*.orig
+*~

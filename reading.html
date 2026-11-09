@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script>if(window.top!==window.self){window.top.location=window.location.href;}</script>
+
     <meta name="google-adsense-account" content="ca-pub-4182322212044643">
 <title>VersantPro - Read</title>
 <link rel="icon" type="image/png" href="icon.png">
@@ -169,9 +173,9 @@ function saveSession(extra={}){
 }
 function refillQuestionQueue(){ questionQueue=[...sentences].sort(()=>Math.random()-0.5); }
 function restoreSession(){
-    document.getElementById("sentence").innerHTML=currentSentence;
-    document.getElementById("spoken").innerHTML=savedSession.lastSpoken?"<b>You said:</b><br><br>"+savedSession.lastSpoken:"<span class=\"status-dot\"></span>Your answer will appear here...";
-    document.getElementById("feedback").innerHTML=savedSession.lastFeedback||"Your saved feedback will appear here after speaking.";
+    document.getElementById("sentence").textContent=currentSentence;
+    document.getElementById("spoken").innerHTML=savedSession.lastSpoken?"<b>You said:</b><br><br>"+escapeHTML(savedSession.lastSpoken):"<span class=\"status-dot\"></span>Your answer will appear here...";
+    document.getElementById("feedback").textContent="Your saved feedback will appear here after speaking.";
     document.getElementById("questionCounter").textContent="Question "+(displayedCount||1);
 }
 if(currentSentence){restoreSession();}else{generateSentence();}
@@ -190,7 +194,7 @@ function generateSentence(){
     questionAnswered=false;
 
     document.getElementById("sentence")
-    .innerHTML=currentSentence;
+    .textContent=currentSentence;
 
     document.title="VersantPro - Question "+displayedCount;
     document.getElementById("questionCounter").textContent="Question "+displayedCount;
@@ -241,7 +245,7 @@ function startRecognition(){
     recognition.maxAlternatives = 1;
 
     recognition.onstart = function(){
-        sentenceBox.innerHTML = currentSentence;
+        sentenceBox.textContent = currentSentence;
         spokenBox.innerHTML = "<span class=\"status-dot\"></span>Listening for your answer...";
     };
 
@@ -257,8 +261,8 @@ function startRecognition(){
         }
         receivedResult = true;
         const spoken = result.transcript.trim();
-        sentenceBox.innerHTML = currentSentence;
-        spokenBox.innerHTML = "<b>You said:</b><br><br>" + spoken;
+        sentenceBox.textContent = currentSentence;
+        spokenBox.innerHTML = "<b>You said:</b><br><br>" + escapeHTML(spoken);
         evaluate(spoken);
     };
 
@@ -272,7 +276,7 @@ function startRecognition(){
             "aborted": "Listening was stopped. Click Start speaking to try again."
         };
         spokenBox.innerHTML = "<b>Microphone message:</b><br>" + (messages[event.error] || "Could not capture the microphone. Please try again.");
-        sentenceBox.innerHTML = currentSentence;
+        sentenceBox.textContent = currentSentence;
     };
 
     recognition.onnomatch = function(){
@@ -291,6 +295,7 @@ function startRecognition(){
         spokenBox.innerHTML = "<b>Microphone is already starting.</b><br>Wait a moment, then try again.";
     }
 }
+function escapeHTML(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
 function clean(text){
 
     return text
