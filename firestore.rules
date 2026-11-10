@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /publicProfiles/{uid} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /usernames/{username} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /xpTransactions/{transactionId} {
+      allow read, write: if false;
+    }
+    match /achievements/{achievementId} {
+      allow read: if resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+  }
+}

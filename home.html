@@ -227,8 +227,9 @@ body{min-height:100vh;color:var(--ink);background:linear-gradient(135deg,#edf5fb
 <main class="home-shell">
 <header class="home-topbar">
     <div class="brand"><div class="brand-mark">V</div><div><div class="brand-name">VersantPro</div><div class="brand-subtitle">Secure English fluency practice</div></div></div>
-    <button class="profile-btn" id="profileBtn" onclick="location.href='profile.html'">Profile</button>
+    <div style="display:flex;gap:8px"><a class="profile-btn" href="leaderboard.html" style="text-decoration:none">Leaderboard</a><button class="profile-btn" id="profileBtn" onclick="location.href='profile.html'">Profile</button></div>
 </header>
+<section aria-labelledby="lb-heading" style="margin:18px 0;padding:18px;border:1px solid #dce6ed;border-radius:16px;background:#fff"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><div class="eyebrow">VersantPro community</div><h2 id="lb-heading" style="margin:5px 0;color:#102a43">Global leaderboard</h2><p style="margin:0;color:#687b8d">Practice consistently. Earn verified XP.</p></div><a href="leaderboard.html" class="profile-btn" style="text-decoration:none">View full leaderboard →</a></div><div id="homeLeaderboardPreview" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;color:#687b8d">Loading live rankings…</div><p id="homeMyRank" style="margin-bottom:0;color:#176b9b"></p></section>
 <section class="title">
     <div class="eyebrow">Professional assessment workspace</div>
     <h1>Versant Sections</h1>
@@ -367,6 +368,7 @@ document.documentElement.classList.remove('auth-check-pending');
 
 </script>
 
+<script type="module" src="home-leaderboard.js"></script>
 </body>
 
 <footer class="footer">
