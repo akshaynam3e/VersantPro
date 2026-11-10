@@ -124,15 +124,15 @@ class SpeechRecognizer {
   constructor(){this.Api=window.SpeechRecognition||window.webkitSpeechRecognition}
   start(onUpdate,onComplete,onError){
     if(!this.Api){onError('Speech recognition is not supported. Use a recent version of Chrome or Edge.');return null}
-    const recognition=new this.Api();recognition.lang='en-US';recognition.continuous=true;recognition.interimResults=true;let finals=[],interim='';
-    recognition.onresult=e=>{interim='';for(let i=e.resultIndex;i<e.results.length;i++){const text=e.results[i][0].transcript.trim();if(e.results[i].isFinal)finals.push(text);else interim+=`${text} `}onUpdate([...finals,interim.trim()].filter(Boolean).join(' '))};
+    const recognition=new this.Api();recognition.lang='en-US';recognition.continuous=true;recognition.interimResults=true;let latest='';
+    const readResults=results=>{const parts=[];for(let i=0;i<results.length;i++){const text=results[i][0]?.transcript?.trim();if(text)parts.push(text)}return parts.join(' ').replace(/\s+/g,' ').trim()};
+    recognition.onresult=e=>{latest=readResults(e.results);onUpdate(latest)};
     recognition.onerror=e=>{if(['not-allowed','service-not-allowed','audio-capture'].includes(e.error))onError(`Microphone error: ${e.error}. Check browser permission and input device.`);else if(e.error!=='no-speech')onError(`Speech recognition error: ${e.error}.`)};
-    recognition.onend=()=>onComplete([...finals,interim.trim()].filter(Boolean).join(' '));
+    recognition.onend=()=>onComplete(readResults(recognition.results)||latest);
     try{recognition.start()}catch(_){onError('Could not start the microphone. Check browser permission.')}return recognition
   }
   stop(recognition){if(recognition){recognition.onend=null;try{recognition.stop()}catch(_) {}}}
 }
-
 class Evaluator {
   tokenize(text){return String(text||'').toLowerCase().replace(/[’]/g,"'").match(/[a-z]+(?:'[a-z]+)?/g)||[]}
   evaluate(expected,recognized){
