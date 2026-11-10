@@ -57,26 +57,69 @@ class QuestionBank {
   size(level){return level==='all'?Object.values(this.questions).flat().length:(this.questions[level]||[]).length}
 }
 
-class TTSPlayer {
-  constructor(){this.supported='speechSynthesis' in window}
-  playOnce(sentence,onComplete,onError){
-    if(!this.supported){onError('Text-to-speech is not supported in this browser.');return}
-    speechSynthesis.cancel();speechSynthesis.resume();
-    const speak=()=>{
-      let started=false,finished=false;
-      const utterance=new SpeechSynthesisUtterance(sentence);utterance.lang='en-US';utterance.rate=.9;utterance.pitch=1;
-      const watchdog=setTimeout(()=>{if(!started&&!finished){speechSynthesis.cancel();onError('Your browser blocked automatic audio. Click Begin assessment once, then allow audio playback.')}},2500);
-      utterance.onstart=()=>{started=true;clearTimeout(watchdog)};
-      utterance.onend=()=>{finished=true;clearTimeout(watchdog);onComplete()};
-      utterance.onerror=()=>{finished=true;clearTimeout(watchdog);onError('The question audio could not be played. Check that your device is not muted.')};
-      speechSynthesis.speak(utterance)
-    };
-    const voices=speechSynthesis.getVoices();
-    if(voices.length){speak()}else{speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speak()};setTimeout(()=>{if(speechSynthesis.onvoiceschanged){speechSynthesis.onvoiceschanged=null;speak()}},500)}
+
+class SentenceBlocker {
+  split(sentence){
+    const words=String(sentence||'').trim().split(/\s+/).filter(Boolean);
+    if(!words.length)return['','',''];
+    const base=Math.floor(words.length/3),remainder=words.length%3;
+    let sizes=[0,1,2].map(i=>base+(i<remainder?1:0));
+    let blocks=[],offset=0;
+    for(const size of sizes){blocks.push(words.slice(offset,offset+size).join(' '));offset+=size}
+    // If repetition makes all three balanced blocks text-identical, use the
+    // nearest alternative word grouping so a different audible order exists.
+    if(words.length>=3&&blocks.every(block=>block===blocks[0])){
+      sizes=[Math.floor((words.length-1)/3),Math.floor(words.length/3),0];
+      sizes[2]=words.length-sizes[0]-sizes[1];
+      blocks=[];offset=0;
+      for(const size of sizes){blocks.push(words.slice(offset,offset+size).join(' '));offset+=size}
+    }
+    return blocks;
   }
-  cancel(){if(this.supported){speechSynthesis.onvoiceschanged=null;speechSynthesis.cancel()}}
+  shuffle(blocks){
+    const original=[...blocks];
+    const differs=arr=>arr.some((block,i)=>block!==original[i]);
+    for(let attempt=0;attempt<32;attempt++){
+      const shuffled=[...original];
+      for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}
+      if(differs(shuffled))return shuffled;
+    }
+    // Deterministic fallback avoids an unchanged order even under an unlucky RNG.
+    const permutations=[[1,0,2],[0,2,1],[2,1,0],[1,2,0],[2,0,1]];
+    for(const order of permutations){const candidate=order.map(i=>original[i]);if(differs(candidate))return candidate}
+    return original;
+  }
+  create(sentence){return this.shuffle(this.split(sentence))}
 }
 
+class TTSPlayer {
+  constructor(){this.supported='speechSynthesis' in window;this.sequenceId=0;this.timers=new Set()}
+  playBlocks(blocks,onComplete,onError){
+    this.cancel();
+    if(!this.supported){onError('Text-to-speech is not supported in this browser.');return}
+    const runId=this.sequenceId;
+    const queue=blocks.map(block=>String(block||'').trim()).filter(Boolean);
+    if(!queue.length){onError('No sentence blocks are available to play.');return}
+    let index=0;
+    const active=()=>runId===this.sequenceId;
+    const clearTimer=timer=>{clearTimeout(timer);this.timers.delete(timer)};
+    const schedule=(fn,delay)=>{const timer=setTimeout(()=>{this.timers.delete(timer);if(active())fn()},delay);this.timers.add(timer);return timer};
+    const fail=message=>{if(!active())return;this.cancel();onError(message)};
+    const speakNext=()=>{
+      if(!active())return;
+      if(index>=queue.length){this.cancel();onComplete();return}
+      const utterance=new SpeechSynthesisUtterance(queue[index++]);utterance.lang='en-US';utterance.rate=.9;utterance.pitch=1;
+      let started=false;
+      const watchdog=schedule(()=>{if(!started){speechSynthesis.cancel();fail('Your browser could not start the audio. Click Begin assessment once, then allow audio playback.')}},5000);
+      utterance.onstart=()=>{if(!active())return;started=true;clearTimer(watchdog)};
+      utterance.onend=()=>{if(!active())return;clearTimer(watchdog);if(index<queue.length)schedule(speakNext,1000);else{this.cancel();onComplete()}};
+      utterance.onerror=()=>{if(!active())return;clearTimer(watchdog);fail('A sentence block could not be played. Check that your device is not muted.')};
+      try{speechSynthesis.speak(utterance)}catch(_){clearTimer(watchdog);fail('The question audio could not be played. Check that your device is not muted.')}
+    };
+    try{speechSynthesis.cancel();speechSynthesis.resume();speakNext()}catch(_){fail('The question audio could not be played. Check that your device is not muted.')}
+  }
+  cancel(){this.sequenceId++;for(const timer of this.timers)clearTimeout(timer);this.timers.clear();if(this.supported){try{speechSynthesis.cancel()}catch(_){}}}
+}
 class SpeechRecognizer {
   constructor(){this.Api=window.SpeechRecognition||window.webkitSpeechRecognition}
   start(onUpdate,onComplete,onError){
@@ -103,13 +146,13 @@ class Evaluator {
 }
 
 class AssessmentController {
-  constructor(){this.bank=new QuestionBank();this.tts=new TTSPlayer();this.stt=new SpeechRecognizer();this.evaluator=new Evaluator();this.questionNumber=0;this.total=10;this.target='';this.recognition=null;this.state='idle';this.silenceTimer=null;this.silence=5;this.$=id=>document.getElementById(id);this.bind()}
+  constructor(){this.bank=new QuestionBank();this.blocker=new SentenceBlocker();this.tts=new TTSPlayer();this.stt=new SpeechRecognizer();this.evaluator=new Evaluator();this.questionNumber=0;this.total=10;this.target='';this.recognition=null;this.state='idle';this.silenceTimer=null;this.silence=5;this.$=id=>document.getElementById(id);this.bind()}
   bind(){this.$('start').onclick=()=>this.begin();this.$('next').onclick=()=>this.next();this.$('level').onchange=()=>{this.bank.used.clear();this.questionNumber=0;this.updateCounter()};window.addEventListener('beforeunload',()=>this.cleanup())}
   updateCounter(){this.$('counter').textContent=`Question ${Math.min(this.questionNumber+1,this.total)} / ${this.total}`}
   setStage(kind,icon,title,copy){this.$('stage').className=`stage ${kind||''}`;this.$('stageIcon').textContent=icon;this.$('stageTitle').textContent=title;this.$('stageCopy').textContent=copy}
   setStatus(text){this.$('status').textContent=text}
   begin(){this.questionNumber=0;this.startQuestion()}
-  startQuestion(){this.cleanupRecognition();this.stopSilence();this.state='audio';this.target=this.bank.get(this.$('level').value);this.updateCounter();this.$('transcript').className='transcript-text placeholder';this.$('transcript').textContent='Your recognized speech will appear here after you answer.';this.$('result').className='result';this.$('score').textContent='—';this.$('feedback').textContent='';this.$('next').hidden=true;this.$('start').hidden=true;this.$('timerLabel').textContent='Question audio';this.$('timer').textContent='ONCE';this.setStage('listening','◉','Listen carefully','The sentence is playing now. It will not be repeated or shown as text.');this.setStatus('Question audio in progress.');this.tts.playOnce(this.target,()=>this.activateMicrophone(),message=>this.fail(message))}
+  startQuestion(){this.tts.cancel();this.cleanupRecognition();this.stopSilence();this.state='audio';this.target=this.bank.get(this.$('level').value);this.updateCounter();this.$('transcript').className='transcript-text placeholder';this.$('transcript').textContent='Your recognized speech will appear here after you answer.';this.$('result').className='result';this.$('score').textContent='—';this.$('feedback').textContent='';this.$('next').hidden=true;this.$('start').hidden=true;this.$('timerLabel').textContent='Question audio';this.$('timer').textContent='ONCE';this.setStage('listening','◉','Listen carefully','The sentence is playing now. It will not be repeated or shown as text.');this.setStatus('Question audio in progress.');this.tts.playBlocks(this.blocker.create(this.target),()=>this.activateMicrophone(),message=>this.fail(message))}
   activateMicrophone(){if(this.state!=='audio')return;this.state='recording';this.$('timerLabel').textContent='Silence submits';this.$('timer').textContent='5s';this.setStage('speaking','●','Speak the sentence','The microphone is active. Say the complete sentence, then pause.');this.setStatus('Microphone active. Speak now.');this.startSilence();this.recognition=this.stt.start(text=>{this.$('transcript').className='transcript-text';this.$('transcript').textContent=text||'Listening…';this.startSilence()},text=>this.finish(text,true),message=>this.fail(message))}
   startSilence(){this.stopSilence();this.silence=5;this.$('timer').textContent='5s';this.silenceTimer=setInterval(()=>{this.silence--;this.$('timer').textContent=`${this.silence}s`;if(this.silence<=2)this.$('timer').classList.add('warning');if(this.silence<=0){this.stopSilence();if(this.state==='recording'){this.cleanupRecognition();this.finish(this.$('transcript').textContent==='Listening…'?'':this.$('transcript').textContent,false)}}},1000)}
   finish(recognized,fromRecognition){if(this.state==='complete')return;this.state='complete';this.stopSilence();this.cleanupRecognition();const answer=recognized||'';const result=this.evaluator.evaluate(this.target,answer);this.$('transcript').className='transcript-text';this.$('transcript').textContent=answer||'No speech detected.';this.$('score').textContent=`${result.score}%`;this.$('feedback').textContent=result.feedback;this.$('result').className=`result visible ${result.score===100?'excellent':'needs-work'}`;this.$('next').hidden=false;this.$('timerLabel').textContent='Result';this.$('timer').textContent='DONE';this.setStage('complete','✓','Response recorded','Your recognized speech and assessment result are shown below.');this.setStatus(fromRecognition?'Response submitted after speech ended.':'Response submitted after 5 seconds of silence.')}
